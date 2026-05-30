@@ -1,0 +1,273 @@
+[Message:   BepInEx] BepInEx 5.4.23.5 - REPO (07/05/2026 20:54:03)
+[Info   :   BepInEx] Running under Unity v2022.3.67.7073210
+[Info   :   BepInEx] CLR runtime version: 4.0.30319.42000
+[Info   :   BepInEx] Supports SRE: True
+[Info   :   BepInEx] System platform: Bits64, Windows
+[Message:   BepInEx] Preloader started
+[Info   :   BepInEx] Loaded 1 patcher method from [BepInEx.Preloader 5.4.23.5]
+[Info   :   BepInEx] 1 patcher plugin loaded
+[Info   :   BepInEx] Patching [UnityEngine.CoreModule] with [BepInEx.Chainloader]
+[Message:   BepInEx] Preloader finished
+[Message:   BepInEx] Chainloader ready
+[Message:   BepInEx] Chainloader started
+[Info   :   BepInEx] 7 plugins to load
+[Info   :   BepInEx] Loading [REPOLib 4.1.0]
+[Info   :   REPOLib] REPOLib has awoken!
+[Info   :   BepInEx] Loading [ExtractionPointConfirmButton 1.2.0]
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ExtractionPointConfirmButton has awoken!
+[Info   :   REPOLib] Loading bundle at C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\Zehs-ExtractionPointConfirmButton\extractionpointconfirmbutton_assets...
+[Info   :   BepInEx] Loading [SurveyorMap 1.0.0]
+[Info   :SurveyorMap] [SurveyorMap] SurveyorMap v1.0.0 loading. scene=DontDestroyOnLoad, hideFlags=HideAndDontSave
+[Info   :SurveyorMap] [SurveyorMap] BuildTag: 2026-05-30 14:46:02 | md5=b46919ef | C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll
+[Info   :SurveyorMap] [SurveyorMap] Capabilities: teammates=enabled, enemies=enabled, spectator=enabled, ui=enabled
+[Info   :SurveyorMap] [SurveyorMap] Controller AddComponent result: component=True, enabled=True, activeSelf=True, activeInHierarchy=True, isActiveAndEnabled=True
+[Info   :SurveyorMap] [SurveyorMap] Controller Initialize. Creating inactive HUD. toggleKey=M
+[Info   :SurveyorMap] [SurveyorMap] Layout applied: PositionPreset=BottomLeft, anchorMin=(0.00, 0.00), anchorMax=(0.00, 0.00), pivot=(0.00, 0.00), anchoredPosition=(24.00, 120.00), size=(260.00, 260.00)
+[Info   :SurveyorMap] [SurveyorMap] HUD canvas created. renderMode=ScreenSpaceOverlay, sortingOrder=1100, panelSize=(260.00, 260.00), panelAnchor=(0.00, 0.00), active=False
+[Info   :SurveyorMap] [SurveyorMap] Feature summary: self=enabled, teammates=disabled, enemies=disabled, spectator=enabled, safeMode=enabled
+[Info   :SurveyorMap] [SurveyorMap] Controller ready. controller=True, hudCreated=True, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=False, spectating=False, PlayerAvatarLocal=False, levelObjects=False, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=False, allowed=False, reason=not-run-level
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=False, RunState=Menu, PlayerAvatarLocal=False, levelObjects=False
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=False, playerLocal=False, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=False, reason=Menu, toggle=True, playerReady=False, enableMinimap=True, allowed=False, nativeTextureReady=False, canvasActive=False
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop scheduled. coroutine=True, pluginEnabled=True, pluginActive=True, dontDestroyOnLoad=True
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe created. id=-242, scene=DontDestroyOnLoad, hideFlags=HideAndDontSave, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] SurveyorMap initialized.
+[Info   :SurveyorMap] [SurveyorMap] Plugin.OnEnable. scene=DontDestroyOnLoad, activeSelf=True, activeInHierarchy=True, enabled=True
+[Info   :   BepInEx] Loading [NoSaveDelete 1.3.0]
+[Info   :NoSaveDelete] Mod NoSaveDelete loaded.
+[Info   :NoSaveDelete] Settings can be changed in BepInEx/config/com.PxntxrezStudio.nosavedelete.cfg
+[Info   :   BepInEx] Loading [Menu Lib 2.5.4]
+[Debug  :  Menu Lib] Hooking `MenuPageMain.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageSettings.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageColor.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageEsc.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageRegions.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageServerList.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageLobby.Start`
+[Debug  :  Menu Lib] Hooking `SemiFunc.UIMouseHover`
+[Debug  :  Menu Lib] Hooking `MenuPage.StateClosing`
+[Debug  :  Menu Lib] Hooking `ChatManager.StateInactive`
+[Info   :   BepInEx] Loading [REPOConfig 1.2.6]
+[Debug  :REPOConfig] Hooking `MenuPageMain.Start`
+[Info   :   BepInEx] Loading [REPO Roles Classic 3.0.1]
+[Info   :REPO Roles Classic] Plugin REPO Roles Classic v3.0.2 loaded successfully.
+[Info   :   REPOLib] Loading bundle at C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\R3Labs-REPORoles_Classic\REPORoles_assets2...
+[Message:   BepInEx] Chainloader startup complete
+[Info   : Unity Log] Odin Serializer ArchitectureInfo initialization with defaults (all unaligned read/writes disabled).
+[Info   : Unity Log] Odin Serializer detected whitelisted runtime platform WindowsPlayer and memory read test succeeded; enabling all unaligned memory read/writes.
+[Info   :   REPOLib] Adding levels.
+[Info   :   REPOLib] Adding valuables to valuable presets.
+[Info   :   REPOLib] Adding enemies.
+[Info   : Unity Log] VERSION: v0.4.4.3
+[Info   : Unity Log] Steam - App ID: 3241660
+[Info   : Unity Log] Steam - User ID: 76561199214540199
+[Info   :SurveyorMap] [SurveyorMap] Controller Start. controller=BepInEx_Manager, hudCreated=False, hudActive=False
+[Info   :   REPOLib] Adding commands.
+[Info   : Unity Log] Commands Loaded (Chat): 5
+[Info   : Unity Log] Commands Loaded (Debug): 24
+[Info   : Unity Log] [MetaSave] MetaSave.es3 found
+[Info   :   REPOLib] [MetaSaveModded] MetaSaveModded.es3 found
+[Info   :   REPOLib] Adding level ambiences.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   :REPO Roles Classic] ReaperEventListener created!
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=1, t=2,6, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=1
+[Info   :SurveyorMap] [SurveyorMap] Controller Initialize. Creating inactive HUD. toggleKey=M
+[Info   :SurveyorMap] [SurveyorMap] Layout applied: PositionPreset=BottomLeft, anchorMin=(0.00, 0.00), anchorMax=(0.00, 0.00), pivot=(0.00, 0.00), anchoredPosition=(24.00, 120.00), size=(260.00, 260.00)
+[Info   :SurveyorMap] [SurveyorMap] HUD canvas created. renderMode=ScreenSpaceOverlay, sortingOrder=1100, panelSize=(260.00, 260.00), panelAnchor=(0.00, 0.00), active=False
+[Info   :SurveyorMap] [SurveyorMap] Feature summary: self=enabled, teammates=disabled, enemies=disabled, spectator=enabled, safeMode=enabled
+[Info   :SurveyorMap] [SurveyorMap] Controller ready. controller=True, hudCreated=True, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=True, RunState=Menu, PlayerAvatarLocal=True, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=1, frame=1, t=2,6, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.OnGUI first call. frame=1, scene=Main
+[Info   : Unity Log] Log: Error - [2026-05-30 15:15:57.089] [51276] (command_register_win.cpp:41): Unable to write first value to registry
+
+[Debug  :   REPOLib] Fixed AudioMixerGroup on GameObject "REPORoles_upgrade Mana Regeneration Upgrade". AudioMixerGroup "Sound/Sound Effects"
+[Info   :REPO Roles Classic] Registered upgrade item 'Mana Regeneration Upgrade'.
+[Debug  :   REPOLib] Fixed AudioMixerGroup on GameObject "REPORoles_upgrade Scout Cooldown Upgrade". AudioMixerGroup "Sound/Sound Effects"
+[Info   :REPO Roles Classic] Registered upgrade item 'Scout Cooldown Upgrade'.
+[Info   :   REPOLib] Finished loading bundles.
+[Info   :   REPOLib] Adding cosmetics.
+[Info   :   REPOLib] [MetaSaveModded] MetaSaveModded.es3 found
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=260, t=7,6, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=260
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=260, frame=260, t=7,6, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=962, t=12,6, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=962
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=962, frame=962, t=12,6, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   : Unity Log] Leave Photon
+[Info   : Unity Log] Steam: Leaving lobby...
+[Info   : Unity Log] [NoSaveDelete] Returning to the main menu. Flags were not set — no reset needed.
+[Info   : Unity Log] Leave to Main Menu
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=False, levelObjects=True, levelGenDone=True, levelGenerated=False, modulesSpawned=0, playerApiReady=False, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=False, RunState=Menu, PlayerAvatarLocal=False, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=False, playerLocal=False, toggle=True, enableMinimap=True
+[Info   :   REPOLib] Adding enemies.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=False, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=False, allowed=False, reason=menu-level
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=True, RunState=Menu, PlayerAvatarLocal=True, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=1578, t=20,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=1578
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=17,1s, now=20,5s, frame=1578. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=1578, frame=1578, t=20,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=2374, t=25,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=2374
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=2374, frame=2374, t=25,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   : Unity Log] [NoSaveDelete] ========================================
+[Info   : Unity Log] [NoSaveDelete] Save limit (10 max) has been REMOVED!
+[Info   : Unity Log] [NoSaveDelete] You can now create UNLIMITED saves!
+[Info   : Unity Log] [NoSaveDelete] ========================================
+[Info   :   REPOLib] Adding items.
+[Info   : Unity Log] Loading save
+[Warning: Unity Log] dictionaryOfDictionaries does not contain key 'playerUpgradeHeadCharge'.
+[Warning: Unity Log] dictionaryOfDictionaries does not contain key 'playerUpgradeHeadPower'.
+[Info   : Unity Log] Changed level to: Level - Manor
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Loading, inferredLevel=True, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=True, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=0, playerApiReady=True, allowed=False, reason=level-not-generated
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3055, t=30,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3055
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3055, frame=3055, t=30,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :   REPOLib] Adding enemies.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=True, spectating=False, PlayerAvatarLocal=False, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=False, allowed=False, reason=startup-or-menu
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=False, RunState=Menu, PlayerAvatarLocal=False, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=False, playerLocal=False, toggle=True, enableMinimap=True
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Loading, inferredLevel=True, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=True, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=True, allowed=False, reason=level-not-generated
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=True, RunState=Loading, PlayerAvatarLocal=True, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3342, t=36,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3342
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=32,4s, now=36,4s, frame=3342. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3342, frame=3342, t=36,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=36,8s, now=39,6s, frame=3366. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3367, t=42,0, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3367
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=39,6s, now=42,0s, frame=3367. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3367, frame=3367, t=42,0, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=42,0s, now=44,1s, frame=3368. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3370, t=48,1, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3370
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=46,0s, now=48,1s, frame=3370. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3370, frame=3370, t=48,1, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3376, t=53,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3376
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3376, frame=3376, t=53,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Warning: Unity Log] Item 'Gun Hunter' not found in the itemDictionary.
+[Warning: Unity Log] Item 'Item Krild Camera' not found in the itemDictionary.
+[Warning: Unity Log] Item 'Item Krild Monitor' not found in the itemDictionary.
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3403, t=59,2, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3403
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop heartbeat lost. last=56,4s, now=59,2s, frame=3403. Restarting.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeLoop started.
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3403, frame=3403, t=59,2, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Level, inferredLevel=True, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=True, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=22, playerApiReady=True, allowed=True, reason=generated-level-ready
+[Info   :SurveyorMap] [SurveyorMap] Native map mirror active (dig-style activeTexture capture; no owned RenderTexture).
+[Warning:SurveyorMap] [SurveyorMap] NativeMapCapture: ready=False, visiblePixels=False, mapPopulated=True, render=not-rendered, camera=Dirt Finder Map Camera, texture=none, source=none, mapActive=True, activeParent=True, nativeVisualHidden=False, questionMarkersHidden=False, questionMarkers=0, modules=22, layers=17, reason=native activeTexture not ready yet
+[Info   :SurveyorMap] [SurveyorMap] EnemyScan: mode=Off, radius=25,0, totalEnemiesFound=0, directorParents=0, sceneEnemies=0, activeEnemies=0, aliveEnemies=0, validEnemies=0, renderedEnemyMarkers=0, noRendererButAccepted=0, rejected{null=0, inactive=0, invalidScene=0, despawn=0, parentNotSpawned=0, parentMismatch=0, dead=0, noRenderer=0, noTransform=0, outOfRange=0, duplicate=0, projection=0}, clamped=0, unclamped=0, offViewportBeforeClamp=0, markerAtEdge=0, baseMapReady=False, baseMapTextureVisible=False, roomOverlayRooms=0
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3476, t=64,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3476
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3476, frame=3476, t=64,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] NativeMapCapture: ready=True, visiblePixels=True, mapPopulated=True, render=render-ok, camera=Dirt Finder Map Camera, texture=200x200 format=ARGB32 depth=32 aa=1 hdr=False mipmaps=False filter=Point, source=native.activeTexture, mapActive=True, activeParent=True, nativeVisualHidden=True, questionMarkersHidden=False, questionMarkers=0, modules=22, layers=17, reason=native-map-rendered
+[Info   :SurveyorMap] [SurveyorMap] HUD activation start. canvasActive=False, panelActive=False, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, panelActive=True, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=True, reason=Level, toggle=True, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=True, canvasActive=True
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Level, inferredLevel=True, RunIsLobby=False, RunIsShop=False, MenuLevel=False, RunIsLevel=True, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=22, playerApiReady=True, allowed=True, reason=gameplay-active
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3980, t=69,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3980
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3980, frame=3980, t=69,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :REPO Roles Classic] Resetting Mana UI.
+[Message:REPO Roles Classic] Assigning role Scout.
+[Info   :REPO Roles Classic] Successfully rolled role!
+[Info   :SurveyorMap] [SurveyorMap] Toggle key detected in plugin Update: M
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=False, reason=toggle-off, toggle=False, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=False, canvasActive=False
+[Info   :SurveyorMap] [SurveyorMap] HUD toggle applied. visibleBefore=True, visibleByToggle=False, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=False, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] Toggle key detected in RuntimeLoop: M
+[Info   :SurveyorMap] [SurveyorMap] HUD toggle applied. visibleBefore=False, visibleByToggle=True, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] EnemyScan: mode=Off, radius=25,0, totalEnemiesFound=0, directorParents=0, sceneEnemies=0, activeEnemies=0, aliveEnemies=0, validEnemies=0, renderedEnemyMarkers=0, noRendererButAccepted=0, rejected{null=0, inactive=0, invalidScene=0, despawn=0, parentNotSpawned=0, parentMismatch=0, dead=0, noRenderer=0, noTransform=0, outOfRange=0, duplicate=0, projection=0}, clamped=0, unclamped=0, offViewportBeforeClamp=0, markerAtEdge=0, baseMapReady=False, baseMapTextureVisible=False, roomOverlayRooms=0
+[Info   :SurveyorMap] [SurveyorMap] HUD activation start. canvasActive=False, panelActive=False, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, panelActive=True, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=True, reason=Level, toggle=True, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=True, canvasActive=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=4387, t=74,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=4387
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=4387, frame=4387, t=74,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Toggle key detected in plugin Update: M
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=False, reason=toggle-off, toggle=False, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=False, canvasActive=False
+[Info   :SurveyorMap] [SurveyorMap] HUD toggle applied. visibleBefore=True, visibleByToggle=False, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=False, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] Toggle key detected in RuntimeLoop: M
+[Info   :SurveyorMap] [SurveyorMap] HUD toggle applied. visibleBefore=False, visibleByToggle=True, hudActive=False
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] HUD activation start. canvasActive=False, panelActive=False, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, panelActive=True, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=True, reason=Level, toggle=True, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=True, canvasActive=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=4947, t=79,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=4947
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=4947, frame=4947, t=79,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=5498, t=84,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=5498
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=5498, frame=5498, t=84,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=6078, t=89,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=6078
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=6078, frame=6078, t=89,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=6627, t=94,4, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=6627
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=6627, frame=6627, t=94,4, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=7184, t=99,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=7184
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=7184, frame=7184, t=99,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=7732, t=104,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=7732
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=7732, frame=7732, t=104,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=8301, t=109,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=8301
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=8301, frame=8301, t=109,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=8864, t=114,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=8864
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=8864, frame=8864, t=114,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=9415, t=119,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=9415
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=9415, frame=9415, t=119,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=9985, t=124,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=9985
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=9985, frame=9985, t=124,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=10555, t=129,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=10555
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=10555, frame=10555, t=129,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=11127, t=134,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=11127
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=11127, frame=11127, t=134,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=11699, t=139,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=11699
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=11699, frame=11699, t=139,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] NativeMapState: nativeMapTabOpen=True, capturePaused=True
+[Info   :SurveyorMap] [SurveyorMap] NativeMapState: originalTargetTextureRestored=True, cameraRestored=True, activeParentRestored=False
+[Warning:SurveyorMap] [SurveyorMap] NativeMapCapture: ready=False, visiblePixels=False, mapPopulated=True, render=not-rendered, camera=none, texture=none, source=none, mapActive=True, activeParent=True, nativeVisualHidden=False, questionMarkersHidden=False, questionMarkers=0, modules=22, layers=17, reason=native-map-tab-active
+[Info   :SurveyorMap] [SurveyorMap] EnemyScan: mode=Off, radius=25,0, totalEnemiesFound=0, directorParents=0, sceneEnemies=0, activeEnemies=0, aliveEnemies=0, validEnemies=0, renderedEnemyMarkers=0, noRendererButAccepted=0, rejected{null=0, inactive=0, invalidScene=0, despawn=0, parentNotSpawned=0, parentMismatch=0, dead=0, noRenderer=0, noTransform=0, outOfRange=0, duplicate=0, projection=0}, clamped=0, unclamped=0, offViewportBeforeClamp=0, markerAtEdge=0, baseMapReady=False, baseMapTextureVisible=False, roomOverlayRooms=0
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=False, reason=Level, toggle=True, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=False, canvasActive=False
+[Info   :SurveyorMap] [SurveyorMap] NativeMapState: nativeMapTabOpen=False, resumingCapture=True
+[Info   :SurveyorMap] [SurveyorMap] NativeMapCapture: ready=True, visiblePixels=True, mapPopulated=True, render=render-ok, camera=Dirt Finder Map Camera, texture=200x200 format=ARGB32 depth=32 aa=1 hdr=False mipmaps=False filter=Point, source=native.activeTexture, mapActive=True, activeParent=True, nativeVisualHidden=True, questionMarkersHidden=False, questionMarkers=0, modules=22, layers=17, reason=native-map-rendered
+[Info   :SurveyorMap] [SurveyorMap] HUD activation start. canvasActive=False, panelActive=False, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, panelActive=True, rawImage=enabled=True, textureAssigned=True, textureSize=200x200
+[Info   :SurveyorMap] [SurveyorMap] HUD visible=True, reason=Level, toggle=True, playerReady=True, enableMinimap=True, allowed=True, nativeTextureReady=True, canvasActive=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=12224, t=144,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=12224
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=12224, frame=12224, t=144,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=12777, t=149,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=12777
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=12777, frame=12777, t=149,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=13322, t=154,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=13322
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=13322, frame=13322, t=154,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=13880, t=159,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=13880
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=13880, frame=13880, t=159,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=14433, t=164,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=14433
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=14433, frame=14433, t=164,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=14953, t=169,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=14953
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=14953, frame=14953, t=169,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=15490, t=174,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=15490
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=15490, frame=15490, t=174,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=16023, t=179,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=16023
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=16023, frame=16023, t=179,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=16571, t=184,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=16571
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=16571, frame=16571, t=184,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=17124, t=189,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=17124
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=17124, frame=17124, t=189,5, scene=Main, activeSelf=True, activeInHierarchy=True

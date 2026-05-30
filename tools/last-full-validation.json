@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-05-30T15:20:34Z",
+  "verdict": "PASS",
+  "buildHash": "b46919ef",
+  "phase1Audit": "PASS",
+  "phase1Detail": "22/22 checks passed",
+  "phase2Build": "PASS",
+  "phase2Detail": "0 errors, 0 warnings. dotnet build -c Release.",
+  "phase3Runtime": "PASS",
+  "phase3Detail": "12/12 criteria. pluginUpdateCount=17124, runtimeProbeUpdateCount=17124, lastException=null.",
+  "phase4Gameplay": "PASS",
+  "phase4Detail": "18/18 criteria. Level confirmed, hudVisible=true, nativeTextureReady=true, minimapBaselineVisible=true, TAB 1/1.",
+  "consolidatedEvidence": {
+    "buildTag": "b46919ef",
+    "buildTagInLog": true,
+    "hashMatch": true,
+    "modEnabled": true,
+    "currentRunState": "Level",
+    "isLevel": true,
+    "hudVisible": true,
+    "nativeTextureReady": true,
+    "nativeMapCaptureReady": true,
+    "minimapBaselineVisible": true,
+    "lastCaptureReason": "native-map-rendered",
+    "lastGateReason": "gameplay-active",
+    "forceHudProofOfLife": false,
+    "toggleKeyDetectedCount": 4,
+    "tabOpenLogCount": 1,
+    "tabCloseLogCount": 1,
+    "tabStatus": "DETECTED",
+    "mKeysSent": 2,
+    "tabKeysSent": 1,
+    "pluginUpdateCount": 17124,
+    "pluginOnGuiCount": 34424,
+    "runtimeProbeUpdateCount": 17124,
+    "runtimeProbeOnGuiCount": 34424,
+    "lastException": null,
+    "lastErrorStack": null
+  },
+  "recentLogEvidence": [
+    "[Info :SurveyorMap] HUD toggle applied. visibleBefore=True, visibleByToggle=False, hudActive=False",
+    "[Info :SurveyorMap] HUD toggle applied. visibleBefore=False, visibleByToggle=True, hudActive=False",
+    "[Info :SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, textureSize=200x200",
+    "[Info :SurveyorMap] HUD visible=True, reason=Level, toggle=True, nativeTextureReady=True, canvasActive=True",
+    "[Info :SurveyorMap] NativeMapState: nativeMapTabOpen=True, capturePaused=True",
+    "[Info :SurveyorMap] NativeMapState: nativeMapTabOpen=False, resumingCapture=True"
+  ],
+  "reports": {
+    "runtime": "tools/last-runtime-validation.json",
+    "gameplay": "tools/last-gameplay-validation.json",
+    "full": "tools/last-full-validation.json"
+  },
+  "checkpoint": "releases/gameplay-baseline-pass-20260530-152034",
+  "notes": [
+    "Core.cs not modified in this sync round.",
+    "DLL not reinstalled in this sync round.",
+    "Full validation evidence sourced from last-runtime-validation.json (PASS 12/12) and last-gameplay-validation.json (PASS 18/18).",
+    "Game was running with build b46919ef at time of evidence collection.",
+    "Level entry was ASSISTED (user entered level, pressed Enter). Keys M x2 and TAB sent automatically.",
+    "TAB detected via log: nativeMapTabOpen=True + nativeMapTabOpen=False both present."
+  ]
+}

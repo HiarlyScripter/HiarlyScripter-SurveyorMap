@@ -1,0 +1,23 @@
+{
+  "buildTag": "1f9b9583",
+  "buildMd5Short": "1f9b9583",
+  "assemblyLocation": "C:\\Users\\Hiarly\\AppData\\Roaming\\r2modmanPlus-local\\REPO\\profiles\\REPO - Test\\BepInEx\\plugins\\HiarlyScripter-SurveyorMap\\SurveyorMap.dll",
+  "timestampUtc": "2026-05-30T17:01:12Z",
+  "scene": "Main",
+  "frameCount": 33398,
+  "timeUnscaled": 206.008,
+  "pluginAwakeCalled": true,
+  "pluginUpdateCount": 33398,
+  "pluginOnGuiCount": 66794,
+  "runtimeProbeCreated": true,
+  "runtimeProbeUpdateCount": 33398,
+  "runtimeProbeOnGuiCount": 66794,
+  "controllerExists": true,
+  "hudExists": true,
+  "forceHudProofOfLife": true,
+  "proofHudVisible": true,
+  "toggleVisible": true,
+  "screenshotTaken": true,
+  "lastException": null,
+  "lastErrorStack": null
+}

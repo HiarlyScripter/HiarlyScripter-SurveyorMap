@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    html, body { margin: 0; width: 256px; height: 256px; overflow: hidden; background: #081016; }
+    svg { display: block; width: 256px; height: 256px; }
+  </style>
+</head>
+<body>
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#1d4f5f"/>
+      <stop offset="58%" stop-color="#102932"/>
+      <stop offset="100%" stop-color="#070b10"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="38" y1="34" x2="218" y2="222">
+      <stop offset="0%" stop-color="#8ff6ff"/>
+      <stop offset="55%" stop-color="#36c6c4"/>
+      <stop offset="100%" stop-color="#f6c85f"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <circle cx="128" cy="128" r="92" fill="none" stroke="#1b3842" stroke-width="24"/>
+  <circle cx="128" cy="128" r="86" fill="none" stroke="url(#ring)" stroke-width="8" filter="url(#glow)"/>
+  <g stroke="#315f6c" stroke-width="2" opacity="0.75">
+    <path d="M128 42v172"/>
+    <path d="M42 128h172"/>
+    <path d="M67 67l122 122"/>
+    <path d="M189 67L67 189"/>
+  </g>
+  <g fill="none" stroke="#69d9df" stroke-width="3" opacity="0.82">
+    <path d="M82 118h33l15-28 23 58 17-30h20"/>
+    <path d="M88 162h31l17-20h34"/>
+  </g>
+  <path d="M128 67l25 91-25-15-25 15 25-91z" fill="#eefbff" stroke="#0b2630" stroke-width="5"/>
+  <circle cx="184" cy="88" r="11" fill="#ff5b4f" stroke="#ffd6cc" stroke-width="3" filter="url(#glow)"/>
+  <circle cx="73" cy="173" r="8" fill="#72ff9d" stroke="#e6ffef" stroke-width="3"/>
+  <circle cx="178" cy="179" r="7" fill="#72ff9d" stroke="#e6ffef" stroke-width="3"/>
+  <text x="128" y="233" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="20" fill="#d8fbff">SURVEYOR</text>
+</svg>
+</body>
+</html>

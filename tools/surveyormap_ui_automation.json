@@ -1,0 +1,39 @@
+{
+  "windowProcess": "REPO",
+  "windowTitleContains": "REPO",
+  "resolution": "1920x1080",
+  "waitMenuSeconds": 40,
+  "waitLevelLoadSeconds": 90,
+  "waitAfterKeyMs": 3000,
+  "tabHoldMs": 2500,
+  "menuNavMode": "assisted",
+  "menuClickSequence": [
+    {
+      "action": "click",
+      "xPct": 50,
+      "yPct": 60,
+      "note": "PLACEHOLDER - Main Play/Solo button (center-ish). Update for your resolution.",
+      "waitAfterMs": 2000
+    },
+    {
+      "action": "click",
+      "xPct": 50,
+      "yPct": 65,
+      "note": "PLACEHOLDER - Confirm/Start button. Update for your resolution.",
+      "waitAfterMs": 3000
+    }
+  ],
+  "keySequence": [
+    { "key": "M",   "holdMs": 100,  "waitAfterMs": 3000, "purpose": "toggle-on" },
+    { "key": "M",   "holdMs": 100,  "waitAfterMs": 3000, "purpose": "toggle-off" },
+    { "key": "TAB", "holdMs": 2500, "waitAfterMs": 3000, "purpose": "tab-open-close" }
+  ],
+  "notes": [
+    "menuNavMode: 'auto' uses menuClickSequence (coordinates as % of window). 'assisted' prompts user.",
+    "xPct/yPct are percentages of window width/height (0-100). 50/50 = center.",
+    "Key codes: M=0x4D, TAB=0x09, RETURN=0x0D, ESCAPE=0x1B, SPACE=0x20",
+    "For TAB: holdMs controls how long the key is held down before release.",
+    "Increase waitMenuSeconds if your machine is slow to load REPO.",
+    "Increase waitLevelLoadSeconds if level takes a long time to generate."
+  ]
+}

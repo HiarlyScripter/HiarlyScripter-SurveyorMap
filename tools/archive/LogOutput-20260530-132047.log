@@ -1,0 +1,230 @@
+[Message:   BepInEx] BepInEx 5.4.23.5 - REPO (07/05/2026 20:54:03)
+[Info   :   BepInEx] Running under Unity v2022.3.67.7073210
+[Info   :   BepInEx] CLR runtime version: 4.0.30319.42000
+[Info   :   BepInEx] Supports SRE: True
+[Info   :   BepInEx] System platform: Bits64, Windows
+[Message:   BepInEx] Preloader started
+[Info   :   BepInEx] Loaded 1 patcher method from [BepInEx.Preloader 5.4.23.5]
+[Info   :   BepInEx] 1 patcher plugin loaded
+[Info   :   BepInEx] Patching [UnityEngine.CoreModule] with [BepInEx.Chainloader]
+[Message:   BepInEx] Preloader finished
+[Message:   BepInEx] Chainloader ready
+[Message:   BepInEx] Chainloader started
+[Info   :   BepInEx] 7 plugins to load
+[Info   :   BepInEx] Loading [REPOLib 4.1.0]
+[Info   :   REPOLib] REPOLib has awoken!
+[Info   :   BepInEx] Loading [ExtractionPointConfirmButton 1.2.0]
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ExtractionPointConfirmButton has awoken!
+[Info   :   REPOLib] Loading bundle at C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\Zehs-ExtractionPointConfirmButton\extractionpointconfirmbutton_assets...
+[Info   :   BepInEx] Loading [QuickPocket 1.0.4]
+[Debug  :QuickPocket] [QuickPocket] Configs carregadas: Key=H Slots=4 HostMax=4 UseHostLimit=True Sync=True
+[Info   :QuickPocket] [QuickPocket] RepoCompat OK — todos os campos criticos validados.
+[Info   :QuickPocket] [QuickPocket] v1.0.4 inicializado. Aguardando jogador...
+[Info   :   BepInEx] Loading [NoSaveDelete 1.3.0]
+[Info   :NoSaveDelete] Mod NoSaveDelete loaded.
+[Info   :NoSaveDelete] Settings can be changed in BepInEx/config/com.PxntxrezStudio.nosavedelete.cfg
+[Info   :   BepInEx] Loading [Menu Lib 2.5.4]
+[Debug  :  Menu Lib] Hooking `MenuPageMain.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageSettings.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageColor.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageEsc.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageRegions.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageServerList.Start`
+[Debug  :  Menu Lib] Hooking `MenuPageLobby.Start`
+[Debug  :  Menu Lib] Hooking `SemiFunc.UIMouseHover`
+[Debug  :  Menu Lib] Hooking `MenuPage.StateClosing`
+[Debug  :  Menu Lib] Hooking `ChatManager.StateInactive`
+[Info   :   BepInEx] Loading [REPOConfig 1.2.6]
+[Debug  :REPOConfig] Hooking `MenuPageMain.Start`
+[Info   :   BepInEx] Loading [REPO Roles Classic 3.0.1]
+[Info   :REPO Roles Classic] Plugin REPO Roles Classic v3.0.2 loaded successfully.
+[Info   :   REPOLib] Loading bundle at C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\R3Labs-REPORoles_Classic\REPORoles_assets2...
+[Message:   BepInEx] Chainloader startup complete
+[Info   : Unity Log] Odin Serializer ArchitectureInfo initialization with defaults (all unaligned read/writes disabled).
+[Info   : Unity Log] Odin Serializer detected whitelisted runtime platform WindowsPlayer and memory read test succeeded; enabling all unaligned memory read/writes.
+[Info   :   REPOLib] Adding levels.
+[Info   :   REPOLib] Adding valuables to valuable presets.
+[Info   :   REPOLib] Adding enemies.
+[Info   : Unity Log] VERSION: v0.4.4.3
+[Info   : Unity Log] Steam - App ID: 3241660
+[Info   : Unity Log] Steam - User ID: 76561199214540199
+[Info   :   REPOLib] Adding commands.
+[Info   : Unity Log] Commands Loaded (Chat): 5
+[Info   : Unity Log] Commands Loaded (Debug): 24
+[Info   : Unity Log] [MetaSave] MetaSave.es3 found
+[Info   :   REPOLib] [MetaSaveModded] MetaSaveModded.es3 found
+[Info   :   REPOLib] Adding level ambiences.
+[Info   :QuickPocket] [QuickPocket] AddPocketManagerPatch: PlayerAvatar.Awake disparado. GO=Player Avatar Controller
+[Info   :QuickPocket] [QuickPocket] Singleplayer — assumindo jogador local.
+[Debug  :QuickPocket] [QuickPocket] PocketManager.Awake — componente pronto, aguardando confirmacao de nivel.
+[Debug  :QuickPocket] [QuickPocket] PocketManager: callbacks Photon + SceneManager registrados.
+[Info   :QuickPocket] [QuickPocket] PocketManager adicionado com sucesso ao PlayerAvatar local.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   :REPO Roles Classic] ReaperEventListener created!
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Debug  :QuickPocket] [QuickPocket] SemiFunc.RunIsLevel(): encontrado.
+[Debug  :   REPOLib] Fixed AudioMixerGroup on GameObject "REPORoles_upgrade Mana Regeneration Upgrade". AudioMixerGroup "Sound/Sound Effects"
+[Info   :REPO Roles Classic] Registered upgrade item 'Mana Regeneration Upgrade'.
+[Debug  :   REPOLib] Fixed AudioMixerGroup on GameObject "REPORoles_upgrade Scout Cooldown Upgrade". AudioMixerGroup "Sound/Sound Effects"
+[Info   :REPO Roles Classic] Registered upgrade item 'Scout Cooldown Upgrade'.
+[Info   :   REPOLib] Finished loading bundles.
+[Info   :   REPOLib] Adding cosmetics.
+[Info   :   REPOLib] [MetaSaveModded] MetaSaveModded.es3 found
+[Info   : Unity Log] Leave Photon
+[Info   : Unity Log] Steam: Leaving lobby...
+[Info   : Unity Log] [NoSaveDelete] Returning to the main menu. Flags were not set — no reset needed.
+[Info   : Unity Log] Leave to Main Menu
+[Info   :   REPOLib] Adding enemies.
+[Info   :QuickPocket] [QuickPocket] AddPocketManagerPatch: PlayerAvatar.Awake disparado. GO=Player Avatar Controller
+[Info   :QuickPocket] [QuickPocket] Singleplayer — assumindo jogador local.
+[Debug  :QuickPocket] [QuickPocket] PocketManager.Awake — componente pronto, aguardando confirmacao de nivel.
+[Debug  :QuickPocket] [QuickPocket] PocketManager: callbacks Photon + SceneManager registrados.
+[Info   :QuickPocket] [QuickPocket] PocketManager adicionado com sucesso ao PlayerAvatar local.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Debug  :QuickPocket] [QuickPocket] Retorno ao menu — limpando estado.
+[Debug  :QuickPocket] [QuickPocket] Estado interno completamente limpo. _hudGameplayReady=false, _hudSuppressedForTransition=true.
+[Info   : Unity Log] [NoSaveDelete] ========================================
+[Info   : Unity Log] [NoSaveDelete] Save limit (10 max) has been REMOVED!
+[Info   : Unity Log] [NoSaveDelete] You can now create UNLIMITED saves!
+[Info   : Unity Log] [NoSaveDelete] ========================================
+[Info   :   REPOLib] Adding items.
+[Info   : Unity Log] Loading save
+[Warning: Unity Log] dictionaryOfDictionaries does not contain key 'playerUpgradeHeadCharge'.
+[Warning: Unity Log] dictionaryOfDictionaries does not contain key 'playerUpgradeHeadPower'.
+[Info   : Unity Log] Changed level to: Level - Manor
+[Debug  :QuickPocket] [QP:HUDState] allowed=true reason=GameplayConfirmed streak=5
+[Info   :   REPOLib] Adding enemies.
+[Info   :QuickPocket] [QuickPocket] AddPocketManagerPatch: PlayerAvatar.Awake disparado. GO=Player Avatar Controller
+[Info   :QuickPocket] [QuickPocket] Singleplayer — assumindo jogador local.
+[Debug  :QuickPocket] [QuickPocket] PocketManager.Awake — componente pronto, aguardando confirmacao de nivel.
+[Debug  :QuickPocket] [QuickPocket] PocketManager: callbacks Photon + SceneManager registrados.
+[Info   :QuickPocket] [QuickPocket] PocketManager adicionado com sucesso ao PlayerAvatar local.
+[Info   :REPO Roles Classic] [PrArPch]: Added ReaperManager to avatar steamID= pv=0
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector Awake() called
+[Info   : Unity Log] [NoSaveDelete] InGameSaveSelector added to player!
+[Info   : Unity Log] [NoSaveDelete] QuickSaveReload added to player!
+[Debug  :QuickPocket] [QP:HUDState] allowed=true reason=GameplayConfirmed streak=5
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Info   :com.github.zehsteam.ExtractionPointConfirmButton] ConfirmButton: Set extraction point.
+[Warning: Unity Log] Item 'Gun Hunter' not found in the itemDictionary.
+[Warning: Unity Log] Item 'Item Krild Camera' not found in the itemDictionary.
+[Warning: Unity Log] Item 'Item Krild Monitor' not found in the itemDictionary.
+[Info   :REPO Roles Classic] Resetting Mana UI.
+[Message:REPO Roles Classic] Assigning role Scout.
+[Info   :REPO Roles Classic] Successfully rolled role!
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Globe(Clone) resolvedPgo=Valuable Manor Globe(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Globe(Clone): dims=(0,45,0,45,0,45) max=0,45 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Globe(Clone) (1/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Doll(Clone) resolvedPgo=Valuable Manor Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Doll(Clone): dims=(0,38,0,36,0,34) max=0,38 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Doll(Clone) (2/4)
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Debug  :QuickPocket] [QP:SafeDrop] ang=0 gate=GATE1 result=OK floor=(-13.84, 0.00, 19.09) normal.y=1,00 layer=Default
+[Debug  :QuickPocket] [QuickPocket] Layers inicializadas: RoomVolume=14
+[Info   :QuickPocket] [QP:SafeDrop] ang=0 result=OK pos=(-13.84, 0.20, 19.09)
+[Info   :QuickPocket] [QP:Restore] item=Valuable Manor Doll(Clone) key=-239934 original=(-5.02, 0.76, 33.09) target=(-13.84, 0.20, 19.09) afterTransform=(-13.84, 0.20, 19.09) afterRb=(-13.84, 0.20, 19.09)
+[Info   :QuickPocket] [QP:DropConfirm] item=Valuable Manor Doll(Clone) viewID=-239934 original=(-5.02, 0.76, 33.09) chosen=(-13.84, 0.20, 19.09) final=(-13.84, -0.22, 19.09) distChosen=0,42 distPlayer=1,22 deltaY=0,42 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Valuable Manor Doll(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Valuable Manor Doll(Clone) (1/4)
+[Debug  :QuickPocket] [QP:SafeDrop] ang=30 gate=GATE1 result=OK floor=(-13.64, 0.00, 18.78) normal.y=1,00 layer=Default
+[Info   :QuickPocket] [QP:SafeDrop] ang=30 result=OK pos=(-13.64, 0.20, 18.78)
+[Info   :QuickPocket] [QP:Restore] item=Valuable Manor Globe(Clone) key=-240696 original=(-4.51, -0.01, 32.73) target=(-13.64, 0.20, 18.78) afterTransform=(-13.64, 0.20, 18.78) afterRb=(-13.64, 0.20, 18.78)
+[Info   :QuickPocket] [QP:DropConfirm] item=Valuable Manor Globe(Clone) viewID=-240696 original=(-4.51, -0.01, 32.73) chosen=(-13.64, 0.20, 18.78) final=(-13.64, 0.01, 18.78) distChosen=0,19 distPlayer=1,20 deltaY=0,19 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Valuable Manor Globe(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Valuable Manor Globe(Clone) (0/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Cosmetic World Object - Uncommon(Clone) resolvedPgo=Cosmetic World Object - Uncommon(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Cosmetic World Object - Uncommon(Clone): dims=(0,82,0,81,0,87) max=0,87 limit=1,25
+[Debug  :QuickPocket] [QP:HideComponents] item=Cosmetic World Object - Uncommon(Clone) mapComponents=3 disabled=3
+[Info   :QuickPocket] [QuickPocket] Pocketado: Cosmetic World Object - Uncommon(Clone) (1/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Vase Chunky(Clone) resolvedPgo=Valuable Manor Vase Chunky(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Vase Chunky(Clone): dims=(1,04,1,45,1,04) max=1,45 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Valuable Manor Vase Chunky(Clone) Reason=TooLarge
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Vase(Clone) resolvedPgo=Valuable Manor Vase(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Vase(Clone): dims=(0,36,0,81,0,36) max=0,81 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Vase(Clone) (2/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Dinosaur(Clone) resolvedPgo=Valuable Manor Dinosaur(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Dinosaur(Clone): dims=(0,77,2,07,2,95) max=2,95 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Valuable Manor Dinosaur(Clone) Reason=TooLarge
+[Debug  :QuickPocket] [QP:SafeDrop] ang=0 gate=GATE1 result=OK floor=(-30.62, 4.45, 54.83) normal.y=0,99 layer=Default
+[Info   :QuickPocket] [QP:SafeDrop] ang=0 result=OK pos=(-30.62, 4.65, 54.83)
+[Info   :QuickPocket] [QP:Restore] item=Valuable Manor Vase(Clone) key=-238390 original=(-43.61, -0.02, 8.80) target=(-30.62, 4.65, 54.83) afterTransform=(-30.62, 4.65, 54.83) afterRb=(-30.62, 4.65, 54.83)
+[Info   :QuickPocket] [QP:DropConfirm] item=Valuable Manor Vase(Clone) viewID=-238390 original=(-43.61, -0.02, 8.80) chosen=(-30.62, 4.65, 54.83) final=(-30.62, 4.20, 54.83) distChosen=0,45 distPlayer=1,21 deltaY=0,45 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Valuable Manor Vase(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Valuable Manor Vase(Clone) (1/4)
+[Debug  :QuickPocket] [QP:SafeDrop] ang=30 gate=GATE1 result=FAIL reason=NoFloor origin=(-29.23, 5.39, 51.70) castDist=4,0
+[Debug  :QuickPocket] [QP:SafeDrop] ang=-30 gate=GATE1 result=FAIL reason=NoFloor origin=(-29.52, 5.39, 52.86) castDist=4,0
+[Debug  :QuickPocket] [QP:SafeDrop] ang=60 gate=GATE1 result=FAIL reason=NoFloor origin=(-29.55, 5.39, 51.16) castDist=4,0
+[Debug  :QuickPocket] [QP:SafeDrop] ang=-60 gate=GATE1 result=FAIL reason=NoFloor origin=(-30.05, 5.39, 53.18) castDist=4,0
+[Debug  :QuickPocket] [QP:SafeDrop] ang=90 gate=GATE1 result=FAIL reason=NoFloor origin=(-30.10, 5.39, 50.87) castDist=4,0
+[Debug  :QuickPocket] [QP:SafeDrop] ang=-90 gate=GATE1 result=OK floor=(-30.67, 4.65, 53.20) normal.y=0,99 layer=Default
+[Info   :QuickPocket] [QP:SafeDrop] ang=-90 result=OK pos=(-30.67, 4.85, 53.20)
+[Info   :QuickPocket] [QP:Restore] item=Cosmetic World Object - Uncommon(Clone) key=-241734 original=(-43.74, 1.35, 16.16) target=(-30.67, 4.85, 53.20) afterTransform=(-30.67, 4.85, 53.20) afterRb=(-30.67, 4.85, 53.20)
+[Info   :QuickPocket] [QP:DropConfirm] item=Cosmetic World Object - Uncommon(Clone) viewID=-241734 original=(-43.74, 1.35, 16.16) chosen=(-30.67, 4.85, 53.20) final=(-30.74, 4.43, 53.19) distChosen=0,43 distPlayer=1,22 deltaY=0,42 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Cosmetic World Object - Uncommon(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Cosmetic World Object - Uncommon(Clone) (0/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Hinge resolvedPgo=Hinge actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Hinge Reason=WorldPropBlocked
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Scream Doll(Clone) resolvedPgo=Valuable Manor Scream Doll(Clone) actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Valuable Manor Scream Doll(Clone) Reason=ScreamDollBlocked
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Scream Doll(Clone) resolvedPgo=Valuable Manor Scream Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Scream Doll(Clone) resolvedPgo=Valuable Manor Scream Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Scream Doll(Clone) resolvedPgo=Valuable Manor Scream Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Scream Doll(Clone) resolvedPgo=Valuable Manor Scream Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Safe Door resolvedPgo=Safe Door actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Safe Door Reason=WorldPropBlocked
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Debug  :QuickPocket] [QP:TryPocket] fallback=ExceptionCaught source=PhysGrabberLocal exception=NullReferenceException
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Surplus Valuable - Small(Clone) resolvedPgo=Surplus Valuable - Small(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Surplus Valuable - Small(Clone): dims=(0,32,0,46,0,32) max=0,46 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Pocketado: Surplus Valuable - Small(Clone) (1/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Hinge resolvedPgo=Hinge actor=SP isMaster=True
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Rigidbody resolvedPgo=Rigidbody actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Rigidbody Reason=InvalidHeldObject
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Rigidbody resolvedPgo=Rigidbody actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Rigidbody Reason=InvalidHeldObject
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Rigidbody resolvedPgo=Rigidbody actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Rigidbody Reason=InvalidHeldObject
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Rigidbody resolvedPgo=Rigidbody actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Rigidbody Reason=InvalidHeldObject
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Rigidbody resolvedPgo=Rigidbody actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Rigidbody Reason=InvalidHeldObject
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Door02 resolvedPgo=Door02 actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Rejected: Item=Door02 Reason=WorldPropBlocked
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Doll(Clone) resolvedPgo=Valuable Manor Doll(Clone) actor=SP isMaster=True
+[Debug  :QuickPocket] [QP] Size/Valuable Manor Doll(Clone): dims=(0,47,0,36,0,47) max=0,47 limit=1,25
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Doll(Clone) (2/4)
+[Debug  :QuickPocket] [QP:SafeDrop] ang=0 gate=GATE1 result=OK floor=(16.75, -4.90, 16.42) normal.y=1,00 layer=Default
+[Info   :QuickPocket] [QP:SafeDrop] ang=0 result=OK pos=(16.75, -4.70, 16.42)
+[Info   :QuickPocket] [QP:Restore] item=Valuable Manor Doll(Clone) key=-238048 original=(15.87, -4.08, 22.55) target=(16.75, -4.70, 16.42) afterTransform=(16.75, -4.70, 16.42) afterRb=(16.75, -4.70, 16.42)
+[Info   :QuickPocket] [QP:DropConfirm] item=Valuable Manor Doll(Clone) viewID=-238048 original=(15.87, -4.08, 22.55) chosen=(16.75, -4.70, 16.42) final=(16.68, -5.16, 16.36) distChosen=0,47 distPlayer=1,16 deltaY=0,46 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Valuable Manor Doll(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Valuable Manor Doll(Clone) (1/4)
+[Debug  :QuickPocket] [QP:SafeDrop] ang=30 gate=GATE1 result=OK floor=(15.62, -4.68, 15.91) normal.y=0,69 layer=Default
+[Debug  :QuickPocket] [QP:SafeDrop] ang=30 gate=GATE1b result=FAIL reason=TooSteep normal.y=0,69
+[Debug  :QuickPocket] [QP:SafeDrop] ang=-30 gate=GATE1 result=OK floor=(15.66, -4.90, 17.11) normal.y=1,00 layer=Default
+[Info   :QuickPocket] [QP:SafeDrop] ang=-30 result=OK pos=(15.66, -4.70, 17.11)
+[Info   :QuickPocket] [QP:Restore] item=Surplus Valuable - Small(Clone) key=-397396 original=(-27.31, 0.39, 38.69) target=(15.66, -4.70, 17.11) afterTransform=(15.66, -4.70, 17.11) afterRb=(15.66, -4.70, 17.11)
+[Info   :QuickPocket] [QP:DropConfirm] item=Surplus Valuable - Small(Clone) viewID=-397396 original=(-27.31, 0.39, 38.69) chosen=(15.66, -4.70, 17.11) final=(15.66, -4.79, 17.11) distChosen=0,09 distPlayer=1,21 deltaY=0,09 result=OK
+[Debug  :QuickPocket] [QP:DropConfirm] item=Surplus Valuable - Small(Clone) result=OK layer=PhysGrabObject colliderEnabled=True detectCollisions=True isKinematic=False useGravity=True
+[Info   :QuickPocket] [QuickPocket] Drop confirmado: Surplus Valuable - Small(Clone) (0/4)
+[Info   :REPO Roles Classic] [EnHlPch] Singleplayer enemy death detected by 76561199214540199
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Globe(Clone) resolvedPgo=Valuable Manor Globe(Clone) actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Globe(Clone) (1/4)
+[Debug  :QuickPocket] [QP:TryPocket] heldRaw=Valuable Manor Doll(Clone) resolvedPgo=Valuable Manor Doll(Clone) actor=SP isMaster=True
+[Info   :QuickPocket] [QuickPocket] Pocketado: Valuable Manor Doll(Clone) (2/4)
+[Info   : Unity Log] [NoSaveDelete] Player death flag set - saves will be blocked
+[Info   : Unity Log] [NoSaveDelete] The player has died. Reloading the last save: REPO_SAVE_2026_01_18_19_24_03

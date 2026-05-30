@@ -1,0 +1,19 @@
+[package]
+namespace = "HiarlyScripter"
+name = "SurveyorMap"
+versionNumber = "1.0.0"
+description = "Client-side configurable HUD minimap for R.E.P.O. with optional safe enemy markers."
+websiteUrl = "https://github.com/HiarlyScripter/HiarlyScripter-SurveyorMap"
+containsNsfwContent = false
+
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2100"
+
+[build]
+icon = "./package/icon.png"
+readme = "./package/README.md"
+outdir = "./dist"
+
+[[build.copy]]
+source = "./package/plugins"
+target = "plugins"
