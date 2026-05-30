@@ -1,34 +1,18 @@
-# VALIDATION_CONTRACT.md
+﻿# VALIDATION_CONTRACT.md
 # Objective acceptance criteria by phase. Updated 2026-05-30.
-
----
-
-## Overall Full Validation - COMPLETE / PASS
-
-Build/hash: `b46919ef`.
-
-| Area | Required Result | Current Status |
-|---|---|---|
-| Static Audit | PASS 22/22 | PASS |
-| Build Release | PASS 0 errors / 0 warnings | PASS |
-| Runtime Probe | PASS 12/12 | PASS |
-| Gameplay Baseline | PASS 18/18 | PASS |
-| Overall | All areas PASS | PASS |
 
 ---
 
 ## Phase 0 - Runtime Baseline (COMPLETE / PASS)
 
-Build/hash: `b46919ef`.
-
-Criteria (12/12 PASS):
+Current build/hash: `c0711156`.
 
 | # | Criterion | Source | Status |
 |---|---|---|---|
 | 1 | hashMatch: build == installed | Hash/log evidence | PASS |
 | 2 | modEnabled: SurveyorMap enabled | Runtime evidence | PASS |
-| 3 | BuildTag `b46919ef` in LogOutput.log | Log | PASS |
-| 4 | runtime-state.json exists and is fresh for pass | File/JSON | PASS |
+| 3 | BuildTag `c0711156` in LogOutput.log | Log | PASS |
+| 4 | runtime-state.json exists and is fresh | File/JSON | PASS |
 | 5 | pluginAwakeCalled=true | JSON | PASS |
 | 6 | pluginUpdateCount > 0 | JSON | PASS |
 | 7 | pluginOnGuiCount > 0 | JSON | PASS |
@@ -42,45 +26,52 @@ Criteria (12/12 PASS):
 
 ## Phase 1 - Minimap Baseline In Level (COMPLETE / PASS)
 
-Build/hash: `b46919ef`.
+Phase 1 remains valid under build `c0711156`.
 
-Gameplay Baseline PASS 18/18:
-
-| # | Criterion | Source | Status |
-|---|---|---|---|
-| 1-12 | All Phase 0 criteria remain PASS | Runtime/gameplay reports | PASS |
-| 13 | currentRunState=Level | JSON/log | PASS |
-| 14 | ForceHudProofOfLife=false | JSON/config evidence | PASS |
-| 15 | hudVisible=true in level | JSON/log | PASS |
-| 16 | nativeTextureReady=true | JSON/log | PASS |
-| 17 | M toggle detected | JSON/log | PASS |
-| 18 | TAB open and close detected | Log | PASS |
-
-Additional Phase 1 evidence:
-- `nativeMapCaptureReady=true`.
-- `minimapBaselineVisible=true`.
-- `lastCaptureReason=native-map-rendered`.
-- `lastGateReason=gameplay-active`.
-- TAB open/close log count is `1/1`.
-- `lastException=null`.
-- `lastErrorStack=null`.
+| Criterion | Source | Status |
+|---|---|---|
+| currentRunState=Level | JSON/log | PASS |
+| ForceHudProofOfLife=false | JSON/config evidence | PASS |
+| hudVisible=true in level | JSON/log | PASS |
+| nativeTextureReady=true | JSON/log | PASS |
+| nativeMapCaptureReady=true | JSON/log | PASS |
+| minimapBaselineVisible=true | JSON/log | PASS |
+| M toggle detected | JSON/log | PASS |
+| lastException=null | JSON | PASS |
+| lastErrorStack=null | JSON | PASS |
 
 ---
 
-## Phase 2 - CenterOnPlayer=true (NEXT)
+## Phase 2 - CenterOnPlayer=true (PARTIAL / BLOCKED)
 
-Gate to start:
-- Overall Full Validation is PASS.
-- Phase 1 remains PASS.
-- Acting agent has run `tools\ai_start_work.ps1`.
+Gameplay criteria: 19/20 PASS.
 
-Expected PASS evidence:
-- `CenterOnPlayer=true` is active.
-- Player-centered minimap behavior is validated in level.
-- No crash or runtime exception.
+| # | Criterion | Source | Status |
+|---|---|---|---|
+| 1-17 | Runtime, level, minimap, and M toggle inherited criteria | JSON/log | PASS |
+| 18 | TAB open and close detected | MapToolController log/JSON | BLOCKED |
+| 19 | CenterOnPlayer=true | JSON/config evidence | PASS |
+| 20 | Player-centered pan applied | JSON/log | PASS |
+
+Current Phase 2 evidence:
+- `centerOnPlayer=true`.
+- `centerOnPlayerApplied=true`.
+- `centerOnPlayerProjectionValid=true`.
+- `centerOnPlayerDistanceFromCenter=0`.
+- `centerOnPlayerZoom=3`.
+- `currentRunState=Level`.
+- `hudVisible=true`.
+- `nativeTextureReady=true`.
+- `minimapBaselineVisible=true`.
+- `forceHudProofOfLife=false`.
 - `lastException=null`.
 - `lastErrorStack=null`.
-- Evidence is captured in log/JSON.
+
+Blocking detail:
+- Synthetic TAB was sent by automation.
+- `MapToolController.Active` did not produce native TAB open/close log entries.
+- Local API inspection confirms the native map binding is Unity InputSystem `<Keyboard>/tab`.
+- Phase 2 is not full PASS until native TAB open/close is objectively confirmed.
 
 ---
 
@@ -88,7 +79,7 @@ Expected PASS evidence:
 
 | Phase | Objective | Gate |
 |---|---|---|
-| Phase 3 | RevealRooms=true | Only after CenterOnPlayer PASS |
+| Phase 3 | RevealRooms=true | Only after Phase 2 full PASS |
 | Phase 4 | ShowEnemies=true | Only after RevealRooms PASS |
 | Phase 5 | Premium visual polish | Only after gameplay features PASS |
 | Phase 6 | Package/release local | Only after all required feature phases PASS |
@@ -103,4 +94,3 @@ For now, `RevealRooms=false` and `ShowEnemies=false` remain out of scope.
 - Do not advance phase without all required criteria satisfied.
 - Do not use visual/manual observation as the only validation.
 - Do not publish, push, or package unless explicitly requested in a future round.
-

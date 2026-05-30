@@ -460,7 +460,7 @@ if ($jsonParseOk -and $null -ne $script:jd) {
     $rpt["scene"]                   = (JVal "scene" "")
     $rpt["buildTag"]                = (JVal "buildTag" "")
     $rpt["timestampUtc"]            = (JVal "timestampUtc" "")
-    foreach ($lf in @("currentRunState","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","toggleKeyDetectedCount","minimapBaselineVisible","lastGateReason","lastCaptureReason")) {
+    foreach ($lf in @("currentRunState","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","centerOnPlayer","centerOnPlayerApplied","centerOnPlayerProjectionValid","centerOnPlayerDistanceFromCenter","centerOnPlayerOffsetMagnitude","centerOnPlayerZoom","toggleKeyDetectedCount","minimapBaselineVisible","lastGateReason","lastCaptureReason")) {
         $v = JVal $lf $null
         if ($null -ne $v) { $rpt[$lf] = $v }
     }

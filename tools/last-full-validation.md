@@ -1,59 +1,22 @@
-# SurveyorMap Full Validation Report
+﻿# SurveyorMap Full Validation Report
 
-**Date:** 2026-05-30  
-**Build/hash:** `b46919ef`  
-**Verdict:** **PASS**  
-**Overall:** **PASS**
+**Date:** 2026-05-30 17:33:52   **Verdict:** **BLOCKED**
 
-This report consolidates the already collected validation evidence. No build,
-install, DLL copy, r2modman action, package update, push, or publish was
-performed during this documentation sync.
-
-## Summary
-
-| Phase | Result | Evidence |
-|---|---|---|
-| Static Audit | PASS | 22/22 checks passed |
-| Build Release | PASS | 0 errors / 0 warnings |
-| Runtime Probe | PASS | 12/12 criteria in `tools/last-runtime-validation.*` |
-| Gameplay Baseline | PASS | 18/18 criteria in `tools/last-gameplay-validation.*` |
-| Overall | PASS | All required phases PASS |
-
-## Consolidated Runtime Evidence
-
-| Field | Value |
+| Phase | Result |
 |---|---|
-| buildTag | `b46919ef` |
-| hashMatch | `true` |
-| modEnabled | `true` |
-| buildTagInLog | `true` |
-| currentRunState | `Level` |
-| hudVisible | `true` |
-| nativeTextureReady | `true` |
-| nativeMapCaptureReady | `true` |
-| minimapBaselineVisible | `true` |
-| lastCaptureReason | `native-map-rendered` |
-| lastGateReason | `gameplay-active` |
-| ForceHudProofOfLife | `false` |
-| toggleKeyDetectedCount | `4` in JSON, `8` in log |
-| TAB open/close | `1/1` in log |
-| lastException | `null` |
-| lastErrorStack | `null` |
+| Phase 1: Static Audit | PASS |
+| Phase 2: Build + Install (c0711156) | PASS |
+| Phase 3: Runtime Probe (12/12) | PASS |
+| Phase 4: Gameplay (19/20 criteria) | PARTIAL_TAB_UNCONFIRMED |
 
-## Source Reports
+## Blocker
 
-- Runtime report: `tools/last-runtime-validation.md`
-- Runtime JSON: `tools/last-runtime-validation.json`
-- Gameplay report: `tools/last-gameplay-validation.md`
-- Gameplay JSON: `tools/last-gameplay-validation.json`
+- C18 TAB open/close remained unconfirmed by automation.
+- CenterOnPlayer evidence passed; native TAB confirmation is the only remaining Phase 2 gate.
+- Overall is BLOCKED, not PASS, until TAB open/close is confirmed in log/JSON.
 
-## Notes
+## Reports
 
-- Runtime Probe PASS is supported by 12/12 criteria.
-- Gameplay Baseline PASS is supported by 18/18 criteria.
-- M toggle was validated by log/JSON evidence.
-- TAB open/close was validated by log evidence.
-- Minimap baseline was validated while the run state was `Level`.
-- RevealRooms and ShowEnemies remain out of scope.
-- Next phase is Phase 2: `CenterOnPlayer=true`.
-
+- Runtime: C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec\tools\last-runtime-validation.md
+- Gameplay: C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec\tools\last-gameplay-validation.md
+- Full: C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec\tools\last-full-validation.md

@@ -1,54 +1,60 @@
-# NEXT_ACTIONS.md
-# Next actions - updated 2026-05-30 after full validation PASS.
+﻿# NEXT_ACTIONS.md
+# Next actions - updated 2026-05-30 after Codex Phase 2 attempt.
 
 ---
 
 ## Current State
 
-- Phase 1 baseline minimap: **COMPLETE / PASS**.
-- Build/hash: `b46919ef`.
+- Branch: `codex-exec`.
+- Build/hash: `c0711156`.
 - Static Audit: **PASS 22/22**.
 - Build Release: **PASS 0 errors / 0 warnings**.
+- Installed DLL hash: **MATCH** (`c0711156`).
 - Runtime Probe: **PASS 12/12**.
-- Gameplay Baseline: **PASS 18/18**.
-- Overall: **PASS**.
+- Gameplay Validation: **PARTIAL 19/20**.
+- Overall: **BLOCKED** on TAB confirmation.
 - `ForceHudProofOfLife=false`.
-- Minimap baseline was validated while `currentRunState=Level`.
-- M toggle was validated by log/JSON.
-- TAB open/close was validated by log.
+- `CenterOnPlayer=true`.
+- `centerOnPlayerApplied=true`.
+- `centerOnPlayerProjectionValid=true`.
+- `centerOnPlayerDistanceFromCenter=0`.
+- HUD/minimap remains visible in `Level`.
+- M toggle remains validated by log/JSON.
+- TAB synthetic key was sent, but native `MapToolController.Active` did not log open/close.
 
 ---
 
-## Next Objective
+## Immediate Next Objective
 
-Phase 2 - `CenterOnPlayer=true`.
+Resolve Phase 2 C18 only:
 
-Only begin Phase 2 after the acting agent reads:
-- `docs\START_HERE_FOR_AI.md`
-- `docs\AI_GIT_PROTOCOL.md`
-- `docs\HANDOFF_CURRENT.md`
-- `docs\VALIDATION_CONTRACT.md`
-- `tools\last-full-validation.md`
+- Confirm native TAB open/close with physical keyboard input while the game is in level, or
+- Improve the automation path so Unity InputSystem receives `<Keyboard>/tab`, then rerun gameplay validation.
 
-Before editing, run:
+Do not expand feature scope until Phase 2 is full PASS.
+
+---
+
+## Commands To Resume
+
+Before editing or validating:
 
 ```powershell
 .\tools\ai_start_work.ps1
 ```
 
-At the end of the round, run:
+Useful checks:
+
+```powershell
+.\tools\surveyormap_runtime_validate.ps1 -NoLaunch -VerboseReport
+.\tools\surveyormap_gameplay_validate.ps1 -NoLaunch -WaitSeconds 120 -VerboseReport
+```
+
+At the end of the next round:
 
 ```powershell
 .\tools\ai_finish_work.ps1 -Message "<checkpoint message>"
 ```
-
----
-
-## Scope Allowed For Next Implementation Round
-
-- Enable and validate `CenterOnPlayer=true`.
-- Keep the existing Phase 1 minimap baseline intact.
-- Preserve objective log/JSON validation for every claim.
 
 ---
 
@@ -58,17 +64,6 @@ At the end of the round, run:
 - `ShowEnemies=true`.
 - Premium visual polish.
 - Package, Thunderstore, GitHub release, or publishing work.
-- r2modman profile changes unless a future explicit validation round requires them.
-- Any unrelated mod.
-
----
-
-## Phase 2 PASS Expectations
-
-The exact Phase 2 criteria live in `docs\VALIDATION_CONTRACT.md`. At minimum:
-- Phase 1 remains PASS.
-- `CenterOnPlayer=true` is active.
-- Player-centered minimap behavior is validated without crash.
-- Runtime still reports `lastException=null` and `lastErrorStack=null`.
-- Validation evidence is captured in log/JSON.
-
+- Default r2modman profile.
+- Other mods.
+- Reference mod code copying.

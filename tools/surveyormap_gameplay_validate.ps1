@@ -468,7 +468,7 @@ Write-Host "    RunState=Level in log: $runStateLevelLog"
 
 if ($jsonParseOk) {
     Write-Host "  JSON state:"
-    foreach ($f in @("currentRunState","isLevel","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","capturePaused","minimapBaselineVisible","toggleKeyDetectedCount","tabOpenCount","tabCloseCount","lastToggleTimeUtc","lastGateReason","lastCaptureReason","forceHudProofOfLife","lastException","lastErrorStack")) {
+    foreach ($f in @("currentRunState","isLevel","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","capturePaused","minimapBaselineVisible","centerOnPlayer","centerOnPlayerApplied","centerOnPlayerProjectionValid","centerOnPlayerDistanceFromCenter","centerOnPlayerOffsetMagnitude","centerOnPlayerZoom","toggleKeyDetectedCount","tabOpenCount","tabCloseCount","lastToggleTimeUtc","lastGateReason","lastCaptureReason","forceHudProofOfLife","lastException","lastErrorStack")) {
         $v = JVal $f $null
         if ($null -ne $v) { Write-Host "    $f = $v" }
     }
@@ -500,6 +500,10 @@ $isLevel            = ($jsonParseOk -and ((JVal "isLevel" $false) -eq $true -or 
 $hudVisible         = ($jsonParseOk -and (JVal "hudVisible" $false) -eq $true)
 $nativeTexReady     = ($jsonParseOk -and (JVal "nativeTextureReady" $false) -eq $true)
 $forceHudOff        = ($jsonParseOk -and (JVal "forceHudProofOfLife" $true) -eq $false)
+$centerEnabled      = ($jsonParseOk -and (JVal "centerOnPlayer" $false) -eq $true)
+$centerApplied      = ($jsonParseOk -and (JVal "centerOnPlayerApplied" $false) -eq $true)
+$centerProjection   = ($jsonParseOk -and (JVal "centerOnPlayerProjectionValid" $false) -eq $true)
+$centerDistance     = [double](JVal "centerOnPlayerDistanceFromCenter" 999)
 $toggleCountJson    = [int](JVal "toggleKeyDetectedCount" 0)
 $tabOpenCountJson   = [int](JVal "tabOpenCount" 0)
 $tabCloseCountJson  = [int](JVal "tabCloseCount" 0)
@@ -520,6 +524,9 @@ $tabTotal = [Math]::Max($tabOpenCountJson, $tabOpenLogCount)
 $tabClosed = [Math]::Max($tabCloseCountJson, $tabCloseLogCount)
 $tabDetected = ($tabTotal -ge 1 -and ($tabClosed -ge 1 -or $tabSentCount -ge 1))
 $g["18_tab"]           = $tabDetected
+# C19/C20: Phase 2 CenterOnPlayer evidence
+$g["19_center_enabled"] = $centerEnabled
+$g["20_center_applied"] = ($centerApplied -and $centerProjection -and $centerDistance -le 1.5)
 
 # TAB BLOCKED check: if we couldn't send TAB at all
 $tabBlocked = ($tabSentCount -eq 0 -and $tabTotal -eq 0)
@@ -542,10 +549,13 @@ $crit = @(
     "[C15] hudVisible=true in level",
     "[C16] nativeTextureReady=true",
     "[C17] toggleKeyDetected >= 2 (json=$toggleCountJson, log=$toggleLogCount)",
-    "[C18] TAB open+close detected (json=$tabOpenCountJson/$tabCloseCountJson, log=$tabOpenLogCount/$tabCloseLogCount)"
+    "[C18] TAB open+close detected (json=$tabOpenCountJson/$tabCloseCountJson, log=$tabOpenLogCount/$tabCloseLogCount)",
+    "[C19] CenterOnPlayer=true",
+    "[C20] player-centered pan applied (projection=$centerProjection, applied=$centerApplied, distance=$centerDistance)"
 )
 
-$keys = @("01_hash","02_mod","03_buildtag","04_json_exists","05_awake","06_plugin_upd","07_plugin_gui","08_probe","09_probe_upd","10_probe_gui","11_no_ex","12_no_stack","13_level","14_no_force_hud","15_hud_visible","16_native_tex","17_m_toggle","18_tab")
+$keys = @("01_hash","02_mod","03_buildtag","04_json_exists","05_awake","06_plugin_upd","07_plugin_gui","08_probe","09_probe_upd","10_probe_gui","11_no_ex","12_no_stack","13_level","14_no_force_hud","15_hud_visible","16_native_tex","17_m_toggle","18_tab","19_center_enabled","20_center_applied")
+$criteriaTotal = $keys.Count
 
 for ($i = 0; $i -lt $keys.Count; $i++) {
     $key = $keys[$i]
@@ -563,7 +573,7 @@ if ($tabBlocked) {
 Head "I) Verdict"
 
 $passCount = ($g.Values | Where-Object { $_ -eq $true }).Count
-$failCount = 18 - $passCount
+$failCount = $criteriaTotal - $passCount
 $passAll   = ($failCount -eq 0)
 
 $tabStatus = if ($tabBlocked)         { "BLOCKED" }
@@ -575,8 +585,8 @@ $levelEntryAuto = ($levelEntryMode -eq "doorstop-auto" -or $levelEntryMode -eq "
 
 $tabSentNotConfirmed = ($tabSentCount -ge 1 -and -not $tabDetected -and -not $tabBlocked)
 $verdict = if ($passAll)                                               { "PASS" }
-           elseif ($passCount -ge 17 -and $tabSentNotConfirmed)       { "PARTIAL_TAB_UNCONFIRMED" }
-           elseif ($passCount -ge 15 -and $tabBlocked)                { "PARTIAL_TAB_BLOCKED" }
+           elseif ($passCount -ge ($criteriaTotal - 1) -and $tabSentNotConfirmed) { "PARTIAL_TAB_UNCONFIRMED" }
+           elseif ($passCount -ge ($criteriaTotal - 3) -and $tabBlocked)          { "PARTIAL_TAB_BLOCKED" }
            else                                                        { "FAIL" }
 
 $failCause = ""
@@ -587,24 +597,24 @@ if (-not $passAll) {
 }
 
 Write-Host ""
-Write-Host "  Criteria: $passCount/18 pass, $failCount/18 fail"
+Write-Host "  Criteria: $passCount/$criteriaTotal pass, $failCount/$criteriaTotal fail"
 Write-Host "  Level entry: $levelEntryMode (auto=$levelEntryAuto)"
 Write-Host "  Keys: M=$mSentCount TAB=$tabSentCount keyStatus=$keyAutoStatus"
 Write-Host "  TAB: $tabStatus"
 Write-Host ""
 if ($verdict -eq "PASS") {
-    Write-Host "  *** RESULT: PASS (18/18) ***"
+    Write-Host "  *** RESULT: PASS ($criteriaTotal/$criteriaTotal) ***"
     Write-Host "  All gameplay criteria satisfied."
 } elseif ($verdict -eq "PARTIAL_TAB_UNCONFIRMED") {
-    Write-Host "  *** RESULT: PARTIAL ($passCount/18) - TAB_SENT_NOT_CONFIRMED ***"
+    Write-Host "  *** RESULT: PARTIAL ($passCount/$criteriaTotal) - TAB_SENT_NOT_CONFIRMED ***"
     Write-Host "  Runtime + level + minimap + toggle PASS. TAB was sent but not confirmed in log."
-    Write-Host "  Cause: keybd_event TAB sent but game may not have processed it (window focus issue)."
+    Write-Host "  Cause: synthetic TAB was sent, but Unity InputSystem did not confirm native map open/close."
     Write-Host "  Manual verification: press TAB in-game and confirm nativeMapTabOpen=True in log."
 } elseif ($verdict -eq "PARTIAL_TAB_BLOCKED") {
-    Write-Host "  *** RESULT: PARTIAL ($passCount/18) - TAB_BLOCKED ***"
+    Write-Host "  *** RESULT: PARTIAL ($passCount/$criteriaTotal) - TAB_BLOCKED ***"
     Write-Host "  Runtime + level + toggle PASS. TAB injection blocked (window not found)."
 } else {
-    Write-Host "  *** RESULT: FAIL ($passCount/18) ***"
+    Write-Host "  *** RESULT: FAIL ($passCount/$criteriaTotal) ***"
     Write-Host "  Root cause: $failCause"
 }
 
@@ -615,7 +625,7 @@ $rpt = [ordered]@{
     timestamp        = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
     verdict          = $verdict
     criteriaPass     = $passCount
-    criteriaTotal    = 18
+    criteriaTotal    = $criteriaTotal
     failCause        = if ($passAll) { $null } else { $failCause }
     buildHash        = $buildShort
     hashMatch        = $hashMatch
@@ -635,7 +645,7 @@ $rpt = [ordered]@{
 }
 
 if ($jsonParseOk) {
-    foreach ($f in @("currentRunState","isLevel","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","capturePaused","minimapBaselineVisible","toggleKeyDetectedCount","tabOpenCount","tabCloseCount","lastToggleTimeUtc","lastGateReason","lastCaptureReason","forceHudProofOfLife","lastException","lastErrorStack","pluginUpdateCount","pluginOnGuiCount","runtimeProbeUpdateCount","runtimeProbeOnGuiCount","scene","buildTag")) {
+    foreach ($f in @("currentRunState","isLevel","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","capturePaused","minimapBaselineVisible","centerOnPlayer","centerOnPlayerApplied","centerOnPlayerProjectionValid","centerOnPlayerDistanceFromCenter","centerOnPlayerOffsetMagnitude","centerOnPlayerZoom","toggleKeyDetectedCount","tabOpenCount","tabCloseCount","lastToggleTimeUtc","lastGateReason","lastCaptureReason","forceHudProofOfLife","lastException","lastErrorStack","pluginUpdateCount","pluginOnGuiCount","runtimeProbeUpdateCount","runtimeProbeOnGuiCount","scene","buildTag")) {
         $v = JVal $f $null
         if ($null -ne $v) { $rpt[$f] = $v }
     }
@@ -653,10 +663,10 @@ OK "JSON: $reportJson"
 $md = @()
 $md += "# SurveyorMap Gameplay Validation"
 $md += ""
-$md += "**Date:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')   **Verdict:** **$verdict** ($passCount/18)"
+$md += "**Date:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')   **Verdict:** **$verdict** ($passCount/$criteriaTotal)"
 $md += ""
 if ($verdict -ne "PASS") { $md += "## Root Cause"; $md += ""; $md += $failCause; $md += "" }
-$md += "## Criteria (18)"
+$md += "## Criteria ($criteriaTotal)"
 $md += ""
 $md += "| # | Criterion | Result |"
 $md += "|---|---|---|"
@@ -674,10 +684,10 @@ $md += "| Level entry | $levelEntryMode (detected=$levelDetected) |"
 $md += "| M keys | sent=$mSentCount confirmed=$toggleLogCount |"
 $md += "| TAB | $tabStatus (open=$tabOpenLogCount close=$tabCloseLogCount) |"
 $md += ""
-if ($tabBlocked) {
+if ($tabBlocked -or $tabSentNotConfirmed) {
     $md += "## TAB: BLOCKED"
     $md += ""
-    $md += "TAB automation failed (game window not in foreground or key injection rejected)."
+    $md += "TAB automation failed or was not confirmed by Unity InputSystem."
     $md += "Minimum manual step: press TAB in-game and confirm open/close in log."
     $md += ""
 }
@@ -690,9 +700,9 @@ if ($recentLog.Count -gt 0) {
 $md | Set-Content $reportMd -Encoding UTF8
 OK "Markdown: $reportMd"
 
-Head "FINAL: $verdict ($passCount/18)"
+Head "FINAL: $verdict ($passCount/$criteriaTotal)"
 Write-Host ""
 
 if ($verdict -eq "PASS") { exit 0 }
-elseif ($verdict -eq "PARTIAL_TAB_BLOCKED") { exit 2 }
+elseif ($verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED")) { exit 2 }
 else { exit 1 }

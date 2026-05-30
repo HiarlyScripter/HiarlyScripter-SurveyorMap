@@ -1,18 +1,21 @@
-# Current Handoff
+﻿# Current Handoff
 
-- Codex Executor contingency round is active on branch `codex-exec`.
-- Documentation sync after Gameplay Baseline PASS is complete.
-- Current state: Phase 1 baseline minimap PASS.
-- Build/hash: `b46919ef`.
+- Codex Executor contingency round ran on branch `codex-exec`.
+- Goal attempted: Phase 2 - `CenterOnPlayer=true`.
+- Build/hash: `c0711156`.
 - Static Audit: PASS 22/22.
 - Build Release: PASS 0 errors / 0 warnings.
+- Installed DLL hash matches build hash.
 - Runtime Probe: PASS 12/12.
-- Gameplay Baseline: PASS 18/18.
-- Overall full validation: PASS.
+- Gameplay Validation: PARTIAL 19/20.
+- Overall status: BLOCKED on TAB confirmation.
 - `ForceHudProofOfLife=false`.
-- Minimap baseline validated in `Level`.
+- `CenterOnPlayer=true`.
+- `centerOnPlayerApplied=true`.
+- `centerOnPlayerProjectionValid=true`.
+- `centerOnPlayerDistanceFromCenter=0`.
+- HUD/minimap visible in `Level`.
 - M toggle validated by log/JSON.
-- TAB open/close validated by log.
+- TAB synthetic key was sent, but native open/close was not confirmed by log/JSON.
 - `RevealRooms=false` and `ShowEnemies=false` remain out of scope.
-- Next step for Claude: read `docs\HANDOFF_BACK_TO_CLAUDE.md`, then plan Phase 2 - `CenterOnPlayer=true`.
-
+- Next step for Claude: read `docs\HANDOFF_BACK_TO_CLAUDE.md`, then resolve/confirm TAB C18 before advancing beyond Phase 2.

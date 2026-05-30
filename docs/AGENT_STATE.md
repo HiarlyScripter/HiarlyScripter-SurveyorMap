@@ -1,5 +1,5 @@
-# AGENT_STATE.md
-# Source of truth - updated 2026-05-30 after Gameplay Baseline PASS.
+﻿# AGENT_STATE.md
+# Source of truth - updated 2026-05-30 after Codex Phase 2 attempt.
 
 ---
 
@@ -18,9 +18,11 @@
 
 | Item | Path |
 |---|---|
-| Claude project root | `C:\Users\Hiarly\.claude\PROJETOS\REPO\HiarlyScripter-SurveyorMap` |
 | Codex Exec worktree | `C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec` |
 | Source | `src\Core.cs` |
+| Build DLL | `build\SurveyorMap.dll` |
+| Test profile | `C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test` |
+| Installed DLL | `...\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll` |
 | Runtime validation | `tools\last-runtime-validation.*` |
 | Gameplay validation | `tools\last-gameplay-validation.*` |
 | Full validation | `tools\last-full-validation.*` |
@@ -31,12 +33,13 @@
 
 | Field | Value |
 |---|---|
-| Build/hash | `b46919ef` |
-| Full validation | PASS |
+| Build/hash | `c0711156` |
 | Static Audit | PASS 22/22 |
-| Build Release | PASS 0 errors / 0 warnings |
+| Build Release | PASS, 0 errors / 0 warnings |
+| Installed DLL hash | `c0711156` |
 | Runtime Probe | PASS 12/12 |
-| Gameplay Baseline | PASS 18/18 |
+| Gameplay Validation | PARTIAL 19/20 |
+| Full validation | BLOCKED by TAB confirmation |
 
 ---
 
@@ -44,13 +47,13 @@
 
 | Item | Status |
 |---|---|
-| BepInEx loads SurveyorMap | PASS, BuildTag found in log |
+| BepInEx loads SurveyorMap | PASS, BuildTag `c0711156` found in log |
 | Plugin.Awake() runs | PASS |
 | Plugin.Update() runs | PASS |
 | Plugin.OnGUI() runs | PASS |
 | RuntimeProbe.Update() runs | PASS |
 | RuntimeProbe.OnGUI() runs | PASS |
-| Runtime JSON exists and is fresh for the pass | PASS |
+| Runtime JSON exists and is fresh | PASS |
 | currentRunState | `Level` |
 | hudVisible in level | `true` |
 | nativeTextureReady in level | `true` |
@@ -59,18 +62,22 @@
 | lastCaptureReason | `native-map-rendered` |
 | lastGateReason | `gameplay-active` |
 | ForceHudProofOfLife | `false` |
-| M toggle | Validated by log/JSON |
-| TAB open/close | Validated by log, open/close `1/1` |
+| CenterOnPlayer | `true` |
+| CenterOnPlayer applied | `true` |
+| CenterOnPlayer projection valid | `true` |
+| CenterOnPlayer distance from center | `0` |
+| M toggle | PASS, validated by log/JSON |
+| TAB open/close | BLOCKED, synthetic TAB sent but not confirmed by MapToolController log |
 | lastException | `null` |
 | lastErrorStack | `null` |
 
 ---
 
-## Baseline Configuration
+## Active Configuration
 
 ```ini
 ForceHudProofOfLife = false
-CenterOnPlayer = false
+CenterOnPlayer = true
 RevealRooms = false
 RevealMode = Off
 ShowEnemies = false
@@ -82,30 +89,27 @@ RenderTextureSize = 256
 
 ---
 
-## Completed Phase
+## Phase State
 
-Phase 1 baseline minimap is complete with PASS.
+Phase 1 baseline minimap remains complete with PASS.
 
-Evidence:
-- Static Audit PASS 22/22.
-- Build Release PASS 0 errors / 0 warnings.
-- Runtime Probe PASS 12/12.
-- Gameplay Baseline PASS 18/18.
-- Minimap baseline validated in `Level`.
-- M validated by log/JSON.
-- TAB open/close validated by log.
+Phase 2 implementation evidence:
+- `CenterOnPlayer=true` migrated/applied.
+- Minimap remained visible in `Level`.
+- Player-centered pan applied with `centerOnPlayerDistanceFromCenter=0`.
+- Runtime stayed clean: `lastException=null`, `lastErrorStack=null`.
+- M toggle still works.
+
+Blocking item:
+- C18 TAB open/close did not confirm through synthetic key injection.
+- Local game API shows native map uses Unity InputSystem binding `<Keyboard>/tab`.
+- Win32 synthetic TAB attempts did not toggle `MapToolController.Active`; M still reached the plugin through legacy Unity input.
 
 ---
 
-## Next Phase
+## Next Step
 
-Next phase: Phase 2 - `CenterOnPlayer=true`.
-
-Keep out of scope for now:
-- `RevealRooms=true`
-- `ShowEnemies=true`
-- Premium visual polish
-- Package/Thunderstore/GitHub publication work
+Next recommended action: have Claude or the user confirm native TAB open/close with physical input, or improve validation automation so Unity InputSystem receives the TAB event. Do not start RevealRooms, ShowEnemies, visual polish, package, Thunderstore, or GitHub work until Phase 2 is fully PASS.
 
 ---
 
@@ -113,7 +117,7 @@ Keep out of scope for now:
 
 - Do not publish to Thunderstore.
 - Do not push to GitHub.
+- Do not touch the Default profile.
 - Do not touch other mods.
-- Do not declare a feature working without objective log/JSON evidence.
-- Do not edit `src\Core.cs` during documentation-only sync rounds.
-
+- Do not copy code from reference mods.
+- Do not declare Phase 2 fully PASS until TAB open/close is objectively confirmed.

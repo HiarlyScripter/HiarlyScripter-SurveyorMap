@@ -1,80 +1,14 @@
-{
-  "timestamp": "2026-05-30T15:20:34Z",
-  "verdict": "PASS",
-  "overall": "PASS",
-  "buildHash": "b46919ef",
-  "phaseResults": {
-    "staticAudit": {
-      "verdict": "PASS",
-      "criteriaPass": 22,
-      "criteriaTotal": 22,
-      "detail": "Static Audit PASS 22/22"
-    },
-    "buildRelease": {
-      "verdict": "PASS",
-      "errors": 0,
-      "warnings": 0,
-      "detail": "Build Release PASS 0 errors / 0 warnings"
-    },
-    "runtimeProbe": {
-      "verdict": "PASS",
-      "criteriaPass": 12,
-      "criteriaTotal": 12,
-      "detail": "Runtime Probe PASS 12/12"
-    },
-    "gameplayBaseline": {
-      "verdict": "PASS",
-      "criteriaPass": 18,
-      "criteriaTotal": 18,
-      "detail": "Gameplay Baseline PASS 18/18"
-    }
-  },
-  "consolidatedEvidence": {
-    "buildTag": "b46919ef",
-    "hashMatch": true,
-    "modEnabled": true,
-    "buildTagInLog": true,
-    "currentRunState": "Level",
-    "isLevel": true,
-    "hudVisible": true,
-    "nativeTextureReady": true,
-    "nativeMapCaptureReady": true,
-    "minimapBaselineVisible": true,
-    "lastCaptureReason": "native-map-rendered",
-    "lastGateReason": "gameplay-active",
-    "forceHudProofOfLife": false,
-    "toggleKeyDetectedCount": 4,
-    "toggleLogCount": 8,
-    "tabOpenLogCount": 1,
-    "tabCloseLogCount": 1,
-    "tabStatus": "DETECTED",
-    "mKeysSent": 2,
-    "tabKeysSent": 1,
-    "pluginUpdateCount": 23731,
-    "pluginOnGuiCount": 47656,
-    "runtimeProbeUpdateCount": 23731,
-    "runtimeProbeOnGuiCount": 47656,
-    "lastException": null,
-    "lastErrorStack": null
-  },
-  "sourceReports": {
-    "runtimeMarkdown": "tools/last-runtime-validation.md",
-    "runtimeJson": "tools/last-runtime-validation.json",
-    "gameplayMarkdown": "tools/last-gameplay-validation.md",
-    "gameplayJson": "tools/last-gameplay-validation.json",
-    "fullMarkdown": "tools/last-full-validation.md",
-    "fullJson": "tools/last-full-validation.json"
-  },
-  "scopeNotes": [
-    "Documentation sync only.",
-    "Core.cs was not modified.",
-    "DLL was not modified.",
-    "No build was run.",
-    "No DLL was installed.",
-    "r2modman was not touched.",
-    "No push or publish was performed.",
-    "RevealRooms and ShowEnemies remain out of scope.",
-    "Next phase is Phase 2: CenterOnPlayer=true."
-  ]
+﻿{
+    "timestamp":  "2026-05-30T17:33:52Z",
+    "verdict":  "BLOCKED",
+    "buildHash":  "c0711156",
+    "phase1Audit":  "PASS",
+    "phase2Build":  "PASS",
+    "phase3Runtime":  "PASS",
+    "phase4Gameplay":  "PARTIAL_TAB_UNCONFIRMED",
+    "phase4Criteria":  "19/20",
+    "reports":  {
+                    "gameplay":  "C:\\Users\\Hiarly\\.codex\\PROJETOS\\REPO\\HiarlyScripter-SurveyorMap-Exec\\tools\\last-gameplay-validation.json",
+                    "runtime":  "C:\\Users\\Hiarly\\.codex\\PROJETOS\\REPO\\HiarlyScripter-SurveyorMap-Exec\\tools\\last-runtime-validation.json"
+                }
 }
-

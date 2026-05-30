@@ -55,6 +55,12 @@ namespace SurveyorMap
         internal bool   NativeTabOpen       => _controller != null && _controller.NativeTabOpenRuntime;
         internal int    TabOpenCount        => _controller != null ? _controller.TabOpenCount : 0;
         internal int    TabCloseCount       => _controller != null ? _controller.TabCloseCount : 0;
+        internal bool   CenterOnPlayerRuntime => _controller != null && _controller.CenterOnPlayerRuntime;
+        internal bool   CenterOnPlayerAppliedRuntime => _controller != null && _controller.CenterOnPlayerAppliedRuntime;
+        internal bool   CenterOnPlayerProjectionValidRuntime => _controller != null && _controller.CenterOnPlayerProjectionValidRuntime;
+        internal float  CenterOnPlayerDistanceFromCenter => _controller != null ? _controller.CenterOnPlayerDistanceFromCenter : 999f;
+        internal float  CenterOnPlayerOffsetMagnitude => _controller != null ? _controller.CenterOnPlayerOffsetMagnitude : 0f;
+        internal float  CenterOnPlayerZoomRuntime => _controller != null ? _controller.CenterOnPlayerZoomRuntime : 1f;
         internal string LastRunState        => _controller != null ? _controller.LastRunStateForJson      : "no-controller";
         internal string LastGateReason      => _controller != null ? _controller.LastGateReasonForJson    : "no-controller";
         internal string LastCaptureReason   => _controller != null ? _controller.LastCaptureReasonForJson : "no-controller";
@@ -585,41 +591,49 @@ namespace SurveyorMap
 
         public void MigrateLayoutDefaults()
         {
-            if (_layoutDefaultsVersion.Value >= 7)
+            int currentLayoutDefaultsVersion = _layoutDefaultsVersion.Value;
+            if (currentLayoutDefaultsVersion >= 8)
                 return;
 
-            if (_layoutDefaultsVersion.Value < 1 && PositionPreset.Value == SurveyorMap.PositionPreset.TopRight)
+            if (currentLayoutDefaultsVersion < 7)
             {
+                if (currentLayoutDefaultsVersion < 1 && PositionPreset.Value == SurveyorMap.PositionPreset.TopRight)
+                {
+                    PositionPreset.Value = SurveyorMap.PositionPreset.BottomLeft;
+                    LogHelper.Info("Migrated PositionPreset from previous TopRight default to BottomLeft.");
+                }
+
                 PositionPreset.Value = SurveyorMap.PositionPreset.BottomLeft;
-                LogHelper.Info("Migrated PositionPreset from previous TopRight default to BottomLeft.");
+                Scale.Value = 1f;
+                UseSquareMap.Value = true;
+                PosX.Value = 24f;
+                PosY.Value = 120f;
+                Width.Value = 260f;
+                Height.Value = 260f;
+                RotateWithPlayer.Value = false;
+                CenterOnPlayer.Value = false;
+                BackgroundOpacity.Value = 0.55f;
+                BorderOpacity.Value = 0.85f;
+                BorderThickness.Value = 3f;
+                MapOpacity.Value = 0.78f;
+                SoftFrame.Value = true;
+                // Show native question marks so TAB map looks unmodified
+                ShowNativeQuestionMarks.Value = true;
+                // Disable room overlay and enemy markers - native map mirror mode
+                RevealRooms.Value = false;
+                RevealMode.Value = SurveyorMap.RevealMode.Off;
+                ShowEnemies.Value = false;
+                EnemyDetectionMode.Value = SurveyorMap.EnemyDetectionMode.Off;
+                EnemyUpdateInterval.Value = 0.5f;
+                EnableProfiling.Value = false;
+                LogHelper.Info("NativeMapMirror defaults applied: overlay=off, enemies=off, centerOnPlayer=off, questionMarks=on.");
+
+                _layoutDefaultsVersion.Value = 7;
+                currentLayoutDefaultsVersion = 7;
             }
-
-            PositionPreset.Value = SurveyorMap.PositionPreset.BottomLeft;
-            Scale.Value = 1f;
-            UseSquareMap.Value = true;
-            PosX.Value = 24f;
-            PosY.Value = 120f;
-            Width.Value = 260f;
-            Height.Value = 260f;
-            RotateWithPlayer.Value = false;
-            CenterOnPlayer.Value = false;
-            BackgroundOpacity.Value = 0.55f;
-            BorderOpacity.Value = 0.85f;
-            BorderThickness.Value = 3f;
-            MapOpacity.Value = 0.78f;
-            SoftFrame.Value = true;
-            // Show native question marks so TAB map looks unmodified
-            ShowNativeQuestionMarks.Value = true;
-            // Disable room overlay and enemy markers — native map mirror mode
-            RevealRooms.Value = false;
-            RevealMode.Value = SurveyorMap.RevealMode.Off;
-            ShowEnemies.Value = false;
-            EnemyDetectionMode.Value = SurveyorMap.EnemyDetectionMode.Off;
-            EnemyUpdateInterval.Value = 0.5f;
-            EnableProfiling.Value = false;
-            LogHelper.Info("NativeMapMirror defaults applied: overlay=off, enemies=off, centerOnPlayer=off, questionMarks=on.");
-
-            _layoutDefaultsVersion.Value = 7;
+            CenterOnPlayer.Value = true;
+            _layoutDefaultsVersion.Value = 8;
+            LogHelper.Info("Phase2 defaults applied: centerOnPlayer=on.");
         }
     }
 
@@ -727,6 +741,12 @@ namespace SurveyorMap
         private bool _baseMapTextureVisible;
         private bool _baseMapTextureReady;
         private bool _enemiesDisabledByError;
+        private bool _centerOnPlayerProjectionValid;
+        private bool _centerOnPlayerApplied;
+        private float _centerOnPlayerDistanceFromCenter = 999f;
+        private Vector2 _centerOnPlayerOffset = Vector2.zero;
+        private float _centerOnPlayerZoom = 1f;
+        private string _lastCenterOnPlayerSummary;
 
         public bool IsInitialized { get; private set; }
 
@@ -747,6 +767,12 @@ namespace SurveyorMap
         internal bool   NativeTabOpenRuntime      => _nativeTabOpenForJson;
         internal int    TabOpenCount              => _tabOpenCount;
         internal int    TabCloseCount             => _tabCloseCount;
+        internal bool   CenterOnPlayerRuntime => _config != null && _config.CenterOnPlayer.Value;
+        internal bool   CenterOnPlayerAppliedRuntime => _centerOnPlayerApplied;
+        internal bool   CenterOnPlayerProjectionValidRuntime => _centerOnPlayerProjectionValid;
+        internal float  CenterOnPlayerDistanceFromCenter => _centerOnPlayerDistanceFromCenter;
+        internal float  CenterOnPlayerOffsetMagnitude => _centerOnPlayerOffset.magnitude;
+        internal float  CenterOnPlayerZoomRuntime => _centerOnPlayerZoom;
 
         internal void Initialize(CapabilityReport report)
         {
@@ -1392,8 +1418,8 @@ namespace SurveyorMap
             if (!show)
                 return;
 
-            // Self marker always at center (player-centered pan is disabled for stability).
-            _selfMarker.SetPosition(Vector2.zero);
+            Vector2 markerPoint = _centerOnPlayerApplied ? playerHudPoint : Vector2.zero;
+            _selfMarker.SetPosition(markerPoint);
             _selfMarker.SetSize(9f * Mathf.Clamp(_config.MarkerScale.Value, 0.5f, 2.5f));
             _selfMarker.SetColor(new Color(0.35f, 1f, 0.9f, 0.98f));
             _selfMarker.SetRotation(45f);
@@ -1402,26 +1428,65 @@ namespace SurveyorMap
 
         private Vector2 ComputePlayerHudPoint(Vector3 playerPos)
         {
+            _centerOnPlayerProjectionValid = false;
+
             if (!_config.CenterOnPlayer.Value || _contentRoot == null)
                 return Vector2.zero;
 
             Vector2 point;
             if (_nativeMapCapture.TryProjectWorldToHud(playerPos, _contentRoot, false, out point))
+            {
+                _centerOnPlayerProjectionValid = true;
                 return point;
+            }
 
             return Vector2.zero;
         }
 
         private void ApplyMapViewTransform(float now, Vector2 playerHudPoint, float yaw)
         {
-            // Player-centered view is disabled for native-map-mirror stability.
-            // Reset any residual pan/rotation to keep the content anchored.
             if (_contentRoot == null)
                 return;
-            if (_contentRoot.anchoredPosition != Vector2.zero)
-                _contentRoot.anchoredPosition = Vector2.zero;
+
+            if (!_config.CenterOnPlayer.Value || !_nativeTextureReady || !_centerOnPlayerProjectionValid)
+            {
+                _centerOnPlayerApplied = false;
+                _centerOnPlayerDistanceFromCenter = 999f;
+                _centerOnPlayerOffset = Vector2.zero;
+                _centerOnPlayerZoom = 1f;
+                if (_contentRoot.anchoredPosition != Vector2.zero)
+                    _contentRoot.anchoredPosition = Vector2.zero;
+                if (_contentRoot.localScale != Vector3.one)
+                    _contentRoot.localScale = Vector3.one;
+                if (_contentRoot.localEulerAngles != Vector3.zero)
+                    _contentRoot.localEulerAngles = Vector3.zero;
+                return;
+            }
+
+            float zoom = Mathf.Clamp(_config.Zoom.Value, 1f, 4f);
+            Vector2 offset = -playerHudPoint * zoom;
+            _contentRoot.localScale = new Vector3(zoom, zoom, 1f);
+            _contentRoot.anchoredPosition = offset;
             if (_contentRoot.localEulerAngles != Vector3.zero)
                 _contentRoot.localEulerAngles = Vector3.zero;
+
+            _centerOnPlayerApplied = true;
+            _centerOnPlayerZoom = zoom;
+            _centerOnPlayerOffset = offset;
+            _centerOnPlayerDistanceFromCenter = (offset + playerHudPoint * zoom).magnitude;
+
+            string summary = "enabled=True, projection=True, zoom=" + zoom.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) +
+                             ", playerHud=(" + playerHudPoint.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) +
+                             "," + playerHudPoint.y.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) +
+                             "), offset=(" + offset.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) +
+                             "," + offset.y.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) +
+                             "), distanceFromCenter=" + _centerOnPlayerDistanceFromCenter.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+
+            if (_lastCenterOnPlayerSummary != summary)
+            {
+                _lastCenterOnPlayerSummary = summary;
+                LogHelper.Info("CenterOnPlayer: " + summary);
+            }
         }
 
         private void ApplyRevealRooms(float now)
@@ -5038,6 +5103,12 @@ namespace SurveyorMap
                 Jb(sb, "nativeTabOpen",            plugin != null && plugin.NativeTabOpen);
                 Jb(sb, "capturePaused",            plugin != null && plugin.NativeTabOpen);
                 Jb(sb, "minimapBaselineVisible",   plugin != null && plugin.HudVisibleRuntime && plugin.NativeTextureReady);
+                Jb(sb, "centerOnPlayer",           plugin != null && plugin.CenterOnPlayerRuntime);
+                Jb(sb, "centerOnPlayerApplied",    plugin != null && plugin.CenterOnPlayerAppliedRuntime);
+                Jb(sb, "centerOnPlayerProjectionValid", plugin != null && plugin.CenterOnPlayerProjectionValidRuntime);
+                Jn(sb, "centerOnPlayerDistanceFromCenter", plugin != null ? plugin.CenterOnPlayerDistanceFromCenter : 999f);
+                Jn(sb, "centerOnPlayerOffsetMagnitude", plugin != null ? plugin.CenterOnPlayerOffsetMagnitude : 0f);
+                Jn(sb, "centerOnPlayerZoom",       plugin != null ? plugin.CenterOnPlayerZoomRuntime : 1f);
                 Jn(sb, "toggleKeyDetectedCount",   plugin != null ? plugin.ToggleKeyDetectedCount : 0);
                 Jn(sb, "tabOpenCount",             plugin != null ? plugin.TabOpenCount  : 0);
                 Jn(sb, "tabCloseCount",            plugin != null ? plugin.TabCloseCount : 0);

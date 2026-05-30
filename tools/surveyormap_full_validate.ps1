@@ -51,6 +51,7 @@ if ($phase1Pass) { OK "Static audit PASS" } else { ERR "Static audit FAIL"; $ove
 Head "Phase 2/4: Build Release + Install"
 
 $env:REPO_MANAGED_DIR = "E:\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed"
+$env:REPO_BEPINEX_CORE_DIR = "C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\core"
 Write-Host "  Running: dotnet build -c Release"
 $buildOutput = & dotnet build "$srcDir" -c Release 2>&1
 $buildExit   = $LASTEXITCODE
@@ -100,7 +101,7 @@ $rArgs += "-LaunchGame"  # Always try to launch for runtime (unless -NoLaunch)
 if ($NoLaunch) { $rArgs = $rArgs | Where-Object { $_ -ne "-LaunchGame" } }
 
 $phase3Start = Get-Date
-& $runtimeScript @rArgs
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $runtimeScript @rArgs
 $runtimeRawExit = $LASTEXITCODE
 
 # Validate via fresh report file (not just exit code — $LASTEXITCODE may be stale from dotnet)
@@ -109,7 +110,7 @@ $phase3Pass = $false
 $phase3Reason = "exit=$runtimeRawExit"
 if (Test-Path $rjPath) {
     $rjMtime = (Get-Item $rjPath).LastWriteTime
-    if ($rjMtime -gt $phase3Start) {
+    if ($rjMtime -ge $phase3Start.AddSeconds(-2)) {
         # Report written during this run — use its verdict
         $rj = Get-Content $rjPath -Raw | ConvertFrom-Json -ErrorAction SilentlyContinue
         if ($rj) {
@@ -135,6 +136,8 @@ if ($phase3Pass) { OK "Runtime PASS ($phase3Reason)" } else { ERR "Runtime FAIL 
 # ========================= PHASE 4: GAMEPLAY VALIDATE =========================
 Head "Phase 4/4: Gameplay Validation"
 
+$phase4Criteria = "unknown"
+
 if ($SkipGameplay) {
     SKIP "Gameplay validation skipped (-SkipGameplay)"
     $phase4Verdict = "SKIPPED"
@@ -145,7 +148,7 @@ if ($SkipGameplay) {
     if ($VerboseReport) { $gArgs += "-VerboseReport" }
 
     $phase4Start = Get-Date
-    & $gameplayScript @gArgs
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $gameplayScript @gArgs
     $gameplayRawExit = $LASTEXITCODE
 
     # Validate via fresh report
@@ -154,11 +157,14 @@ if ($SkipGameplay) {
     $phase4Verdict = "FAIL"
     if (Test-Path $gjPath) {
         $gjMtime = (Get-Item $gjPath).LastWriteTime
-        if ($gjMtime -gt $phase4Start) {
+        if ($gjMtime -ge $phase4Start.AddSeconds(-2)) {
             $gj = Get-Content $gjPath -Raw | ConvertFrom-Json -ErrorAction SilentlyContinue
             if ($gj) {
                 $phase4Verdict = $gj.verdict
                 $phase4Pass    = ($gj.verdict -eq "PASS")
+                if ($gj.criteriaPass -ne $null -and $gj.criteriaTotal -ne $null) {
+                    $phase4Criteria = "$($gj.criteriaPass)/$($gj.criteriaTotal)"
+                }
             } else {
                 $phase4Verdict = if ($gameplayRawExit -eq 0) { "PASS" } elseif ($gameplayRawExit -eq 2) { "PARTIAL_TAB_BLOCKED" } else { "FAIL" }
                 $phase4Pass    = ($gameplayRawExit -eq 0)
@@ -173,9 +179,11 @@ if ($SkipGameplay) {
         $phase4Pass    = ($gameplayRawExit -eq 0)
     }
 
-    if ($phase4Pass)                                   { OK "Gameplay PASS (18/18)" }
-    elseif ($phase4Verdict -eq "PARTIAL_TAB_BLOCKED")  { WARN "Gameplay PARTIAL: runtime+level+toggle PASS, TAB BLOCKED" }
-    else                                               { ERR "Gameplay FAIL ($phase4Verdict)"; $overallPass = $false }
+    $phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED")
+
+    if ($phase4Pass)                  { OK "Gameplay PASS ($phase4Criteria)" }
+    elseif ($phase4TabBlocked)        { WARN "Gameplay PARTIAL: runtime+level+toggle PASS, TAB BLOCKED ($phase4Verdict)" }
+    else                              { ERR "Gameplay FAIL ($phase4Verdict)"; $overallPass = $false }
 }
 
 # ========================= FINAL SUMMARY =========================
@@ -191,7 +199,14 @@ Write-Host "  Phase 3 Runtime: $(if ($phase3Pass) {'PASS (12/12)'} else {'FAIL'}
 Write-Host "  Phase 4 Gameplay: $phase4Verdict"
 Write-Host ""
 
-$finalVerdict = if ($overallPass -and $phase4Verdict -ne "FAIL") { "PASS" } else { "FAIL" }
+$phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED")
+$finalVerdict = if ($overallPass -and $phase4Pass) {
+    "PASS"
+} elseif ($overallPass -and $phase4TabBlocked) {
+    "BLOCKED"
+} else {
+    "FAIL"
+}
 Write-Host "  Overall: $finalVerdict"
 Write-Host ""
 
@@ -204,6 +219,7 @@ $finalRpt = [ordered]@{
     phase2Build    = if ($phase2Pass) { "PASS" } else { "FAIL" }
     phase3Runtime  = if ($phase3Pass) { "PASS" } else { "FAIL" }
     phase4Gameplay = $phase4Verdict
+    phase4Criteria = $phase4Criteria
     reports        = @{
         runtime  = Join-Path $PSScriptRoot "last-runtime-validation.json"
         gameplay = Join-Path $PSScriptRoot "last-gameplay-validation.json"
@@ -226,8 +242,16 @@ $md += "|---|---|"
 $md += "| Phase 1: Static Audit | $(if ($phase1Pass) {'PASS'} else {'FAIL'}) |"
 $md += "| Phase 2: Build + Install ($buildShort) | $(if ($phase2Pass) {'PASS'} else {'FAIL'}) |"
 $md += "| Phase 3: Runtime Probe (12/12) | $(if ($phase3Pass) {'PASS'} else {'FAIL'}) |"
-$md += "| Phase 4: Gameplay (18 criteria) | $phase4Verdict |"
+$md += "| Phase 4: Gameplay ($phase4Criteria criteria) | $phase4Verdict |"
 $md += ""
+if ($finalVerdict -eq "BLOCKED") {
+    $md += "## Blocker"
+    $md += ""
+    $md += "- C18 TAB open/close remained unconfirmed by automation."
+    $md += "- CenterOnPlayer evidence passed; native TAB confirmation is the only remaining Phase 2 gate."
+    $md += "- Overall is BLOCKED, not PASS, until TAB open/close is confirmed in log/JSON."
+    $md += ""
+}
 $md += "## Reports"
 $md += ""
 $md += "- Runtime: $(Join-Path $PSScriptRoot 'last-runtime-validation.md')"
@@ -240,4 +264,6 @@ Write-Host ""
 Write-Host "======================================================"
 Write-Host ""
 
-if (-not $overallPass -or $phase4Verdict -eq "FAIL") { exit 1 } else { exit 0 }
+if ($finalVerdict -eq "PASS") { exit 0 }
+if ($finalVerdict -eq "BLOCKED") { exit 2 }
+exit 1
