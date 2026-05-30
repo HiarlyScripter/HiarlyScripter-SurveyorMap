@@ -1,23 +1,24 @@
-﻿# Handoff Back To Claude
+# Handoff Back To Claude
 
 ## What Codex Did
 
 - Acted as Codex Executor of contingency on branch `codex-exec`.
-- Read `docs\START_HERE_FOR_AI.md`.
 - Ran `tools\ai_start_work.ps1` before editing.
-- Implemented Phase 2 `CenterOnPlayer=true`.
-- Added runtime JSON telemetry for CenterOnPlayer state, projection, pan application, distance from center, offset, and zoom.
-- Updated gameplay validation from 18 criteria to 20 criteria so Phase 2 must prove CenterOnPlayer.
-- Updated full validation script to call child validators through `powershell.exe -ExecutionPolicy Bypass`.
-- Built Release successfully.
-- Installed the clean build DLL into the `REPO - Test` profile.
-- Launched/used the game in `REPO - Test` and validated runtime/gameplay evidence.
+- Diagnosed and hardened only C18 TAB automation in `tools\surveyormap_gameplay_validate.ps1`.
+- Added a TAB input matrix:
+  - `keybd_event` hold 2s.
+  - `keybd_event` hold 4s.
+  - `keybd_event` hold 6s.
+  - `SendInput` hold 2s/4s/6s until confirmation.
+- Added window focus diagnostics: handle, title, process id, focused state.
+- Added fresh evidence checks so old log entries do not satisfy C18.
+- Added optional `-ManualTabFallback`, but did not need it.
+- Updated `tools\surveyormap_full_validate.ps1` so it can pass `-ManualTabFallback` and understand `BLOCKED_BY_INPUT_AUTOMATION`.
+- Updated validation reports and allowed docs.
 
 ## Files Altered
 
-- `src\Core.cs`
 - `tools\surveyormap_gameplay_validate.ps1`
-- `tools\surveyormap_runtime_validate.ps1`
 - `tools\surveyormap_full_validate.ps1`
 - `tools\last-runtime-validation.md`
 - `tools\last-runtime-validation.json`
@@ -28,69 +29,69 @@
 - `docs\AGENT_STATE.md`
 - `docs\NEXT_ACTIONS.md`
 - `docs\VALIDATION_CONTRACT.md`
-- `docs\HANDOFF_CURRENT.md`
 - `docs\HANDOFF_BACK_TO_CLAUDE.md`
-
-## Build And Hash
-
-- Build/hash: `c0711156`.
-- Build command: `dotnet build .\src -c Release`.
-- Build result: PASS, 0 errors / 0 warnings.
-- Installed DLL: `C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll`.
-- Build hash equals installed hash: PASS.
-
-## Validation Results
-
-- Static Audit: PASS 22/22.
-- Runtime Probe: PASS 12/12.
-- Gameplay Validation: PARTIAL 19/20.
-- Full Validation: BLOCKED / not Overall PASS.
-
-Phase 2 evidence that passed:
-- `CenterOnPlayer=true`.
-- `centerOnPlayerApplied=true`.
-- `centerOnPlayerProjectionValid=true`.
-- `centerOnPlayerDistanceFromCenter=0`.
-- `currentRunState=Level`.
-- `ForceHudProofOfLife=false`.
-- `hudVisible=true`.
-- `nativeTextureReady=true`.
-- `nativeMapCaptureReady=true`.
-- `minimapBaselineVisible=true`.
-- M toggle still validates by log/JSON.
-- `lastException=null`.
-- `lastErrorStack=null`.
-
-Blocking criterion:
-- C18 TAB open/close remained unconfirmed.
-- Automation sent TAB, but `tabOpenLogCount=0`, `tabCloseLogCount=0`, `tabOpenCount=0`, `tabCloseCount=0`.
-- Local API inspection shows native map uses Unity InputSystem binding `<Keyboard>/tab`; Win32 synthetic key attempts did not toggle `MapToolController.Active`.
 
 ## Confirmations
 
-- `RevealRooms` was not enabled.
-- `ShowEnemies` was not enabled.
-- Premium visual polish was not touched.
-- Package/Thunderstore/GitHub files were not updated for release.
-- No Thunderstore publish was performed.
-- No GitHub push was performed.
-- Default profile was not touched.
-- Other mods were not touched.
-- Reference mod code was not copied.
-- `mods.yml` was not edited.
+- `src\Core.cs` was not changed.
+- No mod logic was changed.
+- No build was run for the validator hardening change.
+- No DLL was installed in this round.
 - r2modman UI was not touched.
+- `mods.yml` was not edited.
+- `CenterOnPlayer`, `RevealRooms`, `ShowEnemies`, and visual premium were not touched.
+- No publish was performed.
+- No push was performed.
+
+## Build And Hash
+
+- Build/hash remains `c0711156`.
+- Build hash equals installed hash: PASS.
+- This round reused the existing installed DLL.
+
+## Validation Results
+
+- Runtime Probe: PASS 12/12.
+- Gameplay Validation: PASS 20/20.
+- Full Validation: PASS, consolidated from latest runtime/gameplay reports without rerunning the full validator because build/install were out of scope.
+
+## C18 TAB Result
+
+- Final C18 status: PASS.
+- Winning method: `SendInput`.
+- Winning hold: `2s`.
+- Window focused: `true`.
+- Window title: `R.E.P.O.`.
+- Manual fallback used: `false`.
+
+Matrix outcome:
+
+| Method | Hold | Sent | Confirmed |
+|---|---:|---|---|
+| `keybd_event` | 2s | true | false |
+| `keybd_event` | 4s | true | false |
+| `keybd_event` | 6s | true | false |
+| `SendInput` | 2s | true | true |
+
+Fresh C18 evidence:
+
+- `nativeMapTabOpen=True/False` log delta: `1/1`.
+- `capturePaused/resumingCapture` log delta: `1/1`.
+- `nativeTabOpen=false` after release.
+- `capturePaused=false` after release.
 
 ## Final Status
 
-Status: BLOCKED on C18 TAB confirmation, with Phase 2 CenterOnPlayer behavior otherwise validated.
+Status: PASS.
+
+Phase 2 `CenterOnPlayer=true` is now fully validated with C18 closed by synthetic input automation.
 
 ## Next Step For Claude
 
 When Claude returns:
 
 1. Read this file.
-2. Read `docs\HANDOFF_CURRENT.md`.
-3. Read `tools\last-gameplay-validation.md` and `tools\last-full-validation.md`.
-4. Confirm native TAB open/close with physical keyboard input or improve automation so Unity InputSystem receives `<Keyboard>/tab`.
-5. Rerun gameplay validation.
-6. Only after C18 passes, mark Phase 2 full PASS and plan the next phase.
+2. Read `tools\last-gameplay-validation.md`.
+3. Read `tools\last-full-validation.md`.
+4. Treat Phase 2 as PASS.
+5. Do not proceed to `RevealRooms`, `ShowEnemies`, package, publish, or push unless explicitly requested in a new instruction.

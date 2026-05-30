@@ -1,6 +1,6 @@
 ﻿# SurveyorMap Runtime Validation
 
-**Date:** 2026-05-30 17:33:23   **Verdict:** **PASS** (12/12)
+**Date:** 2026-05-30 18:35:25   **Verdict:** **PASS** (12/12)
 
 ## 12 Criteria
 
@@ -21,18 +21,18 @@
 
 ## Recent SurveyorMap Log
 ```
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=11228, t=76,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=11228
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=11228, frame=11228, t=76,5, scene=Main, activeSelf=True, activeInHierarchy=True
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=12050, t=81,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=12050
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=12050, frame=12050, t=81,5, scene=Main, activeSelf=True, activeInHierarchy=True
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=12872, t=86,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=12872
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=12872, frame=12872, t=86,5, scene=Main, activeSelf=True, activeInHierarchy=True
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=13687, t=91,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=13687
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=13687, frame=13687, t=91,5, scene=Main, activeSelf=True, activeInHierarchy=True
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=14492, t=96,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=14492
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=14492, frame=14492, t=96,5, scene=Main, activeSelf=True, activeInHierarchy=True
-[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=15312, t=101,5, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=15312
-[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=15312, frame=15312, t=101,5, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=False, RunState=Menu, PlayerAvatarLocal=False, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=False, playerLocal=False, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=False, levelGenerated=False, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Player API ready=True, RunState=Menu, PlayerAvatarLocal=True, levelObjects=True
+[Info   :SurveyorMap] [SurveyorMap] VisibleGate: playerApiReady=True, playerLocal=True, toggle=True, enableMinimap=True
+[Info   :SurveyorMap] [SurveyorMap] Run state: RunState=Menu, inferredLevel=False, RunIsLobby=False, RunIsShop=False, MenuLevel=True, RunIsLevel=False, spectating=False, PlayerAvatarLocal=True, levelObjects=True, levelGenDone=True, levelGenerated=True, modulesSpawned=0, playerApiReady=True, allowed=False, reason=menu-level
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=2067, t=16,0, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=2067
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=2067, frame=2067, t=16,0, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=2883, t=21,0, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=2883
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=2883, frame=2883, t=21,0, scene=Main, activeSelf=True, activeInHierarchy=True
+[Info   :SurveyorMap] [SurveyorMap] Plugin.Update absolute alive. frame=3708, t=26,1, scene=Main, activeSelf=True, activeInHierarchy=True, enabled=True, forceProof=False, toggleVisible=True, updateCount=3708
+[Info   :SurveyorMap] [SurveyorMap] RuntimeProbe.Update alive. count=3708, frame=3708, t=26,1, scene=Main, activeSelf=True, activeInHierarchy=True
 ```
 
 ## Next Step

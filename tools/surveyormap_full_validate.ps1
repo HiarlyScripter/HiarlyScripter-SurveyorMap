@@ -1,12 +1,13 @@
 # surveyormap_full_validate.ps1
 # Pipeline completo com 4 fases: audit -> build/install -> runtime -> gameplay.
-# Uso: .\tools\surveyormap_full_validate.ps1 [-WaitSeconds 90] [-NoLaunch] [-VerboseReport] [-SkipGameplay]
+# Uso: .\tools\surveyormap_full_validate.ps1 [-WaitSeconds 90] [-NoLaunch] [-VerboseReport] [-SkipGameplay] [-ManualTabFallback]
 
 param(
     [int]$WaitSeconds   = 90,
     [switch]$NoLaunch,
     [switch]$VerboseReport,
-    [switch]$SkipGameplay
+    [switch]$SkipGameplay,
+    [switch]$ManualTabFallback
 )
 
 Set-StrictMode -Off
@@ -146,6 +147,7 @@ if ($SkipGameplay) {
     $gArgs = @("-WaitSeconds", $WaitSeconds)
     if ($NoLaunch)      { $gArgs += "-NoLaunch" }
     if ($VerboseReport) { $gArgs += "-VerboseReport" }
+    if ($ManualTabFallback) { $gArgs += "-ManualTabFallback" }
 
     $phase4Start = Get-Date
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $gameplayScript @gArgs
@@ -166,7 +168,7 @@ if ($SkipGameplay) {
                     $phase4Criteria = "$($gj.criteriaPass)/$($gj.criteriaTotal)"
                 }
             } else {
-                $phase4Verdict = if ($gameplayRawExit -eq 0) { "PASS" } elseif ($gameplayRawExit -eq 2) { "PARTIAL_TAB_BLOCKED" } else { "FAIL" }
+                $phase4Verdict = if ($gameplayRawExit -eq 0) { "PASS" } elseif ($gameplayRawExit -eq 2) { "BLOCKED_BY_INPUT_AUTOMATION" } else { "FAIL" }
                 $phase4Pass    = ($gameplayRawExit -eq 0)
             }
         } else {
@@ -175,11 +177,11 @@ if ($SkipGameplay) {
             WARN "Gameplay report not updated - possible false positive"
         }
     } else {
-        $phase4Verdict = if ($gameplayRawExit -eq 0) { "PASS" } elseif ($gameplayRawExit -eq 2) { "PARTIAL_TAB_BLOCKED" } else { "FAIL" }
+        $phase4Verdict = if ($gameplayRawExit -eq 0) { "PASS" } elseif ($gameplayRawExit -eq 2) { "BLOCKED_BY_INPUT_AUTOMATION" } else { "FAIL" }
         $phase4Pass    = ($gameplayRawExit -eq 0)
     }
 
-    $phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED")
+    $phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED", "BLOCKED_BY_INPUT_AUTOMATION")
 
     if ($phase4Pass)                  { OK "Gameplay PASS ($phase4Criteria)" }
     elseif ($phase4TabBlocked)        { WARN "Gameplay PARTIAL: runtime+level+toggle PASS, TAB BLOCKED ($phase4Verdict)" }
@@ -199,11 +201,11 @@ Write-Host "  Phase 3 Runtime: $(if ($phase3Pass) {'PASS (12/12)'} else {'FAIL'}
 Write-Host "  Phase 4 Gameplay: $phase4Verdict"
 Write-Host ""
 
-$phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED")
+$phase4TabBlocked = $phase4Verdict -in @("PARTIAL_TAB_BLOCKED", "PARTIAL_TAB_UNCONFIRMED", "BLOCKED_BY_INPUT_AUTOMATION")
 $finalVerdict = if ($overallPass -and $phase4Pass) {
     "PASS"
 } elseif ($overallPass -and $phase4TabBlocked) {
-    "BLOCKED"
+    "BLOCKED_BY_INPUT_AUTOMATION"
 } else {
     "FAIL"
 }
@@ -244,12 +246,12 @@ $md += "| Phase 2: Build + Install ($buildShort) | $(if ($phase2Pass) {'PASS'} e
 $md += "| Phase 3: Runtime Probe (12/12) | $(if ($phase3Pass) {'PASS'} else {'FAIL'}) |"
 $md += "| Phase 4: Gameplay ($phase4Criteria criteria) | $phase4Verdict |"
 $md += ""
-if ($finalVerdict -eq "BLOCKED") {
+if ($finalVerdict -eq "BLOCKED_BY_INPUT_AUTOMATION") {
     $md += "## Blocker"
     $md += ""
-    $md += "- C18 TAB open/close remained unconfirmed by automation."
+    $md += "- C18 TAB open/close remained unconfirmed by synthetic input automation."
     $md += "- CenterOnPlayer evidence passed; native TAB confirmation is the only remaining Phase 2 gate."
-    $md += "- Overall is BLOCKED, not PASS, until TAB open/close is confirmed in log/JSON."
+    $md += "- Overall is BLOCKED_BY_INPUT_AUTOMATION, not PASS, until TAB open/close is confirmed in log/JSON."
     $md += ""
 }
 $md += "## Reports"
@@ -265,5 +267,5 @@ Write-Host "======================================================"
 Write-Host ""
 
 if ($finalVerdict -eq "PASS") { exit 0 }
-if ($finalVerdict -eq "BLOCKED") { exit 2 }
+if ($finalVerdict -eq "BLOCKED_BY_INPUT_AUTOMATION") { exit 2 }
 exit 1

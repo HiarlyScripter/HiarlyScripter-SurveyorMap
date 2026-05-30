@@ -1,69 +1,45 @@
-﻿# NEXT_ACTIONS.md
-# Next actions - updated 2026-05-30 after Codex Phase 2 attempt.
+# Next Actions
 
----
+Updated 2026-05-30 after C18 TAB automation diagnostic.
 
-## Current State
+## Current Result
 
-- Branch: `codex-exec`.
+Phase 2 - `CenterOnPlayer=true` is PASS.
+
 - Build/hash: `c0711156`.
-- Static Audit: **PASS 22/22**.
-- Build Release: **PASS 0 errors / 0 warnings**.
-- Installed DLL hash: **MATCH** (`c0711156`).
-- Runtime Probe: **PASS 12/12**.
-- Gameplay Validation: **PARTIAL 19/20**.
-- Overall: **BLOCKED** on TAB confirmation.
-- `ForceHudProofOfLife=false`.
+- Runtime Probe: PASS 12/12.
+- Gameplay Validation: PASS 20/20.
+- Overall: PASS.
 - `CenterOnPlayer=true`.
-- `centerOnPlayerApplied=true`.
-- `centerOnPlayerProjectionValid=true`.
-- `centerOnPlayerDistanceFromCenter=0`.
-- HUD/minimap remains visible in `Level`.
-- M toggle remains validated by log/JSON.
-- TAB synthetic key was sent, but native `MapToolController.Active` did not log open/close.
+- `ForceHudProofOfLife=false`.
+- HUD/minimap visible in `Level`.
+- M toggle validated by log/JSON.
+- TAB open/close validated by automation.
 
----
+## C18 Automation Finding
 
-## Immediate Next Objective
+- `keybd_event` does not satisfy C18 even with focus and TAB holds of 2s, 4s, and 6s.
+- `SendInput` with scancode input satisfies C18 with TAB hold of 2s.
+- Fresh evidence:
+  - `nativeMapTabOpen=True/False` log delta = `1/1`.
+  - `capturePaused/resumingCapture` log delta = `1/1`.
+- Manual fallback was implemented but not needed.
 
-Resolve Phase 2 C18 only:
+## Recommended Next Action
 
-- Confirm native TAB open/close with physical keyboard input while the game is in level, or
-- Improve the automation path so Unity InputSystem receives `<Keyboard>/tab`, then rerun gameplay validation.
+Claude can resume after reading:
 
-Do not expand feature scope until Phase 2 is full PASS.
+- `docs\HANDOFF_BACK_TO_CLAUDE.md`
+- `tools\last-gameplay-validation.md`
+- `tools\last-full-validation.md`
 
----
+Recommended next phase: plan the next explicitly requested phase only. `RevealRooms` and `ShowEnemies` remain out of scope until requested.
 
-## Commands To Resume
+## Guardrails
 
-Before editing or validating:
-
-```powershell
-.\tools\ai_start_work.ps1
-```
-
-Useful checks:
-
-```powershell
-.\tools\surveyormap_runtime_validate.ps1 -NoLaunch -VerboseReport
-.\tools\surveyormap_gameplay_validate.ps1 -NoLaunch -WaitSeconds 120 -VerboseReport
-```
-
-At the end of the next round:
-
-```powershell
-.\tools\ai_finish_work.ps1 -Message "<checkpoint message>"
-```
-
----
-
-## Out Of Scope
-
-- `RevealRooms=true`.
-- `ShowEnemies=true`.
-- Premium visual polish.
-- Package, Thunderstore, GitHub release, or publishing work.
-- Default r2modman profile.
-- Other mods.
-- Reference mod code copying.
+- Do not change `src\Core.cs` for TAB automation unless a future task explicitly requests mod logic changes.
+- Do not publish.
+- Do not push.
+- Do not package.
+- Do not touch r2modman UI.
+- Do not edit `mods.yml`.

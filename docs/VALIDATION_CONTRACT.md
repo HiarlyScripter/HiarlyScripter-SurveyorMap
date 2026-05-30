@@ -1,9 +1,10 @@
-﻿# VALIDATION_CONTRACT.md
-# Objective acceptance criteria by phase. Updated 2026-05-30.
+# VALIDATION_CONTRACT.md
+
+Objective acceptance criteria by phase. Updated 2026-05-30.
 
 ---
 
-## Phase 0 - Runtime Baseline (COMPLETE / PASS)
+## Phase 0 - Runtime Baseline (PASS)
 
 Current build/hash: `c0711156`.
 
@@ -24,9 +25,7 @@ Current build/hash: `c0711156`.
 
 ---
 
-## Phase 1 - Minimap Baseline In Level (COMPLETE / PASS)
-
-Phase 1 remains valid under build `c0711156`.
+## Phase 1 - Minimap Baseline In Level (PASS)
 
 | Criterion | Source | Status |
 |---|---|---|
@@ -42,18 +41,29 @@ Phase 1 remains valid under build `c0711156`.
 
 ---
 
-## Phase 2 - CenterOnPlayer=true (PARTIAL / BLOCKED)
+## Phase 2 - CenterOnPlayer=true (PASS)
 
-Gameplay criteria: 19/20 PASS.
+Gameplay criteria: 20/20 PASS.
 
 | # | Criterion | Source | Status |
 |---|---|---|---|
 | 1-17 | Runtime, level, minimap, and M toggle inherited criteria | JSON/log | PASS |
-| 18 | TAB open and close detected | MapToolController log/JSON | BLOCKED |
+| 18 | TAB open and close detected | Fresh log evidence | PASS |
 | 19 | CenterOnPlayer=true | JSON/config evidence | PASS |
 | 20 | Player-centered pan applied | JSON/log | PASS |
 
-Current Phase 2 evidence:
+C18 TAB automation contract:
+
+- The validator must focus the `REPO` window and record handle/title/process id.
+- The validator must try `keybd_event` holds of 2s, 4s, and 6s.
+- The validator must then try `SendInput` holds of 2s, 4s, and 6s until one confirms.
+- A C18 PASS requires fresh evidence after the attempt, not old log history.
+- Accepted evidence: log delta `nativeMapTabOpen=True/False`, JSON delta `tabOpenCount/tabCloseCount`, or capture log delta `capturePaused/resumingCapture`.
+- Current winning method: `SendInput`, hold `2s`, confirmed by fresh native map log delta `1/1`.
+- Manual fallback is optional and was not used for the current PASS.
+
+Phase 2 evidence:
+
 - `centerOnPlayer=true`.
 - `centerOnPlayerApplied=true`.
 - `centerOnPlayerProjectionValid=true`.
@@ -67,19 +77,13 @@ Current Phase 2 evidence:
 - `lastException=null`.
 - `lastErrorStack=null`.
 
-Blocking detail:
-- Synthetic TAB was sent by automation.
-- `MapToolController.Active` did not produce native TAB open/close log entries.
-- Local API inspection confirms the native map binding is Unity InputSystem `<Keyboard>/tab`.
-- Phase 2 is not full PASS until native TAB open/close is objectively confirmed.
-
 ---
 
 ## Future Phases
 
 | Phase | Objective | Gate |
 |---|---|---|
-| Phase 3 | RevealRooms=true | Only after Phase 2 full PASS |
+| Phase 3 | RevealRooms=true | Only when explicitly requested |
 | Phase 4 | ShowEnemies=true | Only after RevealRooms PASS |
 | Phase 5 | Premium visual polish | Only after gameplay features PASS |
 | Phase 6 | Package/release local | Only after all required feature phases PASS |
