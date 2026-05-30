@@ -1,69 +1,106 @@
 # VALIDATION_CONTRACT.md
-# Critérios objetivos de aceitação por fase. Atualizado 2026-05-30.
+# Objective acceptance criteria by phase. Updated 2026-05-30.
 
 ---
 
-## Fase 0 — Runtime Baseline (CONCLUÍDA ✅)
+## Overall Full Validation - COMPLETE / PASS
 
-**PASS em 2026-05-30. Build: `1f9b9583`.**
+Build/hash: `b46919ef`.
 
-Critérios (12/12 PASS):
+| Area | Required Result | Current Status |
+|---|---|---|
+| Static Audit | PASS 22/22 | PASS |
+| Build Release | PASS 0 errors / 0 warnings | PASS |
+| Runtime Probe | PASS 12/12 | PASS |
+| Gameplay Baseline | PASS 18/18 | PASS |
+| Overall | All areas PASS | PASS |
 
-| # | Critério | Fonte | Status |
+---
+
+## Phase 0 - Runtime Baseline (COMPLETE / PASS)
+
+Build/hash: `b46919ef`.
+
+Criteria (12/12 PASS):
+
+| # | Criterion | Source | Status |
 |---|---|---|---|
-| 1 | hashMatch: build == installed | Hash MD5 | ✅ |
-| 2 | modEnabled: SurveyorMap enabled no mods.yml | mods.yml | ✅ |
-| 3 | BuildTag atual no LogOutput.log | Log | ✅ |
-| 4 | JSON runtime criado e fresh (<30 min) | Arquivo | ✅ |
-| 5 | pluginAwakeCalled=true | JSON | ✅ |
-| 6 | pluginUpdateCount > 0 | JSON | ✅ |
-| 7 | pluginOnGuiCount > 0 | JSON | ✅ |
-| 8 | runtimeProbeCreated=true | JSON | ✅ |
-| 9 | runtimeProbeUpdateCount > 0 | JSON | ✅ |
-| 10 | runtimeProbeOnGuiCount > 0 | JSON | ✅ |
-| 11 | lastException=null | JSON | ✅ |
-| 12 | lastErrorStack=null | JSON | ✅ |
+| 1 | hashMatch: build == installed | Hash/log evidence | PASS |
+| 2 | modEnabled: SurveyorMap enabled | Runtime evidence | PASS |
+| 3 | BuildTag `b46919ef` in LogOutput.log | Log | PASS |
+| 4 | runtime-state.json exists and is fresh for pass | File/JSON | PASS |
+| 5 | pluginAwakeCalled=true | JSON | PASS |
+| 6 | pluginUpdateCount > 0 | JSON | PASS |
+| 7 | pluginOnGuiCount > 0 | JSON | PASS |
+| 8 | runtimeProbeCreated=true | JSON | PASS |
+| 9 | runtimeProbeUpdateCount > 0 | JSON | PASS |
+| 10 | runtimeProbeOnGuiCount > 0 | JSON | PASS |
+| 11 | lastException=null | JSON | PASS |
+| 12 | lastErrorStack=null | JSON | PASS |
 
 ---
 
-## Fase 1 — Minimap Baseline em Level (PENDENTE)
+## Phase 1 - Minimap Baseline In Level (COMPLETE / PASS)
 
-**Gate para avançar:** todos os critérios abaixo verdadeiros após entrar em level solo.
+Build/hash: `b46919ef`.
 
-| # | Critério | Fonte |
+Gameplay Baseline PASS 18/18:
+
+| # | Criterion | Source | Status |
+|---|---|---|---|
+| 1-12 | All Phase 0 criteria remain PASS | Runtime/gameplay reports | PASS |
+| 13 | currentRunState=Level | JSON/log | PASS |
+| 14 | ForceHudProofOfLife=false | JSON/config evidence | PASS |
+| 15 | hudVisible=true in level | JSON/log | PASS |
+| 16 | nativeTextureReady=true | JSON/log | PASS |
+| 17 | M toggle detected | JSON/log | PASS |
+| 18 | TAB open and close detected | Log | PASS |
+
+Additional Phase 1 evidence:
+- `nativeMapCaptureReady=true`.
+- `minimapBaselineVisible=true`.
+- `lastCaptureReason=native-map-rendered`.
+- `lastGateReason=gameplay-active`.
+- TAB open/close log count is `1/1`.
+- `lastException=null`.
+- `lastErrorStack=null`.
+
+---
+
+## Phase 2 - CenterOnPlayer=true (NEXT)
+
+Gate to start:
+- Overall Full Validation is PASS.
+- Phase 1 remains PASS.
+- Acting agent has run `tools\ai_start_work.ps1`.
+
+Expected PASS evidence:
+- `CenterOnPlayer=true` is active.
+- Player-centered minimap behavior is validated in level.
+- No crash or runtime exception.
+- `lastException=null`.
+- `lastErrorStack=null`.
+- Evidence is captured in log/JSON.
+
+---
+
+## Future Phases
+
+| Phase | Objective | Gate |
 |---|---|---|
-| 1-12 | Todos os critérios da Fase 0 | (herdados) |
-| 13 | currentRunState=Level | JSON |
-| 14 | hudVisible=true | JSON |
-| 15 | nativeTextureReady=true | JSON |
-| 16 | nativeMapCaptureReady=true | JSON |
-| 17 | lastCaptureReason=native-map-rendered | JSON |
-| 18 | lastException=null (mantido no level) | JSON |
+| Phase 3 | RevealRooms=true | Only after CenterOnPlayer PASS |
+| Phase 4 | ShowEnemies=true | Only after RevealRooms PASS |
+| Phase 5 | Premium visual polish | Only after gameplay features PASS |
+| Phase 6 | Package/release local | Only after all required feature phases PASS |
 
-**TAB evidence:** validação manual obrigatória (não automatizável via script):
-- nativeTabOpen=true quando TAB abre → log
-- capturePaused → log
-- nativeTabOpen=false quando TAB solta → log
-- captureResumed → log
+For now, `RevealRooms=false` and `ShowEnemies=false` remain out of scope.
 
 ---
 
-## Fases futuras (só após Fase 1 PASS)
+## Permanent Rules
 
-| Fase | Objetivo | Gate |
-|---|---|---|
-| Fase 2 | Toggle M liga/desliga | Canvas ativa/desativa + toggleKeyDetectedCount > 0 |
-| Fase 3 | CenterOnPlayer=true | Player centralizado, sem crash |
-| Fase 4 | RevealRooms=true | Overlay de salas aparecendo |
-| Fase 5 | ShowEnemies=true | Marcadores de inimigos (abordagem clay-BetterMap) |
-| Fase 6 | Visual premium | Sem definição ainda |
-| Fase 7 | Package/release local | Todas anteriores PASS |
+- Do not declare a feature working without objective log or JSON evidence.
+- Do not advance phase without all required criteria satisfied.
+- Do not use visual/manual observation as the only validation.
+- Do not publish, push, or package unless explicitly requested in a future round.
 
----
-
-## Regras permanentes
-
-- Não declarar feature funcionando sem evidência objetiva (log ou JSON)
-- Não avançar de fase sem todos os critérios satisfeitos
-- Não usar teste visual manual como única validação
-- Relatório 12/12 = exatamente 12 critérios verificados objetivamente

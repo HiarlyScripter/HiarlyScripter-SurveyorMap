@@ -1,9 +1,18 @@
 # Current Handoff
 
-- Current state: baseline minimap gameplay PASS b46919ef.
-- Runtime Probe PASS.
-- Gameplay Baseline PASS.
+- Codex Executor contingency round is active on branch `codex-exec`.
+- Documentation sync after Gameplay Baseline PASS is complete.
+- Current state: Phase 1 baseline minimap PASS.
+- Build/hash: `b46919ef`.
+- Static Audit: PASS 22/22.
+- Build Release: PASS 0 errors / 0 warnings.
+- Runtime Probe: PASS 12/12.
+- Gameplay Baseline: PASS 18/18.
+- Overall full validation: PASS.
 - `ForceHudProofOfLife=false`.
-- Next step: close `last-full-validation` docs if still pending; then Phase 2 CenterOnPlayer.
-- RevealRooms, ShowEnemies, and premium visual polish are out of scope for now.
+- Minimap baseline validated in `Level`.
+- M toggle validated by log/JSON.
+- TAB open/close validated by log.
+- `RevealRooms=false` and `ShowEnemies=false` remain out of scope.
+- Next step for Claude: read `docs\HANDOFF_BACK_TO_CLAUDE.md`, then plan Phase 2 - `CenterOnPlayer=true`.
 

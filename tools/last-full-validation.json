@@ -1,20 +1,39 @@
 {
   "timestamp": "2026-05-30T15:20:34Z",
   "verdict": "PASS",
+  "overall": "PASS",
   "buildHash": "b46919ef",
-  "phase1Audit": "PASS",
-  "phase1Detail": "22/22 checks passed",
-  "phase2Build": "PASS",
-  "phase2Detail": "0 errors, 0 warnings. dotnet build -c Release.",
-  "phase3Runtime": "PASS",
-  "phase3Detail": "12/12 criteria. pluginUpdateCount=17124, runtimeProbeUpdateCount=17124, lastException=null.",
-  "phase4Gameplay": "PASS",
-  "phase4Detail": "18/18 criteria. Level confirmed, hudVisible=true, nativeTextureReady=true, minimapBaselineVisible=true, TAB 1/1.",
+  "phaseResults": {
+    "staticAudit": {
+      "verdict": "PASS",
+      "criteriaPass": 22,
+      "criteriaTotal": 22,
+      "detail": "Static Audit PASS 22/22"
+    },
+    "buildRelease": {
+      "verdict": "PASS",
+      "errors": 0,
+      "warnings": 0,
+      "detail": "Build Release PASS 0 errors / 0 warnings"
+    },
+    "runtimeProbe": {
+      "verdict": "PASS",
+      "criteriaPass": 12,
+      "criteriaTotal": 12,
+      "detail": "Runtime Probe PASS 12/12"
+    },
+    "gameplayBaseline": {
+      "verdict": "PASS",
+      "criteriaPass": 18,
+      "criteriaTotal": 18,
+      "detail": "Gameplay Baseline PASS 18/18"
+    }
+  },
   "consolidatedEvidence": {
     "buildTag": "b46919ef",
-    "buildTagInLog": true,
     "hashMatch": true,
     "modEnabled": true,
+    "buildTagInLog": true,
     "currentRunState": "Level",
     "isLevel": true,
     "hudVisible": true,
@@ -25,38 +44,37 @@
     "lastGateReason": "gameplay-active",
     "forceHudProofOfLife": false,
     "toggleKeyDetectedCount": 4,
+    "toggleLogCount": 8,
     "tabOpenLogCount": 1,
     "tabCloseLogCount": 1,
     "tabStatus": "DETECTED",
     "mKeysSent": 2,
     "tabKeysSent": 1,
-    "pluginUpdateCount": 17124,
-    "pluginOnGuiCount": 34424,
-    "runtimeProbeUpdateCount": 17124,
-    "runtimeProbeOnGuiCount": 34424,
+    "pluginUpdateCount": 23731,
+    "pluginOnGuiCount": 47656,
+    "runtimeProbeUpdateCount": 23731,
+    "runtimeProbeOnGuiCount": 47656,
     "lastException": null,
     "lastErrorStack": null
   },
-  "recentLogEvidence": [
-    "[Info :SurveyorMap] HUD toggle applied. visibleBefore=True, visibleByToggle=False, hudActive=False",
-    "[Info :SurveyorMap] HUD toggle applied. visibleBefore=False, visibleByToggle=True, hudActive=False",
-    "[Info :SurveyorMap] HUD activation success. hudActive=True, canvasActive=True, textureSize=200x200",
-    "[Info :SurveyorMap] HUD visible=True, reason=Level, toggle=True, nativeTextureReady=True, canvasActive=True",
-    "[Info :SurveyorMap] NativeMapState: nativeMapTabOpen=True, capturePaused=True",
-    "[Info :SurveyorMap] NativeMapState: nativeMapTabOpen=False, resumingCapture=True"
-  ],
-  "reports": {
-    "runtime": "tools/last-runtime-validation.json",
-    "gameplay": "tools/last-gameplay-validation.json",
-    "full": "tools/last-full-validation.json"
+  "sourceReports": {
+    "runtimeMarkdown": "tools/last-runtime-validation.md",
+    "runtimeJson": "tools/last-runtime-validation.json",
+    "gameplayMarkdown": "tools/last-gameplay-validation.md",
+    "gameplayJson": "tools/last-gameplay-validation.json",
+    "fullMarkdown": "tools/last-full-validation.md",
+    "fullJson": "tools/last-full-validation.json"
   },
-  "checkpoint": "releases/gameplay-baseline-pass-20260530-152034",
-  "notes": [
-    "Core.cs not modified in this sync round.",
-    "DLL not reinstalled in this sync round.",
-    "Full validation evidence sourced from last-runtime-validation.json (PASS 12/12) and last-gameplay-validation.json (PASS 18/18).",
-    "Game was running with build b46919ef at time of evidence collection.",
-    "Level entry was ASSISTED (user entered level, pressed Enter). Keys M x2 and TAB sent automatically.",
-    "TAB detected via log: nativeMapTabOpen=True + nativeMapTabOpen=False both present."
+  "scopeNotes": [
+    "Documentation sync only.",
+    "Core.cs was not modified.",
+    "DLL was not modified.",
+    "No build was run.",
+    "No DLL was installed.",
+    "r2modman was not touched.",
+    "No push or publish was performed.",
+    "RevealRooms and ShowEnemies remain out of scope.",
+    "Next phase is Phase 2: CenterOnPlayer=true."
   ]
 }
+

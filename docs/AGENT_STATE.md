@@ -1,115 +1,119 @@
 # AGENT_STATE.md
-# Fonte de verdade — atualizado 2026-05-30 após PASS runtime baseline.
+# Source of truth - updated 2026-05-30 after Gameplay Baseline PASS.
 
 ---
 
-## Identidade do projeto
+## Project Identity
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| Nome | SurveyorMap |
-| Autor | HiarlyScripter |
-| GUID | com.hiarlyscripter.surveyormap |
-| Versão | 1.0.0 |
+| Name | SurveyorMap |
+| Author | HiarlyScripter |
+| GUID | `com.hiarlyscripter.surveyormap` |
+| Version | `1.0.0` |
 
 ---
 
-## Caminhos críticos
+## Critical Paths
 
-| Item | Caminho |
+| Item | Path |
 |---|---|
-| Raiz do projeto | `C:\Users\Hiarly\.claude\PROJETOS\REPO\HiarlyScripter-SurveyorMap` |
-| Source | `...\src\Core.cs` |
-| Build DLL | `...\build\SurveyorMap.dll` |
-| Perfil de teste | `C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test` |
-| DLL instalada | `...\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll` |
-| Config ativa | `...\REPO - Test\BepInEx\config\com.hiarlyscripter.surveyormap.cfg` |
-| LogOutput.log | `...\REPO - Test\BepInEx\LogOutput.log` |
-| JSON diagnóstico | `...\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\diagnostics\surveyormap-runtime-state.json` |
+| Claude project root | `C:\Users\Hiarly\.claude\PROJETOS\REPO\HiarlyScripter-SurveyorMap` |
+| Codex Exec worktree | `C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec` |
+| Source | `src\Core.cs` |
+| Runtime validation | `tools\last-runtime-validation.*` |
+| Gameplay validation | `tools\last-gameplay-validation.*` |
+| Full validation | `tools\last-full-validation.*` |
 
 ---
 
-## Build atual
+## Current Build
 
-| Campo | Valor |
+| Field | Value |
 |---|---|
-| Hash curto | `1f9b9583` (2026-05-30) |
-| Build DLL | `...\build\SurveyorMap.dll` |
-| Instalada | `...\REPO - Test\...\SurveyorMap.dll` (hash igual) |
-| Package DLL | `...\package\plugins\...\SurveyorMap.dll` (sincronizada em 2026-05-30) |
+| Build/hash | `b46919ef` |
+| Full validation | PASS |
+| Static Audit | PASS 22/22 |
+| Build Release | PASS 0 errors / 0 warnings |
+| Runtime Probe | PASS 12/12 |
+| Gameplay Baseline | PASS 18/18 |
 
 ---
 
-## Estado funcional CONFIRMADO
+## Confirmed Functional State
 
 | Item | Status |
 |---|---|
-| BepInEx carrega SurveyorMap | ✅ Confirmado (BuildTag no log) |
-| Plugin.Awake() roda | ✅ Confirmado |
-| Plugin.OnEnable() roda | ✅ Confirmado |
-| Plugin.Update() roda | ✅ Confirmado (pluginUpdateCount=6241+) |
-| Plugin.OnGUI() roda | ✅ Confirmado (pluginOnGuiCount=12480+) |
-| RuntimeProbe.Update() roda | ✅ Confirmado (runtimeProbeUpdateCount=6241+) |
-| RuntimeProbe.OnGUI() roda | ✅ Confirmado (runtimeProbeOnGuiCount=12480+) |
-| JSON runtime escrito | ✅ Confirmado |
-| lastException=null | ✅ Confirmado |
-| scene=DontDestroyOnLoad | ✅ Confirmado |
-| hideFlags=HideAndDontSave | ✅ Confirmado |
-| SurveyorMap enabled no mods.yml | ✅ Confirmado |
-| TAB nativo funciona | ✅ Confirmado (observação anterior) |
+| BepInEx loads SurveyorMap | PASS, BuildTag found in log |
+| Plugin.Awake() runs | PASS |
+| Plugin.Update() runs | PASS |
+| Plugin.OnGUI() runs | PASS |
+| RuntimeProbe.Update() runs | PASS |
+| RuntimeProbe.OnGUI() runs | PASS |
+| Runtime JSON exists and is fresh for the pass | PASS |
+| currentRunState | `Level` |
+| hudVisible in level | `true` |
+| nativeTextureReady in level | `true` |
+| nativeMapCaptureReady in level | `true` |
+| minimapBaselineVisible in level | `true` |
+| lastCaptureReason | `native-map-rendered` |
+| lastGateReason | `gameplay-active` |
+| ForceHudProofOfLife | `false` |
+| M toggle | Validated by log/JSON |
+| TAB open/close | Validated by log, open/close `1/1` |
+| lastException | `null` |
+| lastErrorStack | `null` |
 
 ---
 
-## Estado pendente (próxima rodada)
+## Baseline Configuration
 
-| Item | Status |
-|---|---|
-| Minimap aparece no level | ⏳ Não validado ainda |
-| NativeMapCapture ready no level | ⏳ Não validado |
-| M detectado no level | ⏳ Não validado |
-| TAB open/close no level com evidência de log | ⏳ Não validado |
-| nativeTextureReady=true no level | ⏳ Não validado |
-
----
-
-## Config baseline atual (aplicada 2026-05-30)
-
-```
-ForceHudProofOfLife   = false  ← diagnóstico desativado
-CenterOnPlayer        = false
-RevealRooms           = false
-RevealMode            = Off
-ShowEnemies           = false
-EnemyDetectionMode    = Off
-SafeMode              = true
-CaptureFPS            = 5
-RenderTextureSize     = 256
+```ini
+ForceHudProofOfLife = false
+CenterOnPlayer = false
+RevealRooms = false
+RevealMode = Off
+ShowEnemies = false
+EnemyDetectionMode = Off
+SafeMode = true
+CaptureFPS = 5
+RenderTextureSize = 256
 ```
 
 ---
 
-## Fixes que resolveram o runtime baseline
+## Completed Phase
 
-| Fix | O que resolveu |
-|---|---|
-| `hideFlags = HideFlags.HideAndDontSave` | Plugin destruído antes do primeiro frame — DontDestroyOnLoad sozinho não bastava |
-| `Log = Logger` antes de qualquer `LogHelper.Info` | NullReferenceException em Awake() matava o plugin |
-| `CultureInfo.InvariantCulture` no JSON writer | Vírgula PT-BR no número quebrava parsing do JSON |
-| `mods.yml` SurveyorMap enabled=true | Plugin estava desabilitado no perfil |
+Phase 1 baseline minimap is complete with PASS.
 
----
-
-## Checkpoint estável disponível
-
-`releases/runtime-baseline-pass-20260530-140333`
-(Core.cs + DLL + relatório PASS do runtime baseline)
+Evidence:
+- Static Audit PASS 22/22.
+- Build Release PASS 0 errors / 0 warnings.
+- Runtime Probe PASS 12/12.
+- Gameplay Baseline PASS 18/18.
+- Minimap baseline validated in `Level`.
+- M validated by log/JSON.
+- TAB open/close validated by log.
 
 ---
 
-## Proibido (sem exceção)
+## Next Phase
 
-- Publicar no Thunderstore
-- Push no GitHub
-- Mexer em outros mods ou no perfil Default
-- Copiar código de dig-Minimap ou clay-BetterMap
-- Declarar feature funcionando sem evidência objetiva de log/JSON
+Next phase: Phase 2 - `CenterOnPlayer=true`.
+
+Keep out of scope for now:
+- `RevealRooms=true`
+- `ShowEnemies=true`
+- Premium visual polish
+- Package/Thunderstore/GitHub publication work
+
+---
+
+## Permanent Rules
+
+- Do not publish to Thunderstore.
+- Do not push to GitHub.
+- Do not touch other mods.
+- Do not declare a feature working without objective log/JSON evidence.
+- Do not edit `src\Core.cs` during documentation-only sync rounds.
+

@@ -1,59 +1,74 @@
 # NEXT_ACTIONS.md
-# Próximas ações — atualizado 2026-05-30 pós-hardening.
+# Next actions - updated 2026-05-30 after full validation PASS.
 
 ---
 
-## Estado atual
+## Current State
 
-- Runtime baseline: **PASS** (build `1f9b9583`)
-- Config baseline: **aplicada** (ForceHudProofOfLife=false, SafeMode=true, etc.)
-- Validador: **corrigido** (12 critérios, freshness check, JSON enxuto)
-- Fase 1 (minimap em level): **pendente**
+- Phase 1 baseline minimap: **COMPLETE / PASS**.
+- Build/hash: `b46919ef`.
+- Static Audit: **PASS 22/22**.
+- Build Release: **PASS 0 errors / 0 warnings**.
+- Runtime Probe: **PASS 12/12**.
+- Gameplay Baseline: **PASS 18/18**.
+- Overall: **PASS**.
+- `ForceHudProofOfLife=false`.
+- Minimap baseline was validated while `currentRunState=Level`.
+- M toggle was validated by log/JSON.
+- TAB open/close was validated by log.
 
 ---
 
-## Próximo objetivo: Fase 1 — Minimap baseline em level
+## Next Objective
 
-### Comandos obrigatórios
+Phase 2 - `CenterOnPlayer=true`.
+
+Only begin Phase 2 after the acting agent reads:
+- `docs\START_HERE_FOR_AI.md`
+- `docs\AI_GIT_PROTOCOL.md`
+- `docs\HANDOFF_CURRENT.md`
+- `docs\VALIDATION_CONTRACT.md`
+- `tools\last-full-validation.md`
+
+Before editing, run:
+
 ```powershell
-cd "C:\Users\Hiarly\.claude\PROJETOS\REPO\HiarlyScripter-SurveyorMap"
-.\tools\surveyormap_static_audit.ps1
-.\tools\surveyormap_full_validate.ps1 -LaunchGame -WaitSeconds 90 -VerboseReport
+.\tools\ai_start_work.ps1
 ```
 
-### O que o usuário precisa fazer
-1. Abrir r2modman → REPO - Test → Start modded
-2. Aguardar menu carregar
-3. Criar partida solo
-4. Entrar no level e aguardar ~10s
-5. Opcionalmente: pressionar M para testar toggle
-6. Opcionalmente: pressionar TAB para testar mapa nativo
-7. Fechar o jogo ou aguardar validação
+At the end of the round, run:
 
-### Critérios de PASS da Fase 1
-Ver `docs/VALIDATION_CONTRACT.md` — Fase 1 (critérios 13-18).
+```powershell
+.\tools\ai_finish_work.ps1 -Message "<checkpoint message>"
+```
 
 ---
 
-## Escopo permitido agora
+## Scope Allowed For Next Implementation Round
 
-- Validar minimap baseline visual em level
-- Ajustar config se necessário (não reativar features)
-- Corrigir bugs de captura se nativeTextureReady=false
-
-## Fora de escopo
-
-- CenterOnPlayer, RevealRooms, ShowEnemies
-- Visual premium
-- Package/Thunderstore/GitHub
+- Enable and validate `CenterOnPlayer=true`.
+- Keep the existing Phase 1 minimap baseline intact.
+- Preserve objective log/JSON validation for every claim.
 
 ---
 
-## Guia de diagnóstico se Fase 1 FAIL
+## Out Of Scope
 
-| Sintoma | Causa provável | Ação |
-|---|---|---|
-| currentRunState != Level | Gate de level não abre | Verificar SemiFunc.RunIsLevel() + GameDirector state |
-| hudVisible=false | Toggle off ou gate fechado | Verificar playerApiReady, enableMinimap, nativeTextureReady |
-| nativeTextureReady=false | Camera não encontrada ou activeTexture null | Ver log: `Dirt Finder Map Camera missing` ou `native activeTexture not ready` |
-| lastCaptureReason != native-map-rendered | Outro estado da captura | Ler campo lastCaptureReason no JSON |
+- `RevealRooms=true`.
+- `ShowEnemies=true`.
+- Premium visual polish.
+- Package, Thunderstore, GitHub release, or publishing work.
+- r2modman profile changes unless a future explicit validation round requires them.
+- Any unrelated mod.
+
+---
+
+## Phase 2 PASS Expectations
+
+The exact Phase 2 criteria live in `docs\VALIDATION_CONTRACT.md`. At minimum:
+- Phase 1 remains PASS.
+- `CenterOnPlayer=true` is active.
+- Player-centered minimap behavior is validated without crash.
+- Runtime still reports `lastException=null` and `lastErrorStack=null`.
+- Validation evidence is captured in log/JSON.
+
