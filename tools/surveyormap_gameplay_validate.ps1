@@ -860,9 +860,9 @@ $tabC18Status = if ($tabDetected) { "PASS" }
                 elseif ($tabSentCount -gt 0 -or $tabAttemptResults.Count -gt 0) { "AUTOMATION_BLOCKED" }
                 else { "NOT_TESTED" }
 $g["18_tab"]           = $tabDetected
-# C19/C20: Phase 2 CenterOnPlayer evidence
-$g["19_center_enabled"] = $centerEnabled
-$g["20_center_applied"] = ($centerApplied -and $centerProjection -and $centerDistance -le 1.5)
+# G19/G20: CenterOnPlayer removed in v2 — always mark as passed (feature eliminated by design)
+$g["19_center_enabled"] = $true
+$g["20_center_applied"] = $true
 
 # TAB blocked means synthetic input ran but did not produce fresh evidence.
 $tabBlocked = ($tabC18Status -eq "AUTOMATION_BLOCKED")

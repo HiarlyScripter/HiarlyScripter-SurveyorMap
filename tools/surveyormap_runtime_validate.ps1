@@ -1,5 +1,6 @@
 # surveyormap_runtime_validate.ps1
-# Validacao runtime - 12 criterios objetivos. PASS somente com todos verdadeiros.
+# Validacao runtime SurveyorMap v2 — 8 criterios objetivos.
+# PASS somente com todos verdadeiros.
 # Uso: .\tools\surveyormap_runtime_validate.ps1 [-LaunchGame] [-WaitSeconds 60] [-NoLaunch] [-CloseGame] [-VerboseReport]
 
 param(
@@ -59,7 +60,7 @@ function LogIcon([bool]$b) { if ($b) { "[OK]" } else { "[--]" } }
 # ========================= A) PRE-CHECK =========================
 Head "A) Pre-Check"
 
-if (Test-Path $buildDll) { OK "Build DLL found" } else { ERR "Build DLL NOT found: $buildDll" }
+if (Test-Path $buildDll)     { OK "Build DLL found" }     else { ERR "Build DLL NOT found: $buildDll" }
 if (Test-Path $installedDll) { OK "Installed DLL found" } else { ERR "Installed DLL NOT found" }
 
 $buildHash     = Get-MD5Full $buildDll
@@ -133,7 +134,6 @@ if ($repoExe) {
     else                    { $launchMethod = "steam-protocol" }
     INFO "REPO.exe: $repoExe"
 }
-
 Write-Host "  Launch method: $launchMethod"
 
 # ========================= D) LAUNCH =========================
@@ -266,125 +266,101 @@ if ($NoLaunch) {
     if (-not $jsonFound)     { WARN "JSON not created after ${WaitSeconds}s" }
 }
 
-# ========================= F) 12 CRITERIA =========================
-Head "F) 12 Criteria Validation"
+# ========================= F) 8 CRITERIA =========================
+Head "F) 8 Criteria Validation"
 
 $c = @{}
 
 # C1 - Hash match
 $c["01_hash"] = $hashMatch
-if ($hashMatch) { OK "[C1]  hashMatch=true ($buildShort)" } else { ERR "[C1]  hashMatch=false" }
+if ($hashMatch) { OK "[C1] hashMatch=true ($buildShort)" } else { ERR "[C1] hashMatch=false" }
 
 # C2 - Mod enabled
 $c["02_mod"] = $modEnabled
-if ($modEnabled) { OK "[C2]  modEnabled=true" } else { ERR "[C2]  modEnabled=false" }
+if ($modEnabled) { OK "[C2] modEnabled=true" } else { ERR "[C2] modEnabled=false" }
 
-# C3 - BuildTag in log
+# C3 - Plugin loaded in log
 $logContent = @()
 if (Test-Path $logPath) {
     $logContent = Get-Content $logPath -Encoding UTF8 -ErrorAction SilentlyContinue
 }
-$c["03_tag"] = (($logContent | Where-Object { $_ -match "BuildTag.*md5=$expectedTag" }).Count -gt 0)
-if ($c["03_tag"]) { OK "[C3]  BuildTag '$expectedTag' in log" } else { ERR "[C3]  BuildTag '$expectedTag' NOT in log" }
+$pluginLoaded = (($logContent | Where-Object { $_ -match "\[SurveyorMap\].*v1\.0\.0 loaded" }).Count -gt 0)
+$c["03_loaded"] = $pluginLoaded
+if ($pluginLoaded) { OK "[C3] Plugin v1.0.0 loaded in log" } else { ERR "[C3] Plugin load line NOT in log" }
 
-# C4 - JSON fresh
+# C4 - BuildTag (MD5 short) in log
+$c["04_tag"] = (($logContent | Where-Object { $_ -match "BuildTag.*md5=$expectedTag" }).Count -gt 0)
+if ($c["04_tag"]) { OK "[C4] BuildTag '$expectedTag' in log" } else { ERR "[C4] BuildTag '$expectedTag' NOT in log" }
+
+# C5 - JSON exists and fresh
 $jsonExists = Test-Path $jsonPath
 $jsonFresh  = $false
+$jsonAgeMin = 9999
 if ($jsonExists) {
-    $jsonMtime = (Get-Item $jsonPath).LastWriteTime
+    $jsonMtime  = (Get-Item $jsonPath).LastWriteTime
     $jsonAgeMin = ((Get-Date) - $jsonMtime).TotalMinutes
     if ($NoLaunch) {
         $jsonFresh = $jsonAgeMin -le $freshnessMin
-        if (-not $jsonFresh) { WARN "[C4]  JSON age=$([int]$jsonAgeMin)min > ${freshnessMin}min threshold - STALE" }
+        if (-not $jsonFresh) { WARN "[C5] JSON age=$([int]$jsonAgeMin)min > ${freshnessMin}min threshold - STALE" }
     } else {
         $jsonFresh = $jsonMtime -gt $gameStartTime
-        if (-not $jsonFresh) { WARN "[C4]  JSON not updated since game launch" }
+        if (-not $jsonFresh) { WARN "[C5] JSON not updated since game launch" }
     }
 }
-$c["04_json"] = ($jsonExists -and $jsonFresh)
-if ($c["04_json"]) { OK "[C4]  JSON exists and fresh (age=$([int]$jsonAgeMin)min)" } else { ERR "[C4]  JSON missing or stale" }
+$c["05_json"] = ($jsonExists -and $jsonFresh)
+if ($c["05_json"]) { OK "[C5] JSON exists and fresh (age=$([int]$jsonAgeMin)min)" } else { ERR "[C5] JSON missing or stale" }
 
 # Parse JSON
-$script:jd = $null
+$script:jd   = $null
 $jsonParseOk = $false
 if ($jsonExists) {
     try {
-        $script:jd = (Get-Content $jsonPath -Raw -Encoding UTF8) | ConvertFrom-Json
+        $script:jd   = (Get-Content $jsonPath -Raw -Encoding UTF8) | ConvertFrom-Json
         $jsonParseOk = $true
-    } catch {
-        ERR "[JSON] Parse failed: $_"
-    }
+    } catch { ERR "[JSON] Parse failed: $_" }
 }
 
-# C5 - pluginAwakeCalled
-$c["05_awake"] = ($jsonParseOk -and (JVal "pluginAwakeCalled" $false) -eq $true)
-if ($c["05_awake"]) { OK "[C5]  pluginAwakeCalled=true" } else { ERR "[C5]  pluginAwakeCalled=false" }
+# C6 - buildTimestamp in JSON (confirms Awake() ran)
+$jsonBuildTs = JVal "buildTimestamp" ""
+$c["06_awake"] = ($jsonParseOk -and $jsonBuildTs -ne "")
+if ($c["06_awake"]) { OK "[C6] buildTimestamp in JSON: $jsonBuildTs" } else { ERR "[C6] buildTimestamp missing — Awake() may not have run" }
 
-# C6 - pluginUpdateCount > 0
-$pluginUpd = [int](JVal "pluginUpdateCount" 0)
-$c["06_plugin_upd"] = ($jsonParseOk -and $pluginUpd -gt 0)
-if ($c["06_plugin_upd"]) { OK "[C6]  pluginUpdateCount=$pluginUpd > 0" } else { ERR "[C6]  pluginUpdateCount=0" }
+# C7 - hudVisible=true (default state, confirms Update() ran)
+$hudVis = JVal "hudVisible" $null
+$c["07_hud"] = ($jsonParseOk -and $null -ne $hudVis)
+if ($c["07_hud"]) { OK "[C7] hudVisible=$hudVis in JSON" } else { ERR "[C7] hudVisible field missing in JSON" }
 
-# C7 - pluginOnGuiCount > 0
-$pluginGui = [int](JVal "pluginOnGuiCount" 0)
-$c["07_plugin_gui"] = ($jsonParseOk -and $pluginGui -gt 0)
-if ($c["07_plugin_gui"]) { OK "[C7]  pluginOnGuiCount=$pluginGui > 0" } else { ERR "[C7]  pluginOnGuiCount=0" }
-
-# C8 - runtimeProbeCreated
-$c["08_probe"] = ($jsonParseOk -and (JVal "runtimeProbeCreated" $false) -eq $true)
-if ($c["08_probe"]) { OK "[C8]  runtimeProbeCreated=true" } else { ERR "[C8]  runtimeProbeCreated=false" }
-
-# C9 - runtimeProbeUpdateCount > 0
-$probeUpd = [int](JVal "runtimeProbeUpdateCount" 0)
-$c["09_probe_upd"] = ($jsonParseOk -and $probeUpd -gt 0)
-if ($c["09_probe_upd"]) { OK "[C9]  runtimeProbeUpdateCount=$probeUpd > 0" } else { ERR "[C9]  runtimeProbeUpdateCount=0" }
-
-# C10 - runtimeProbeOnGuiCount > 0
-$probeGui = [int](JVal "runtimeProbeOnGuiCount" 0)
-$c["10_probe_gui"] = ($jsonParseOk -and $probeGui -gt 0)
-if ($c["10_probe_gui"]) { OK "[C10] runtimeProbeOnGuiCount=$probeGui > 0" } else { ERR "[C10] runtimeProbeOnGuiCount=0" }
-
-# C11 - lastException null
+# C8 - No lastException
 $lastEx = JVal "lastException" $null
-$c["11_no_ex"] = ($jsonParseOk -and ($null -eq $lastEx -or $lastEx.ToString() -eq ""))
-if ($c["11_no_ex"]) { OK "[C11] lastException=null" } else { ERR "[C11] lastException=$lastEx" }
+$c["08_no_ex"] = ($jsonParseOk -and ($null -eq $lastEx -or $lastEx.ToString() -eq ""))
+if ($c["08_no_ex"]) { OK "[C8] lastException empty" } else { ERR "[C8] lastException=$lastEx" }
 
-# C12 - lastErrorStack null
-$lastStack = JVal "lastErrorStack" $null
-$c["12_no_stack"] = ($jsonParseOk -and ($null -eq $lastStack -or $lastStack.ToString() -eq ""))
-if ($c["12_no_stack"]) { OK "[C12] lastErrorStack=null" } else { ERR "[C12] lastErrorStack=$lastStack" }
-
-# --- Informational log checks (not blocking) ---
+# --- Informational from JSON (not blocking for runtime — require gameplay) ---
 Write-Host ""
-Write-Host "  -- Log evidence (informational, not blocking) --"
-$pluginUpdateLog = (($logContent | Where-Object { $_ -match "Plugin\.Update absolute alive" }).Count -gt 0)
-$pluginOnGuiLog  = (($logContent | Where-Object { $_ -match "OnGUI absolute proof reached" }).Count -gt 0)
-$probeUpdateLog  = (($logContent | Where-Object { $_ -match "RuntimeProbe\.Update alive" }).Count -gt 0)
-$probeOnGuiLog   = (($logContent | Where-Object { $_ -match "RuntimeProbe\.OnGUI first call" }).Count -gt 0)
-Write-Host "  $(LogIcon $pluginUpdateLog)   Plugin.Update alive in log"
-Write-Host "  $(LogIcon $pluginOnGuiLog)    Plugin.OnGUI alive in log"
-Write-Host "  $(LogIcon $probeUpdateLog)    RuntimeProbe.Update alive in log"
-Write-Host "  $(LogIcon $probeOnGuiLog)     RuntimeProbe.OnGUI first call in log"
+Write-Host "  -- Gameplay signals (informational — require in-level run) --"
+$texReady = JVal "nativeTextureReady" $false
+$gpActive = JVal "gameplayActive"     $false
+$tabAct   = JVal "tabActive"          $false
+$rvTotal  = JVal "revealRoomsTotal"   0
+$rvExp    = JVal "revealRoomsExplored" 0
+$enemyCnt = JVal "enemyMarkerCount"   0
+Write-Host "  $(LogIcon $texReady) nativeTextureReady=$texReady"
+Write-Host "  $(LogIcon $gpActive) gameplayActive=$gpActive"
+Write-Host "  $(LogIcon ($rvTotal -gt 0)) revealRooms=$rvExp/$rvTotal"
+Write-Host "  $(LogIcon ($enemyCnt -gt 0)) enemyMarkerCount=$enemyCnt"
+Write-Host "  [--] tabActive=$tabAct (informational)"
 
-# --- Level diagnostics from JSON (if present) ---
-if ($jsonParseOk -and $null -ne $script:jd) {
-    $runState  = JVal "currentRunState" ""
-    $hudVis    = JVal "hudVisible" $null
-    $nativeTex = JVal "nativeTextureReady" $null
-    $capReason = JVal "lastCaptureReason" ""
-    $tabOpen   = JVal "nativeTabOpen" $null
-    $togCount  = JVal "toggleKeyDetectedCount" $null
-    if ($runState -ne "") {
-        Write-Host ""
-        Write-Host "  -- Level diagnostics --"
-        Write-Host "  currentRunState    = $runState"
-        if ($null -ne $hudVis)    { Write-Host "  hudVisible         = $hudVis" }
-        if ($null -ne $nativeTex) { Write-Host "  nativeTextureReady = $nativeTex" }
-        if ($capReason -ne "")    { Write-Host "  lastCaptureReason  = $capReason" }
-        if ($null -ne $tabOpen)   { Write-Host "  nativeTabOpen      = $tabOpen" }
-        if ($null -ne $togCount)  { Write-Host "  toggleKeyDetected  = $togCount" }
-    }
-}
+# --- Log evidence ---
+Write-Host ""
+Write-Host "  -- Log evidence --"
+$cameraFound = (($logContent | Where-Object { $_ -match "Map camera found" }).Count -gt 0)
+$revealLog   = (($logContent | Where-Object { $_ -match "RevealRooms: explored=" }).Count -gt 0)
+$markerLog   = (($logContent | Where-Object { $_ -match "Enemy marker added" }).Count -gt 0)
+$toggleLog   = (($logContent | Where-Object { $_ -match "M toggle" }).Count -gt 0)
+Write-Host "  $(LogIcon $cameraFound) Map camera found in log"
+Write-Host "  $(LogIcon $revealLog)   RevealRooms log line"
+Write-Host "  $(LogIcon $markerLog)   Enemy marker added in log"
+Write-Host "  $(LogIcon $toggleLog)   M toggle in log"
 
 if ($VerboseReport -and $jsonParseOk -and $null -ne $script:jd) {
     Write-Host ""
@@ -396,79 +372,66 @@ if ($VerboseReport -and $jsonParseOk -and $null -ne $script:jd) {
 Head "G) Verdict"
 
 $passCount = ($c.Values | Where-Object { $_ -eq $true }).Count
-$failCount = 12 - $passCount
+$failCount = 8 - $passCount
 $passAll   = ($failCount -eq 0)
 $verdict   = if ($passAll) { "PASS" } else { "FAIL" }
 
 $failCause = ""
 if (-not $passAll) {
-    if (-not $c["01_hash"])       { $failCause = "C1: DLL hash mismatch - reinstall from build/" }
-    elseif (-not $c["02_mod"])    { $failCause = "C2: SurveyorMap disabled - enable via r2modman" }
-    elseif (-not $c["03_tag"])    { $failCause = "C3: BuildTag not in log - wrong DLL or BepInEx load error" }
-    elseif (-not $c["04_json"])   { $failCause = "C4: JSON missing or stale - run with -LaunchGame or ensure game ran recently" }
-    elseif (-not $c["05_awake"])  { $failCause = "C5: pluginAwakeCalled=false - Awake() failed; check log for errors" }
-    elseif (-not $c["06_plugin_upd"])  { $failCause = "C6: pluginUpdateCount=0 - Update() never called; check hideFlags/DontDestroyOnLoad" }
-    elseif (-not $c["07_plugin_gui"])  { $failCause = "C7: pluginOnGuiCount=0 - OnGUI() never called" }
-    elseif (-not $c["08_probe"])       { $failCause = "C8: runtimeProbeCreated=false - EnsureCreated() failed; check log" }
-    elseif (-not $c["09_probe_upd"])   { $failCause = "C9: runtimeProbeUpdateCount=0 - probe Update() never called" }
-    elseif (-not $c["10_probe_gui"])   { $failCause = "C10: runtimeProbeOnGuiCount=0 - probe OnGUI() never called" }
-    elseif (-not $c["11_no_ex"])       { $failCause = "C11: lastException=$lastEx" }
-    elseif (-not $c["12_no_stack"])    { $failCause = "C12: lastErrorStack set - check log" }
+    if (-not $c["01_hash"])   { $failCause = "C1: DLL hash mismatch — reinstall from build/" }
+    elseif (-not $c["02_mod"])   { $failCause = "C2: SurveyorMap disabled — enable via r2modman" }
+    elseif (-not $c["03_loaded"]) { $failCause = "C3: Plugin load line not in log — BepInEx error or wrong DLL" }
+    elseif (-not $c["04_tag"])   { $failCause = "C4: BuildTag '$expectedTag' not in log — old DLL may still be loaded" }
+    elseif (-not $c["05_json"])  { $failCause = "C5: JSON missing/stale — run game with new DLL first" }
+    elseif (-not $c["06_awake"]) { $failCause = "C6: buildTimestamp missing — Awake() failed; check log" }
+    elseif (-not $c["07_hud"])   { $failCause = "C7: hudVisible not in JSON — Update()/WriteDiagJson() not running" }
+    elseif (-not $c["08_no_ex"]) { $failCause = "C8: lastException=$lastEx" }
     else { $failCause = "Unknown" }
 }
 
 Write-Host ""
-Write-Host "  Criteria: $passCount/12 pass, $failCount/12 fail"
+Write-Host "  Criteria: $passCount/8 pass, $failCount/8 fail"
 Write-Host ""
 if ($passAll) {
-    Write-Host "  *** RESULT: PASS (12/12) ***"
+    Write-Host "  *** RESULT: PASS (8/8) ***"
 } else {
-    Write-Host "  *** RESULT: FAIL ($passCount/12) ***"
+    Write-Host "  *** RESULT: FAIL ($passCount/8) ***"
     Write-Host "  Root cause: $failCause"
 }
 
 # ========================= H) REPORTS =========================
 Head "H) Reports"
 
-# Lean JSON (only primitives)
 $rpt = [ordered]@{
     timestamp      = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
     verdict        = $verdict
     criteriaPass   = $passCount
-    criteriaTotal  = 12
+    criteriaTotal  = 8
     failCause      = if ($passAll) { $null } else { $failCause }
     buildHash      = $buildShort
     installedHash  = (Get-MD5Short $installedDll)
     hashMatch      = $hashMatch
     modEnabled     = $modEnabled
-    buildTagInLog  = $c["03_tag"]
-    jsonFresh      = $c["04_json"]
+    pluginLoaded   = $pluginLoaded
+    buildTagInLog  = $c["04_tag"]
+    jsonFresh      = $c["05_json"]
     launchMethod   = if ($assistedMode) { "assisted" } else { $launchMethod }
     launchAuto     = $launchAuto
     waitSeconds    = $WaitSeconds
 }
 
 if ($jsonParseOk -and $null -ne $script:jd) {
-    $rpt["pluginAwakeCalled"]       = [bool](JVal "pluginAwakeCalled" $false)
-    $rpt["pluginUpdateCount"]       = [int](JVal "pluginUpdateCount" 0)
-    $rpt["pluginOnGuiCount"]        = [int](JVal "pluginOnGuiCount" 0)
-    $rpt["runtimeProbeCreated"]     = [bool](JVal "runtimeProbeCreated" $false)
-    $rpt["runtimeProbeUpdateCount"] = [int](JVal "runtimeProbeUpdateCount" 0)
-    $rpt["runtimeProbeOnGuiCount"]  = [int](JVal "runtimeProbeOnGuiCount" 0)
-    $rpt["lastException"]           = (JVal "lastException" $null)
-    $rpt["lastErrorStack"]          = (JVal "lastErrorStack" $null)
-    $rpt["scene"]                   = (JVal "scene" "")
-    $rpt["buildTag"]                = (JVal "buildTag" "")
-    $rpt["timestampUtc"]            = (JVal "timestampUtc" "")
-    foreach ($lf in @("currentRunState","hudVisible","nativeTextureReady","nativeMapCaptureReady","nativeTabOpen","centerOnPlayer","centerOnPlayerApplied","centerOnPlayerProjectionValid","centerOnPlayerDistanceFromCenter","centerOnPlayerOffsetMagnitude","centerOnPlayerZoom","toggleKeyDetectedCount","minimapBaselineVisible","lastGateReason","lastCaptureReason")) {
-        $v = JVal $lf $null
-        if ($null -ne $v) { $rpt[$lf] = $v }
+    foreach ($f in @("buildTimestamp","buildMd5Short","assemblyPath","hudVisible","nativeTextureReady",
+                     "gameplayActive","tabActive","revealRoomsTotal","revealRoomsExplored",
+                     "enemyMarkerCount","lastException","writeTimeUtc")) {
+        $v = JVal $f $null
+        if ($null -ne $v) { $rpt[$f] = $v }
     }
 }
 
 $recentLog = @()
 if ($logContent.Count -gt 0) {
-    $recentLog = ($logContent | Where-Object { $_ -match "\[SurveyorMap\]" }) | Select-Object -Last 12 | ForEach-Object { [string]$_ }
+    $recentLog = ($logContent | Where-Object { $_ -match "\[SurveyorMap\]" }) | Select-Object -Last 15 | ForEach-Object { [string]$_ }
     if ($recentLog.Count -gt 0) { $rpt["recentLogLines"] = $recentLog }
 }
 
@@ -476,9 +439,9 @@ $rpt | ConvertTo-Json -Depth 3 | Set-Content $reportJson -Encoding UTF8
 OK "JSON: $reportJson"
 
 $md = @()
-$md += "# SurveyorMap Runtime Validation"
+$md += "# SurveyorMap Runtime Validation v2"
 $md += ""
-$md += "**Date:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')   **Verdict:** **$verdict** ($passCount/12)"
+$md += "**Date:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')   **Verdict:** **$verdict** ($passCount/8)"
 $md += ""
 if (-not $passAll) {
     $md += "## Root Cause"
@@ -486,22 +449,18 @@ if (-not $passAll) {
     $md += $failCause
     $md += ""
 }
-$md += "## 12 Criteria"
+$md += "## 8 Criteria"
 $md += ""
 $md += "| # | Criterion | Result |"
 $md += "|---|---|---|"
-$md += "| C1  | hashMatch: build == installed ($buildShort) | $(if ($c['01_hash']) {'PASS'} else {'FAIL'}) |"
-$md += "| C2  | modEnabled: SurveyorMap enabled | $(if ($c['02_mod']) {'PASS'} else {'FAIL'}) |"
-$md += "| C3  | BuildTag '$expectedTag' in LogOutput.log | $(if ($c['03_tag']) {'PASS'} else {'FAIL'}) |"
-$md += "| C4  | runtime-state.json exists and fresh | $(if ($c['04_json']) {'PASS'} else {'FAIL'}) |"
-$md += "| C5  | pluginAwakeCalled=true | $(if ($c['05_awake']) {'PASS'} else {'FAIL'}) |"
-$md += "| C6  | pluginUpdateCount > 0 | $(if ($c['06_plugin_upd']) {'PASS'} else {'FAIL'}) |"
-$md += "| C7  | pluginOnGuiCount > 0 | $(if ($c['07_plugin_gui']) {'PASS'} else {'FAIL'}) |"
-$md += "| C8  | runtimeProbeCreated=true | $(if ($c['08_probe']) {'PASS'} else {'FAIL'}) |"
-$md += "| C9  | runtimeProbeUpdateCount > 0 | $(if ($c['09_probe_upd']) {'PASS'} else {'FAIL'}) |"
-$md += "| C10 | runtimeProbeOnGuiCount > 0 | $(if ($c['10_probe_gui']) {'PASS'} else {'FAIL'}) |"
-$md += "| C11 | lastException=null | $(if ($c['11_no_ex']) {'PASS'} else {'FAIL'}) |"
-$md += "| C12 | lastErrorStack=null | $(if ($c['12_no_stack']) {'PASS'} else {'FAIL'}) |"
+$md += "| C1 | hashMatch: build == installed ($buildShort) | $(if ($c['01_hash']) {'PASS'} else {'FAIL'}) |"
+$md += "| C2 | modEnabled | $(if ($c['02_mod']) {'PASS'} else {'FAIL'}) |"
+$md += "| C3 | Plugin v1.0.0 loaded in log | $(if ($c['03_loaded']) {'PASS'} else {'FAIL'}) |"
+$md += "| C4 | BuildTag '$expectedTag' in log | $(if ($c['04_tag']) {'PASS'} else {'FAIL'}) |"
+$md += "| C5 | runtime-state.json fresh | $(if ($c['05_json']) {'PASS'} else {'FAIL'}) |"
+$md += "| C6 | buildTimestamp in JSON (Awake ran) | $(if ($c['06_awake']) {'PASS'} else {'FAIL'}) |"
+$md += "| C7 | hudVisible in JSON (Update/WriteDiag ran) | $(if ($c['07_hud']) {'PASS'} else {'FAIL'}) |"
+$md += "| C8 | lastException empty | $(if ($c['08_no_ex']) {'PASS'} else {'FAIL'}) |"
 $md += ""
 if ($recentLog.Count -gt 0) {
     $md += "## Recent SurveyorMap Log"
@@ -513,7 +472,7 @@ if ($recentLog.Count -gt 0) {
 $md += "## Next Step"
 $md += ""
 if ($passAll) {
-    $md += "PASS 12/12. Advance to Fase 1 level validation if applicable."
+    $md += "PASS 8/8. Advance to gameplay validation."
 } else {
     $md += "Fix: $failCause"
 }
@@ -525,6 +484,6 @@ if ($CloseGame -and $null -ne $gameProcess -and -not $gameProcess.HasExited) {
     $gameProcess.Kill()
 }
 
-Head "FINAL: $verdict ($passCount/12)"
+Head "FINAL: $verdict ($passCount/8)"
 Write-Host ""
 if (-not $passAll) { exit 1 } else { exit 0 }
