@@ -4,29 +4,26 @@ using System.Text;
 
 namespace SurveyorMap
 {
-    /// <summary>
-    /// Lightweight shared diagnostic state, written to JSON for validators.
-    /// Keep this separate from rendering logic.
-    /// </summary>
     internal static class SurveyorMapDiagnostics
     {
-        public static string AssemblyPath       = "";
-        public static string BuildTimestamp     = "";
-        public static string BuildMd5Short      = "";
-        public static string DiagnosticsDir     = "";
-        public static bool   NativeTextureReady = false;
-        public static bool   HudVisible         = true;
-        public static bool   TabActive          = false;
-        public static bool   GameplayActive     = false;
-        public static int    TabOpenCount       = 0;
-        public static int    TabCloseCount      = 0;
+        public static string AssemblyPath        = "";
+        public static string BuildTimestamp      = "";
+        public static string BuildMd5Short       = "";
+        public static string DiagnosticsDir      = "";
+        public static bool   NativeTextureReady  = false;
+        public static bool   HudVisible          = true;
+        public static bool   TabActive           = false;
+        public static bool   GameplayActive      = false;
+        public static int    TabOpenCount        = 0;
+        public static int    TabCloseCount       = 0;
         public static int    ToggleKeyDetectedCount = 0;
-        public static int    UpdateCount        = 0;
-        public static int    OnGuiCount         = 0;
-        public static int    RevealRoomsTotal   = 0;
+        public static int    UpdateCount         = 0;
+        public static int    OnGuiCount          = 0;
+        public static int    RevealRoomsTotal    = 0;
         public static int    RevealRoomsExplored = 0;
-        public static int    EnemyMarkerCount   = 0;
-        public static string LastException      = "";
+        public static int    EnemyMarkerCount    = 0;  // set from EnemyMapMarkerService.ActiveMarkerCount
+        public static string RevealRoomsMode     = "Off";
+        public static string LastException       = "";
 
         public static void WriteDiagJson()
         {
@@ -57,13 +54,14 @@ namespace SurveyorMap
                 // Toggle tracking
                 sb.AppendLine($"  \"toggleKeyDetectedCount\": {ToggleKeyDetectedCount},");
                 // Feature results
+                sb.AppendLine($"  \"revealRoomsMode\": {J(RevealRoomsMode)},");
                 sb.AppendLine($"  \"revealRoomsTotal\": {RevealRoomsTotal},");
                 sb.AppendLine($"  \"revealRoomsExplored\": {RevealRoomsExplored},");
                 sb.AppendLine($"  \"enemyMarkerCount\": {EnemyMarkerCount},");
                 // Counters
                 sb.AppendLine($"  \"pluginUpdateCount\": {UpdateCount},");
                 sb.AppendLine($"  \"pluginOnGuiCount\": {OnGuiCount},");
-                // Compatibility shims for old validators
+                // Compatibility shims for validators
                 sb.AppendLine($"  \"pluginAwakeCalled\": true,");
                 sb.AppendLine($"  \"runtimeProbeCreated\": {B(UpdateCount > 0)},");
                 sb.AppendLine($"  \"runtimeProbeUpdateCount\": {UpdateCount},");

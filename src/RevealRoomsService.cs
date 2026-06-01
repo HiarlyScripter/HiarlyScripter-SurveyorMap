@@ -11,13 +11,19 @@ namespace SurveyorMap
         [HarmonyPostfix]
         private static void Postfix()
         {
-            if (!SurveyorMapPlugin.Settings.RevealRooms.Value) return;
+            // Clear stale enemy markers from previous level before new spawns begin
+            EnemyMapMarkerService.ClearAll();
+
+            var mode = SurveyorMapPlugin.Settings.RevealRoomsMode.Value;
+            if (!string.Equals(mode, "NativeGlobal", StringComparison.OrdinalIgnoreCase)) return;
+
+            // NativeGlobal: calls RoomVolume.SetExplored() — also reveals in native TAB map (opt-in)
             SurveyorMapPlugin.Instance.StartCoroutine(RevealDelayed());
         }
 
         private static IEnumerator RevealDelayed()
         {
-            // Brief delay — GenerateDone fires before all RoomVolumes may be fully initialized
+            // Brief delay — GenerateDone fires before all RoomVolumes are fully initialized
             yield return new WaitForSeconds(0.5f);
             ApplyRevealRooms();
         }
@@ -27,18 +33,12 @@ namespace SurveyorMap
             try
             {
                 var rooms = UnityEngine.Object.FindObjectsOfType<RoomVolume>();
-                int total       = rooms.Length;
-                int explored    = 0;
-                int skipped     = 0;
+                int total = rooms.Length, explored = 0, skipped = 0;
 
                 foreach (var room in rooms)
                 {
                     if (room == null) { skipped++; continue; }
-                    try
-                    {
-                        bool result = room.SetExplored();
-                        if (result) explored++;
-                    }
+                    try   { if (room.SetExplored()) explored++; }
                     catch (Exception ex)
                     {
                         skipped++;
@@ -49,7 +49,7 @@ namespace SurveyorMap
                 SurveyorMapDiagnostics.RevealRoomsTotal    = total;
                 SurveyorMapDiagnostics.RevealRoomsExplored = explored;
                 SurveyorMapPlugin.Log.LogInfo(
-                    $"[SurveyorMap] RevealRooms: explored={explored}/{total} skipped={skipped}");
+                    $"[SurveyorMap] RevealRooms NativeGlobal: explored={explored}/{total} skipped={skipped}");
             }
             catch (Exception ex)
             {

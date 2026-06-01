@@ -5,6 +5,7 @@ namespace SurveyorMap
 {
     public class SurveyorMapConfig
     {
+        // --- Minimap ---
         public readonly ConfigEntry<bool>    EnableMinimap;
         public readonly ConfigEntry<KeyCode> ToggleKey;
         public readonly ConfigEntry<float>   Width;
@@ -13,8 +14,20 @@ namespace SurveyorMap
         public readonly ConfigEntry<float>   PosY;
         public readonly ConfigEntry<float>   Opacity;
         public readonly ConfigEntry<float>   Zoom;
-        public readonly ConfigEntry<bool>    RevealRooms;
+
+        // --- Features ---
+        // Off = safe default (TAB vanilla). NativeGlobal = calls SetExplored (also reveals in TAB).
+        public readonly ConfigEntry<string>  RevealRoomsMode;
         public readonly ConfigEntry<bool>    ShowEnemies;
+
+        // --- Enemy markers ---
+        public readonly ConfigEntry<float>   EnemyMarkerSize;
+        // DifficultyShape = shape+color per difficulty. Circle = all circles (colored by difficulty).
+        public readonly ConfigEntry<string>  EnemyMarkerShapeMode;
+
+        // --- Edit mode ---
+        public readonly ConfigEntry<bool>    EditModeEnabled;
+        public readonly ConfigEntry<KeyCode> EditModeKey;
 
         public SurveyorMapConfig(ConfigFile cfg)
         {
@@ -34,10 +47,21 @@ namespace SurveyorMap
                 "Minimap opacity (0 = invisible, 1 = fully opaque).");
             Zoom = cfg.Bind("Minimap", "Zoom", 2.25f,
                 "Orthographic size of the native map camera while minimap is visible.");
-            RevealRooms = cfg.Bind("Features", "RevealRooms", true,
-                "Reveal all rooms on level load via native RoomVolume.SetExplored().");
+
+            RevealRoomsMode = cfg.Bind("Features", "RevealRoomsMode", "Off",
+                "Off = safe default (TAB stays vanilla). NativeGlobal = reveals via RoomVolume.SetExplored() — also affects the native TAB map.");
             ShowEnemies = cfg.Bind("Features", "ShowEnemies", true,
                 "Show enemy positions on the map using native MapCustom markers.");
+
+            EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 1.0f,
+                "Scale multiplier for enemy markers (0.1–3.0). Default 1.0.");
+            EnemyMarkerShapeMode = cfg.Bind("Features", "EnemyMarkerShapeMode", "DifficultyShape",
+                "DifficultyShape = distinct shape+color per difficulty tier. Circle = all circles colored by difficulty.");
+
+            EditModeEnabled = cfg.Bind("EditMode", "EditModeEnabled", true,
+                "Enable the in-game minimap edit mode (F8 by default).");
+            EditModeKey = cfg.Bind("EditMode", "EditModeKey", KeyCode.F8,
+                "Key to enter/exit minimap edit mode. In edit mode: drag to move, resize from corner, scroll to zoom.");
         }
     }
 }

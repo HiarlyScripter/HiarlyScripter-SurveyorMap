@@ -82,7 +82,7 @@ Check "No targetTexture assignment"                 $noTarget "targetTexture hij
 # === Config ===
 Check "SurveyorMapConfig.cs exists"                 (SrcFile "SurveyorMapConfig.cs") ""
 Check "EnableMinimap config entry"                  (SrcContains '"EnableMinimap"') ""
-Check "RevealRooms config entry"                    (SrcContains '"RevealRooms"') ""
+Check "RevealRoomsMode config entry"                (SrcContains '"RevealRoomsMode"') ""
 Check "ShowEnemies config entry"                    (SrcContains '"ShowEnemies"') ""
 
 # === RevealRooms ===
