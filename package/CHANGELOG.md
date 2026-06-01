@@ -1,46 +1,57 @@
 # Changelog - SurveyorMap
 
----
+Este arquivo possui versao em Portugues e Ingles. A versao em Portugues vem primeiro; a English version is below.
 
-## v1.0.0 - 2026-06-01 (patch)
+This file includes Portuguese and English versions. Portuguese comes first; English version is below.
 
-**Compatibilidade:** R.E.P.O. · BepInEx `5.4.2100`
+## Portugues
 
-### Enemy Markers
+### v1.0.0 local - 2026-06-01
 
-- Registry-based tracking per `EnemyParent.instanceID` — no duplicate markers.
-- Marker cleanup on despawn, death (`EnemyHealth.DeathRPC` / `DeathImpulseRPC`), and periodic sweep every 2 seconds.
-- Sweep also removes markers whose host `GameObject` is null, inactive, or has `EnemyHealth.dead=true`.
-- Marker shape and color per difficulty tier: circle (easy/green), diamond (medium/yellow), triangle (hard/orange), star (elite/red).
-- New configs: `EnemyMarkerSize` (scale multiplier), `EnemyMarkerShapeMode` (DifficultyShape | Circle).
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
-### In-game Edit Mode
+- Rebuild v2 com arquitetura limpa baseada no espelho do mapa nativo.
+- Minimap persistente via camera nativa `activeTexture`.
+- Comportamento TAB-safe: o minimapa some enquanto o TAB nativo esta aberto.
+- Toggle `M` para mostrar/esconder o minimapa.
+- Marcadores de inimigos por `MapCustom`, com cleanup por registry, morte, despawn, inatividade e varredura periodica.
+- Marcadores com formas e cores por dificuldade.
+- Configs `EnemyMarkerSize` e `EnemyMarkerShapeMode`.
+- Modo de edicao com `F8`: mover, redimensionar, ajustar zoom, `Shift + wheel`, `+ / -`, e salvar config ao sair.
+- `RevealRoomsMode` substitui o booleano antigo:
+  - `Vanilla` e o padrao e nao chama `RoomVolume.SetExplored()`;
+  - `NativeGlobal` revela via `RoomVolume.SetExplored()` e afeta TAB + minimap;
+  - `MinimapOnly` permanece bloqueado/nao implementado.
+- ZIP local atualizado em `releases/HiarlyScripter-SurveyorMap-v1.0.0-local.zip`.
 
-- Press `F8` to enter/exit edit mode.
-- Drag the minimap to reposition; drag the bottom-right corner to resize; scroll wheel adjusts zoom.
-- Values (X/Y/W/H/Zoom) shown as overlay while in edit mode.
-- Config is saved automatically on exit.
-- New configs: `EditModeEnabled`, `EditModeKey`.
+### v1.0.0 local - 2026-05-31
 
-### RevealRooms
+- Rebuild inicial da arquitetura v2.
+- Remocao de RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, overlays falsos, RenderTexture proprio e proof HUD.
+- Baseline de minimap nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
 
-- `RevealRooms` boolean replaced by `RevealRoomsMode` string: `Vanilla` (default) | `NativeGlobal`.
-- Default `Off` preserves the native TAB map exactly as vanilla (no `SetExplored` calls).
-- `NativeGlobal` is the previous behavior (opt-in): reveals all rooms via `RoomVolume.SetExplored()` — also affects the TAB map.
-- MinimapOnly reveal (TAB stays vanilla): **BLOCKED** — no safe implementation found without mutating `RoomVolume.Explored`.
+## English
 
----
+### v1.0.0 local - 2026-06-01
 
-## v1.0.0 - 2026-05-31
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
-**Compatibilidade:** R.E.P.O. · BepInEx `5.4.2100`
+- v2 rebuild with a clean native-map mirror architecture.
+- Persistent minimap through the native map camera `activeTexture`.
+- TAB-safe behavior: the minimap hides while the native TAB map is open.
+- `M` toggle to show/hide the minimap.
+- Enemy markers through `MapCustom`, with registry cleanup on death, despawn, inactivity, and periodic sweep.
+- Enemy marker shapes and colors by difficulty.
+- `EnemyMarkerSize` and `EnemyMarkerShapeMode` configs.
+- `F8` edit mode: move, resize, adjust zoom, `Shift + wheel`, `+ / -`, and save config on exit.
+- `RevealRoomsMode` replaces the old boolean:
+  - `Vanilla` is the default and does not call `RoomVolume.SetExplored()`;
+  - `NativeGlobal` reveals through `RoomVolume.SetExplored()` and affects TAB + minimap;
+  - `MinimapOnly` remains blocked/not implemented.
+- Local ZIP refreshed at `releases/HiarlyScripter-SurveyorMap-v1.0.0-local.zip`.
 
-### Complete Rebuild (v2 Architecture)
+### v1.0.0 local - 2026-05-31
 
-- Replaced previous implementation with a clean native-map mirror.
-- Persistent minimap mirrors the native `Dirt Finder Map Camera` activeTexture — no fake overlays, no custom geometry.
-- M key toggles the minimap HUD.
-- TAB map is fully unaffected; minimap hides automatically while TAB is open.
-- RevealRooms via native `RoomVolume.SetExplored()`.
-- ShowEnemies via native `MapCustom` markers with cleanup on despawn.
-- Removed: RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, fake room overlays, owned RenderTexture, cyan proof HUD.
+- Initial v2 architecture rebuild.
+- Removed RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, fake overlays, owned RenderTexture, and proof HUD.
+- Baseline native minimap, M toggle, TAB-safe behavior, global RevealRooms, and initial ShowEnemies.
