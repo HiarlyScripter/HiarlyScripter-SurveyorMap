@@ -24,7 +24,7 @@
 
 ### RevealRooms
 
-- `RevealRooms` boolean replaced by `RevealRoomsMode` string: `Off` (default) | `NativeGlobal`.
+- `RevealRooms` boolean replaced by `RevealRoomsMode` string: `Vanilla` (default) | `NativeGlobal`.
 - Default `Off` preserves the native TAB map exactly as vanilla (no `SetExplored` calls).
 - `NativeGlobal` is the previous behavior (opt-in): reveals all rooms via `RoomVolume.SetExplored()` — also affects the TAB map.
 - MinimapOnly reveal (TAB stays vanilla): **BLOCKED** — no safe implementation found without mutating `RoomVolume.Explored`.

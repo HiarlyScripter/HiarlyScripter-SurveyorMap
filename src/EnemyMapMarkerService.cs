@@ -69,8 +69,11 @@ namespace SurveyorMap
         private static FieldInfo    _mceField;      // MapCustom.mapCustomEntity
         private static FieldInfo    _diffField;     // EnemyParent.difficulty
         private static FieldInfo    _spawnedField;  // EnemyParent.Spawned
-        private static FieldInfo    _deadField;     // EnemyHealth.dead
-        private static FieldInfo    _hpField;       // EnemyHealth.healthCurrent
+        private static FieldInfo    _deadField;          // EnemyHealth.dead
+        private static FieldInfo    _hpField;            // EnemyHealth.healthCurrent
+        private static FieldInfo    _autoAddField;       // MapCustom.autoAdd
+        private static FieldInfo    _currentStateField;  // Enemy.CurrentState
+        private static PropertyInfo _currentStateProp;
 
         // Colors per difficulty category (white-tinted via MapCustom.color)
         private static readonly Color[] _colors = new Color[]
@@ -109,6 +112,15 @@ namespace SurveyorMap
             _deadField = eh.GetField("dead",          bf) ?? eh.GetField("Dead",          bf);
             _hpField   = eh.GetField("healthCurrent", bf) ?? eh.GetField("HealthCurrent", bf)
                       ?? eh.GetField("HP",            bf) ?? eh.GetField("hp",            bf);
+
+            _autoAddField = typeof(MapCustom).GetField("autoAdd", bf)
+                         ?? typeof(MapCustom).GetField("AutoAdd", bf);
+
+            _currentStateField = typeof(Enemy).GetField("CurrentState", bf)
+                              ?? typeof(Enemy).GetField("currentState", bf);
+            if (_currentStateField == null)
+                _currentStateProp = typeof(Enemy).GetProperty("CurrentState", bf)
+                                 ?? typeof(Enemy).GetProperty("currentState", bf);
         }
 
         private static Enemy GetEnemy(EnemyParent parent)
@@ -132,10 +144,10 @@ namespace SurveyorMap
                     if (raw != null)
                     {
                         int d = Convert.ToInt32(raw);
-                        if (d <= 1) return MarkerCategory.Easy;
+                        if (d == 1) return MarkerCategory.Easy;
                         if (d == 2) return MarkerCategory.Medium;
                         if (d == 3) return MarkerCategory.Hard;
-                        return MarkerCategory.Elite;
+                        return MarkerCategory.Elite; // 0, 4+ or unknown → elite/red
                     }
                 }
             }
@@ -260,6 +272,9 @@ namespace SurveyorMap
                 var color  = _colors[(int)cat];
 
                 var mc = host.GetComponent<MapCustom>() ?? host.AddComponent<MapCustom>();
+                // Disable auto-registration before explicit AddCustom to prevent duplicate entries
+                if (_autoAddField != null)
+                    try { _autoAddField.SetValue(mc, false); } catch { }
                 mc.sprite = sprite;
                 mc.color  = color;
 
@@ -346,6 +361,19 @@ namespace SurveyorMap
                 {
                     var raw = _spawnedField.GetValue(e.Parent);
                     if (raw is bool b && !b) return true;
+                }
+
+                // Enemy.CurrentState == Despawn
+                if (_currentStateField != null || _currentStateProp != null)
+                {
+                    try
+                    {
+                        var state = _currentStateField != null
+                            ? _currentStateField.GetValue(e.Enemy)
+                            : _currentStateProp.GetValue(e.Enemy);
+                        if (state != null && state.ToString() == "Despawn") return true;
+                    }
+                    catch { }
                 }
 
                 // EnemyHealth checks (cached component)

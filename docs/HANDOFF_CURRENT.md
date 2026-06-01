@@ -46,7 +46,7 @@
 
 ### Pendência 1 — RevealRooms (PARCIALMENTE CONCLUÍDA)
 - `RevealRooms: bool` substituído por `RevealRoomsMode: string`
-- Default: `"Off"` — TAB vanilla preservado, sem `SetExplored()` chamado
+- Default: `"Vanilla"` — TAB vanilla preservado, sem `SetExplored()` chamado
 - `"NativeGlobal"` = comportamento anterior (opt-in) — também revela no TAB
 - `MinimapOnly` = **BLOQUEADO** — sem implementação segura encontrada
 - README e CHANGELOG documentam status honesto

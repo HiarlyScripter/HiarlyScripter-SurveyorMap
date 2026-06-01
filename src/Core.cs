@@ -210,79 +210,126 @@ namespace SurveyorMap
         {
             var evt         = Event.current;
             var minimapRect = new Rect(x, y, w, h);
-            var resizeRect  = new Rect(x + w - 16f, y + h - 16f, 16f, 16f);
+            // 24x24 resize handle at bottom-right for easier grabbing
+            var resizeRect  = new Rect(x + w - 24f, y + h - 24f, 24f, 24f);
+            int ctrlId      = GUIUtility.GetControlID(FocusType.Passive);
 
             // Yellow border
             GUI.color = new Color(1f, 0.85f, 0f, 0.9f);
             GUI.Box(minimapRect, GUIContent.none);
 
-            // Resize handle (bottom-right corner)
+            // Resize handle indicator
+            GUI.color = new Color(1f, 0.85f, 0f, 1f);
             GUI.DrawTexture(resizeRect, Texture2D.whiteTexture);
             GUI.color = Color.white;
 
             // Info label above minimap
-            var info = $"X:{Settings.PosX.Value:0}  Y:{Settings.PosY.Value:0}  W:{Settings.Width.Value:0}  H:{Settings.Height.Value:0}  Z:{Settings.Zoom.Value:0.00}  [F8 to exit]";
-            var labelRect = new Rect(x, y - 20f, w + 80f, 18f);
+            var info = $"X:{Settings.PosX.Value:0}  Y:{Settings.PosY.Value:0}" +
+                       $"  W:{Settings.Width.Value:0}  H:{Settings.Height.Value:0}" +
+                       $"  Z:{Settings.Zoom.Value:0.00}" +
+                       $"  [drag=move] [corner=resize] [+/-=size] [wheel=zoom] [Shift+wheel=size] [F8=exit]";
+            var labelRect = new Rect(x, y - 20f, w + 200f, 18f);
             GUI.color = new Color(1f, 0.85f, 0f, 1f);
             GUI.Label(labelRect, info);
             GUI.color = Color.white;
 
-            // Mouse events
-            if (evt.type == EventType.MouseDown && evt.button == 0)
+            // Use GetTypeForControl for reliable drag event delivery
+            switch (evt.GetTypeForControl(ctrlId))
             {
-                if (resizeRect.Contains(evt.mousePosition))
-                {
-                    _editResizeActive = true;
-                    _editDragOrigin   = evt.mousePosition;
-                    _editStartW       = Settings.Width.Value;
-                    _editStartH       = Settings.Height.Value;
-                    evt.Use();
-                }
-                else if (minimapRect.Contains(evt.mousePosition))
-                {
-                    _editDragActive = true;
-                    _editDragOrigin = evt.mousePosition;
-                    _editStartPosX  = Settings.PosX.Value;
-                    _editStartPosY  = Settings.PosY.Value;
-                    evt.Use();
-                }
-            }
-            else if (evt.type == EventType.MouseDrag && evt.button == 0)
-            {
-                var delta = evt.mousePosition - _editDragOrigin;
-                if (_editDragActive)
-                {
-                    // PosY is offset from bottom — mouse Y is inverted
-                    float newX = Mathf.Clamp(_editStartPosX + delta.x, 0f,
-                                             Screen.width  - Settings.Width.Value);
-                    float newY = Mathf.Clamp(_editStartPosY - delta.y, 0f,
-                                             Screen.height - Settings.Height.Value);
-                    Settings.PosX.Value = newX;
-                    Settings.PosY.Value = newY;
-                    evt.Use();
-                }
-                else if (_editResizeActive)
-                {
-                    float newW = Mathf.Clamp(_editStartW + delta.x, 64f,
-                                             Screen.width  - Settings.PosX.Value);
-                    float newH = Mathf.Clamp(_editStartH + delta.y, 64f,
-                                             Screen.height - Settings.PosY.Value);
-                    Settings.Width.Value  = newW;
-                    Settings.Height.Value = newH;
-                    evt.Use();
-                }
-            }
-            else if (evt.type == EventType.MouseUp && evt.button == 0)
-            {
-                _editDragActive   = false;
-                _editResizeActive = false;
-            }
-            else if (evt.type == EventType.ScrollWheel &&
-                     minimapRect.Contains(evt.mousePosition))
-            {
-                float newZoom = Settings.Zoom.Value + evt.delta.y * 0.1f;
-                Settings.Zoom.Value = Mathf.Clamp(newZoom, 0.5f, 10f);
-                evt.Use();
+                case EventType.MouseDown:
+                    if (evt.button == 0)
+                    {
+                        if (resizeRect.Contains(evt.mousePosition))
+                        {
+                            GUIUtility.hotControl = ctrlId;
+                            _editResizeActive     = true;
+                            _editDragActive       = false;
+                            _editDragOrigin       = evt.mousePosition;
+                            _editStartW           = Settings.Width.Value;
+                            _editStartH           = Settings.Height.Value;
+                            evt.Use();
+                        }
+                        else if (minimapRect.Contains(evt.mousePosition))
+                        {
+                            GUIUtility.hotControl = ctrlId;
+                            _editDragActive       = true;
+                            _editResizeActive     = false;
+                            _editDragOrigin       = evt.mousePosition;
+                            _editStartPosX        = Settings.PosX.Value;
+                            _editStartPosY        = Settings.PosY.Value;
+                            evt.Use();
+                        }
+                    }
+                    break;
+
+                case EventType.MouseDrag:
+                    if (GUIUtility.hotControl == ctrlId)
+                    {
+                        var delta = evt.mousePosition - _editDragOrigin;
+                        if (_editDragActive)
+                        {
+                            // PosY is offset from bottom — GUI Y grows downward, so invert delta.y
+                            Settings.PosX.Value = Mathf.Clamp(_editStartPosX + delta.x, 0f,
+                                                               Screen.width  - Settings.Width.Value);
+                            Settings.PosY.Value = Mathf.Clamp(_editStartPosY - delta.y, 0f,
+                                                               Screen.height - Settings.Height.Value);
+                        }
+                        else if (_editResizeActive)
+                        {
+                            Settings.Width.Value  = Mathf.Clamp(_editStartW + delta.x, 64f, Screen.width);
+                            Settings.Height.Value = Mathf.Clamp(_editStartH + delta.y, 64f, Screen.height);
+                        }
+                        evt.Use();
+                    }
+                    break;
+
+                case EventType.MouseUp:
+                    if (GUIUtility.hotControl == ctrlId)
+                    {
+                        GUIUtility.hotControl = 0;
+                        _editDragActive   = false;
+                        _editResizeActive = false;
+                        evt.Use();
+                    }
+                    break;
+
+                case EventType.ScrollWheel:
+                    if (minimapRect.Contains(evt.mousePosition))
+                    {
+                        if (evt.shift)
+                        {
+                            // Shift+wheel → resize (scroll up = bigger)
+                            float step = -evt.delta.y * 8f;
+                            Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  + step, 64f, Screen.width);
+                            Settings.Height.Value = Mathf.Clamp(Settings.Height.Value + step, 64f, Screen.height);
+                        }
+                        else
+                        {
+                            // Plain wheel → zoom
+                            Settings.Zoom.Value = Mathf.Clamp(
+                                Settings.Zoom.Value + evt.delta.y * 0.1f, 0.5f, 10f);
+                        }
+                        evt.Use();
+                    }
+                    break;
+
+                case EventType.KeyDown:
+                    // +/= keys → increase size
+                    if (evt.keyCode == KeyCode.Plus || evt.keyCode == KeyCode.Equals ||
+                        evt.keyCode == KeyCode.KeypadPlus)
+                    {
+                        Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  + 10f, 64f, Screen.width);
+                        Settings.Height.Value = Mathf.Clamp(Settings.Height.Value + 10f, 64f, Screen.height);
+                        evt.Use();
+                    }
+                    // - key → decrease size
+                    else if (evt.keyCode == KeyCode.Minus || evt.keyCode == KeyCode.KeypadMinus)
+                    {
+                        Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  - 10f, 64f, Screen.width);
+                        Settings.Height.Value = Mathf.Clamp(Settings.Height.Value - 10f, 64f, Screen.height);
+                        evt.Use();
+                    }
+                    break;
             }
         }
 

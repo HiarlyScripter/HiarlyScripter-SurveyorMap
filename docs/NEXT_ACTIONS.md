@@ -92,7 +92,7 @@ Opacity = 0.85
 Zoom = 2.25
 
 [Features]
-RevealRoomsMode = Off      # Off (default/safe) | NativeGlobal (opt-in, afeta TAB)
+RevealRoomsMode = Vanilla      # Off (default/safe) | NativeGlobal (opt-in, afeta TAB)
 ShowEnemies = true
 EnemyMarkerSize = 1.0      # 0.1–3.0
 EnemyMarkerShapeMode = DifficultyShape  # DifficultyShape | Circle
