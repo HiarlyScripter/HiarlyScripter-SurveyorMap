@@ -83,7 +83,7 @@ namespace SurveyorMap
 
             Log.LogInfo($"[SurveyorMap] v{PluginVersion} loaded. asm={asmPath}");
             Log.LogInfo($"[SurveyorMap] EnableMinimap={Settings.EnableMinimap.Value}" +
-                        $" RevealRoomsMode={Settings.RevealRoomsMode.Value}" +
+                        $" RevealRoomsMode={Settings.RevealRoomsMode.Value} (Vanilla=no SetExplored, NativeGlobal=SetExplored+TAB)" +
                         $" ShowEnemies={Settings.ShowEnemies.Value}" +
                         $" EnemyMarkerShapeMode={Settings.EnemyMarkerShapeMode.Value}" +
                         $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +

@@ -28,7 +28,7 @@ Only the player who wants the HUD. SurveyorMap does not send RPCs, does not alte
 | Minimap   | PosY                 | 120              | Vertical offset from the bottom edge.                                               |
 | Minimap   | Opacity              | 0.85             | Minimap opacity (0 = invisible, 1 = opaque).                                        |
 | Minimap   | Zoom                 | 2.25             | Native map camera orthographic zoom factor.                                         |
-| Features  | RevealRoomsMode      | Off              | Off = safe (TAB vanilla). NativeGlobal = reveal via SetExplored (also affects TAB). |
+| Features  | RevealRoomsMode      | Vanilla          | Vanilla = default (no SetExplored, TAB stays original). NativeGlobal = reveals via SetExplored, also affects TAB. |
 | Features  | ShowEnemies          | true             | Show enemy markers on the map.                                                      |
 | Features  | EnemyMarkerSize      | 1.0              | Scale multiplier for enemy markers (0.1–3.0).                                       |
 | Features  | EnemyMarkerShapeMode | DifficultyShape  | DifficultyShape = shape+color per tier. Circle = all circles colored by difficulty. |
@@ -50,5 +50,5 @@ Configuration is stored in `BepInEx/config/com.hiarlyscripter.surveyormap.cfg`.
 
 - The minimap is purely client-side and does not affect other players.
 - Enemy markers are cleaned up on despawn, death, and via a periodic sweep every 2 seconds.
-- RevealRooms `NativeGlobal` calls `RoomVolume.SetExplored()` which also reveals rooms in the native TAB map — this is intentional opt-in behavior, not the default.
+- RevealRooms `NativeGlobal` calls `RoomVolume.SetExplored()` which also reveals rooms in the native TAB map — intentional opt-in, not the default. Default `Vanilla` never calls SetExplored.
 - MinimapOnly RevealRooms (reveal only on the persistent minimap, TAB stays vanilla): **BLOCKED** — no safe implementation found that does not mutate `RoomVolume.Explored`. Not implemented.

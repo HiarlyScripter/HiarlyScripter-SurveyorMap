@@ -48,8 +48,8 @@ namespace SurveyorMap
             Zoom = cfg.Bind("Minimap", "Zoom", 2.25f,
                 "Orthographic size of the native map camera while minimap is visible.");
 
-            RevealRoomsMode = cfg.Bind("Features", "RevealRoomsMode", "Off",
-                "Off = safe default (TAB stays vanilla). NativeGlobal = reveals via RoomVolume.SetExplored() — also affects the native TAB map.");
+            RevealRoomsMode = cfg.Bind("Features", "RevealRoomsMode", "Vanilla",
+                "Vanilla = default, no SetExplored calls, TAB stays original. NativeGlobal = reveals rooms via RoomVolume.SetExplored() — also affects the native TAB map.");
             ShowEnemies = cfg.Bind("Features", "ShowEnemies", true,
                 "Show enemy positions on the map using native MapCustom markers.");
 
