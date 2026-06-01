@@ -22,8 +22,8 @@ namespace SurveyorMap
 
         // --- Enemy markers ---
         public readonly ConfigEntry<float>   EnemyMarkerSize;
-        // DifficultyShape = shape+color per difficulty. Circle = all circles (colored by difficulty).
-        public readonly ConfigEntry<string>  EnemyMarkerShapeMode;
+        // ShowEnemiesInUnexploredRooms: false (default) = hide in unexplored rooms; true = always show
+        public readonly ConfigEntry<bool>    ShowEnemiesInUnexploredRooms;
 
         // --- Edit mode ---
         public readonly ConfigEntry<bool>    EditModeEnabled;
@@ -55,8 +55,10 @@ namespace SurveyorMap
 
             EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 1.0f,
                 "Scale multiplier for enemy markers (0.1–3.0). Default 1.0.");
-            EnemyMarkerShapeMode = cfg.Bind("Features", "EnemyMarkerShapeMode", "DifficultyShape",
-                "DifficultyShape = distinct shape+color per difficulty tier. Circle = all circles colored by difficulty.");
+            ShowEnemiesInUnexploredRooms = cfg.Bind("Features", "ShowEnemiesInUnexploredRooms", false,
+                "false (default) = hide enemy markers in unexplored rooms (more vanilla). " +
+                "true = show all enemy markers regardless of room exploration. " +
+                "Detection uses physics overlap; if room cannot be determined, marker is shown (fail-safe).");
 
             EditModeEnabled = cfg.Bind("EditMode", "EditModeEnabled", true,
                 "Enable the in-game minimap edit mode (F8 by default).");

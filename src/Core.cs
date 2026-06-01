@@ -83,9 +83,9 @@ namespace SurveyorMap
 
             Log.LogInfo($"[SurveyorMap] v{PluginVersion} loaded. asm={asmPath}");
             Log.LogInfo($"[SurveyorMap] EnableMinimap={Settings.EnableMinimap.Value}" +
-                        $" RevealRoomsMode={Settings.RevealRoomsMode.Value} (Vanilla=no SetExplored, NativeGlobal=SetExplored+TAB)" +
+                        $" RevealRoomsMode={Settings.RevealRoomsMode.Value}" +
                         $" ShowEnemies={Settings.ShowEnemies.Value}" +
-                        $" EnemyMarkerShapeMode={Settings.EnemyMarkerShapeMode.Value}" +
+                        $" ShowEnemiesInUnexploredRooms={Settings.ShowEnemiesInUnexploredRooms.Value}" +
                         $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
                         $" EditModeEnabled={Settings.EditModeEnabled.Value}");
         }
@@ -227,7 +227,7 @@ namespace SurveyorMap
             var info = $"X:{Settings.PosX.Value:0}  Y:{Settings.PosY.Value:0}" +
                        $"  W:{Settings.Width.Value:0}  H:{Settings.Height.Value:0}" +
                        $"  Z:{Settings.Zoom.Value:0.00}" +
-                       $"  [drag=move] [corner=resize] [+/-=size] [wheel=zoom] [Shift+wheel=size] [F8=exit]";
+                       $"  [drag=move] [corner=resize] [+/-=size] [wheel=zoom] [Shift+wheel=size] [R=reset] [F8=exit]";
             var labelRect = new Rect(x, y - 20f, w + 200f, 18f);
             GUI.color = new Color(1f, 0.85f, 0f, 1f);
             GUI.Label(labelRect, info);
@@ -327,6 +327,18 @@ namespace SurveyorMap
                     {
                         Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  - 10f, 64f, Screen.width);
                         Settings.Height.Value = Mathf.Clamp(Settings.Height.Value - 10f, 64f, Screen.height);
+                        evt.Use();
+                    }
+                    // R → reset minimap to defaults (only active in edit mode)
+                    else if (evt.keyCode == KeyCode.R)
+                    {
+                        Settings.PosX.Value    = 24f;
+                        Settings.PosY.Value    = 120f;
+                        Settings.Width.Value   = 260f;
+                        Settings.Height.Value  = 260f;
+                        Settings.Zoom.Value    = 2.25f;
+                        Settings.Opacity.Value = 0.85f;
+                        Log.LogInfo("[SurveyorMap] Edit mode: reset to defaults.");
                         evt.Use();
                     }
                     break;

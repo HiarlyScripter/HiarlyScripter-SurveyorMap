@@ -41,52 +41,71 @@ namespace SurveyorMap
         }
     }
 
+    // ── Data types ────────────────────────────────────────────────────────────
+
+    // Difficulty tier → controls COLOUR
     internal enum MarkerCategory { Easy = 0, Medium = 1, Hard = 2, Elite = 3 }
+
+    // Enemy family/type → controls SHAPE
+    internal enum MarkerShape    { Circle = 0, Triangle = 1, Diamond = 2, Star = 3 }
 
     internal struct MarkerEntry
     {
-        public EnemyParent Parent;
-        public Enemy       Enemy;
-        public GameObject  Host;
-        public MapCustom   Mc;
-        public EnemyHealth Health; // cached — may be null
+        public EnemyParent    Parent;
+        public Enemy          Enemy;
+        public GameObject     Host;
+        public MapCustom      Mc;
+        public EnemyHealth    Health; // cached — may be null
+        public MarkerCategory Tier;   // colour source (difficulty)
+        public MarkerShape    Shape;  // shape source  (type/name)
     }
+
+    // ── Service ───────────────────────────────────────────────────────────────
 
     internal static class EnemyMapMarkerService
     {
         // Registry keyed by EnemyParent.GetInstanceID()
         private static readonly Dictionary<int, MarkerEntry> _registry = new Dictionary<int, MarkerEntry>();
 
-        // Sprite cache per category
+        // Sprite cache per shape (4 shapes × 1 sprite each — colour is applied via MapCustom.color)
         private static readonly Sprite[] _sprites = new Sprite[4];
 
-        // Reflection cache
+        // ── Colours — colour = danger/difficulty ─────────────────────────────
+        // Easy  #DFFFE8  verde-gelo quase branco  (low danger)
+        // Med   #3DA5FF  azul/ciano               (medium danger)
+        // Hard  #9B5CFF  roxo/violeta             (high danger)
+        // Elite #FF3B30  vermelho/coral forte     (critical danger)
+        private static readonly Color[] _colors = new Color[]
+        {
+            new Color(0.875f, 1.000f, 0.910f, 1f), // Easy  — #DFFFE8
+            new Color(0.239f, 0.647f, 1.000f, 1f), // Medium— #3DA5FF
+            new Color(0.608f, 0.361f, 1.000f, 1f), // Hard  — #9B5CFF
+            new Color(1.000f, 0.231f, 0.188f, 1f), // Elite — #FF3B30
+        };
+
+        // ── Reflection cache ─────────────────────────────────────────────────
         private static bool         _reflected;
         private static FieldInfo    _enemyField;
         private static PropertyInfo _enemyProp;
         private static FieldInfo    _rbField;
         private static FieldInfo    _hasRbField;
-        private static FieldInfo    _mceField;      // MapCustom.mapCustomEntity
-        private static FieldInfo    _diffField;     // EnemyParent.difficulty
-        private static FieldInfo    _spawnedField;  // EnemyParent.Spawned
+        private static FieldInfo    _mceField;           // MapCustom.mapCustomEntity
+        private static FieldInfo    _diffField;          // EnemyParent.difficulty
+        private static FieldInfo    _spawnedField;       // EnemyParent.Spawned
         private static FieldInfo    _deadField;          // EnemyHealth.dead
         private static FieldInfo    _hpField;            // EnemyHealth.healthCurrent
         private static FieldInfo    _autoAddField;       // MapCustom.autoAdd
         private static FieldInfo    _currentStateField;  // Enemy.CurrentState
         private static PropertyInfo _currentStateProp;
-
-        // Colors per difficulty category (white-tinted via MapCustom.color)
-        private static readonly Color[] _colors = new Color[]
-        {
-            new Color(0.30f, 0.92f, 0.30f, 1f),  // Easy  — green
-            new Color(1.00f, 0.85f, 0.15f, 1f),  // Medium — yellow
-            new Color(1.00f, 0.45f, 0.10f, 1f),  // Hard  — orange
-            new Color(1.00f, 0.15f, 0.15f, 1f),  // Elite — red
-        };
+        private static FieldInfo    _enemyTypeField;     // Enemy.Type / EnemyType
+        private static PropertyInfo _enemyTypeProp;
+        private static FieldInfo    _enemyNameField;     // EnemyParent.enemyName
+        private static PropertyInfo _enemyNameProp;
+        private static FieldInfo    _roomExploredField;  // RoomVolume.explored
 
         public static int ActiveMarkerCount => _registry.Count;
 
-        // ── Reflection ──────────────────────────────────────────────────────────
+        // ── Reflection ───────────────────────────────────────────────────────
 
         private static void EnsureReflection()
         {
@@ -95,33 +114,41 @@ namespace SurveyorMap
             var bf = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
             var ep = typeof(EnemyParent);
-            _enemyField   = ep.GetField("Enemy",      bf);
+            _enemyField   = ep.GetField("Enemy",     bf);
             if (_enemyField == null)
-                _enemyProp  = ep.GetProperty("Enemy", bf);
-            _diffField    = ep.GetField("difficulty",  bf) ?? ep.GetField("Difficulty",  bf);
-            _spawnedField = ep.GetField("Spawned",     bf) ?? ep.GetField("spawned",     bf);
+                _enemyProp = ep.GetProperty("Enemy", bf);
+            _diffField    = ep.GetField("difficulty", bf) ?? ep.GetField("Difficulty", bf);
+            _spawnedField = ep.GetField("Spawned",    bf) ?? ep.GetField("spawned",    bf);
+            _enemyNameField = ep.GetField("enemyName", bf) ?? ep.GetField("EnemyName", bf);
+            if (_enemyNameField == null)
+                _enemyNameProp = ep.GetProperty("enemyName", bf) ?? ep.GetProperty("EnemyName", bf);
 
             var en = typeof(Enemy);
-            _rbField    = en.GetField("Rigidbody",    bf);
-            _hasRbField = en.GetField("HasRigidbody", bf);
+            _rbField           = en.GetField("Rigidbody",    bf);
+            _hasRbField        = en.GetField("HasRigidbody", bf);
+            _currentStateField = en.GetField("CurrentState", bf) ?? en.GetField("currentState", bf);
+            if (_currentStateField == null)
+                _currentStateProp = en.GetProperty("CurrentState", bf) ?? en.GetProperty("currentState", bf);
+            _enemyTypeField   = en.GetField("Type",      bf) ?? en.GetField("type",      bf)
+                             ?? en.GetField("EnemyType", bf);
+            if (_enemyTypeField == null)
+                _enemyTypeProp = en.GetProperty("Type", bf) ?? en.GetProperty("EnemyType", bf);
 
             _mceField = typeof(MapCustom).GetField("mapCustomEntity",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            _autoAddField = typeof(MapCustom).GetField("autoAdd", bf)
+                         ?? typeof(MapCustom).GetField("AutoAdd", bf);
 
             var eh = typeof(EnemyHealth);
             _deadField = eh.GetField("dead",          bf) ?? eh.GetField("Dead",          bf);
             _hpField   = eh.GetField("healthCurrent", bf) ?? eh.GetField("HealthCurrent", bf)
                       ?? eh.GetField("HP",            bf) ?? eh.GetField("hp",            bf);
 
-            _autoAddField = typeof(MapCustom).GetField("autoAdd", bf)
-                         ?? typeof(MapCustom).GetField("AutoAdd", bf);
-
-            _currentStateField = typeof(Enemy).GetField("CurrentState", bf)
-                              ?? typeof(Enemy).GetField("currentState", bf);
-            if (_currentStateField == null)
-                _currentStateProp = typeof(Enemy).GetProperty("CurrentState", bf)
-                                 ?? typeof(Enemy).GetProperty("currentState", bf);
+            _roomExploredField = typeof(RoomVolume).GetField("explored", bf)
+                              ?? typeof(RoomVolume).GetField("Explored", bf);
         }
+
+        // ── Accessors ────────────────────────────────────────────────────────
 
         private static Enemy GetEnemy(EnemyParent parent)
         {
@@ -134,7 +161,9 @@ namespace SurveyorMap
             return null;
         }
 
-        private static MarkerCategory GetCategory(EnemyParent parent)
+        // ── Colour: derived from EnemyParent.difficulty ───────────────────────
+
+        private static MarkerCategory GetTier(EnemyParent parent)
         {
             try
             {
@@ -147,7 +176,7 @@ namespace SurveyorMap
                         if (d == 1) return MarkerCategory.Easy;
                         if (d == 2) return MarkerCategory.Medium;
                         if (d == 3) return MarkerCategory.Hard;
-                        return MarkerCategory.Elite; // 0, 4+ or unknown → elite/red
+                        return MarkerCategory.Elite; // 0 / 4+ / unknown → critical
                     }
                 }
             }
@@ -155,68 +184,124 @@ namespace SurveyorMap
             return MarkerCategory.Elite;
         }
 
-        // ── Sprite generation ────────────────────────────────────────────────────
+        // ── Shape: derived from Enemy.Type / enemyName / host name ───────────
 
-        private static Sprite GetOrCreateSprite(MarkerCategory cat)
+        private static MarkerShape GetShape(EnemyParent parent, Enemy enemy, GameObject host)
         {
-            int idx = (int)cat;
-            if (_sprites[idx] != null && _sprites[idx]) return _sprites[idx];
+            // Collect candidate names to inspect
+            var name = "";
+            try
+            {
+                // 1. Enemy.Type enum (toString)
+                if (_enemyTypeField != null || _enemyTypeProp != null)
+                {
+                    var raw = _enemyTypeField != null
+                        ? _enemyTypeField.GetValue(enemy)
+                        : _enemyTypeProp.GetValue(enemy);
+                    if (raw != null) name += " " + raw.ToString();
+                }
 
-            bool shapeMode = string.Equals(
-                SurveyorMapPlugin.Settings.EnemyMarkerShapeMode.Value,
-                "DifficultyShape", StringComparison.OrdinalIgnoreCase);
+                // 2. EnemyParent.enemyName
+                if (_enemyNameField != null || _enemyNameProp != null)
+                {
+                    var raw = _enemyNameField != null
+                        ? _enemyNameField.GetValue(parent)
+                        : _enemyNameProp.GetValue(parent);
+                    if (raw != null) name += " " + raw.ToString();
+                }
+
+                // 3. Host / enemy GameObject names as last fallback
+                if (host   != null) name += " " + host.name;
+                if (enemy  != null) name += " " + enemy.gameObject.name;
+                if (parent != null) name += " " + parent.gameObject.name;
+            }
+            catch { }
+
+            name = name.ToLower();
+
+            // Star — boss / elite / extreme threat
+            if (ContainsAny(name, "boss", "elite", "apex", "king", "titan", "lord", "chief",
+                                  "master", "giant", "mega", "alpha", "omega"))
+                return MarkerShape.Star;
+
+            // Triangle — hunter / aggressive / pursuer / melee
+            if (ContainsAny(name, "hunt", "bang", "attack", "rush", "charge", "charg",
+                                  "chase", "stalk", "crawl", "bowtie", "runner", "raider"))
+                return MarkerShape.Triangle;
+
+            // Diamond — special / support / strange / non-standard behavior
+            if (ContainsAny(name, "shadow", "duck", "child", "baby", "clown", "ghost",
+                                  "float", "eye", "mouth", "pet", "creep", "mentalist",
+                                  "support", "flower", "reap", "special", "weird"))
+                return MarkerShape.Diamond;
+
+            // Circle — common / basic / neutral fallback
+            return MarkerShape.Circle;
+        }
+
+        private static bool ContainsAny(string haystack, params string[] needles)
+        {
+            foreach (var n in needles)
+                if (haystack.Contains(n)) return true;
+            return false;
+        }
+
+        // ── Sprite generation (shape only — colour applied via mc.color) ──────
+
+        private static Sprite GetOrCreateSprite(MarkerShape shape)
+        {
+            int idx = (int)shape;
+            if (_sprites[idx] != null && _sprites[idx]) return _sprites[idx];
 
             var tex = new Texture2D(16, 16, TextureFormat.RGBA32, false);
             tex.hideFlags = HideFlags.HideAndDontSave;
             var px = new Color[256];
             for (int i = 0; i < 256; i++) px[i] = Color.clear;
 
-            if (!shapeMode || cat == MarkerCategory.Easy)
+            switch (shape)
             {
-                // Circle
-                for (int py = 0; py < 16; py++)
-                for (int pxc = 0; pxc < 16; pxc++)
-                    if (Vector2.Distance(new Vector2(pxc, py), new Vector2(7.5f, 7.5f)) <= 6.5f)
-                        px[py * 16 + pxc] = Color.white;
-            }
-            else if (cat == MarkerCategory.Medium)
-            {
-                // Diamond: |dx|+|dy| <= 6.5
-                for (int py = 0; py < 16; py++)
-                for (int pxc = 0; pxc < 16; pxc++)
-                    if (Mathf.Abs(pxc - 7.5f) + Mathf.Abs(py - 7.5f) <= 6.5f)
-                        px[py * 16 + pxc] = Color.white;
-            }
-            else if (cat == MarkerCategory.Hard)
-            {
-                // Upward triangle: base at bottom, apex at top
-                for (int py = 2; py <= 14; py++)
-                {
-                    float halfW = (py - 2f) / 12f * 6.5f;
+                case MarkerShape.Circle:
+                    for (int py = 0; py < 16; py++)
                     for (int pxc = 0; pxc < 16; pxc++)
-                        if (Mathf.Abs(pxc - 7.5f) <= halfW)
+                        if (Vector2.Distance(new Vector2(pxc, py), new Vector2(7.5f, 7.5f)) <= 6.5f)
                             px[py * 16 + pxc] = Color.white;
-                }
-            }
-            else
-            {
-                // Elite — 6-point star (two overlapping triangles)
-                // Upward triangle
-                for (int py = 2; py <= 12; py++)
-                {
-                    float halfW = (py - 2f) / 10f * 5.5f;
+                    break;
+
+                case MarkerShape.Diamond:
+                    for (int py = 0; py < 16; py++)
                     for (int pxc = 0; pxc < 16; pxc++)
-                        if (Mathf.Abs(pxc - 7.5f) <= halfW)
+                        if (Mathf.Abs(pxc - 7.5f) + Mathf.Abs(py - 7.5f) <= 6.5f)
                             px[py * 16 + pxc] = Color.white;
-                }
-                // Downward triangle
-                for (int py = 4; py <= 14; py++)
-                {
-                    float halfW = (14f - py) / 10f * 5.5f;
-                    for (int pxc = 0; pxc < 16; pxc++)
-                        if (Mathf.Abs(pxc - 7.5f) <= halfW)
-                            px[py * 16 + pxc] = Color.white;
-                }
+                    break;
+
+                case MarkerShape.Triangle:
+                    // Upward-pointing — apex at top, base at bottom
+                    for (int py = 2; py <= 14; py++)
+                    {
+                        float halfW = (py - 2f) / 12f * 6.5f;
+                        for (int pxc = 0; pxc < 16; pxc++)
+                            if (Mathf.Abs(pxc - 7.5f) <= halfW)
+                                px[py * 16 + pxc] = Color.white;
+                    }
+                    break;
+
+                case MarkerShape.Star:
+                    // 6-point star: upward triangle ∪ downward triangle
+                    for (int py = 2; py <= 12; py++)
+                    {
+                        float halfW = (py - 2f) / 10f * 5.5f;
+                        for (int pxc = 0; pxc < 16; pxc++)
+                            if (Mathf.Abs(pxc - 7.5f) <= halfW)
+                                px[py * 16 + pxc] = Color.white;
+                    }
+                    for (int py = 4; py <= 14; py++)
+                    {
+                        float halfW = (14f - py) / 10f * 5.5f;
+                        for (int pxc = 0; pxc < 16; pxc++)
+                            if (Mathf.Abs(pxc - 7.5f) <= halfW)
+                                px[py * 16 + pxc] = Color.white;
+                    }
+                    break;
             }
 
             tex.SetPixels(px);
@@ -241,7 +326,107 @@ namespace SurveyorMap
             catch { }
         }
 
-        // ── Public API ───────────────────────────────────────────────────────────
+        // ── Pre-add filter — refuse to create a marker for dead/inactive enemies
+
+        private static bool IsAddAllowed(EnemyParent parent, Enemy enemy)
+        {
+            try
+            {
+                if (parent == null || enemy == null)               return false;
+                if (!parent.gameObject.activeInHierarchy)          return false;
+                if (!enemy.gameObject.activeInHierarchy)           return false;
+
+                // EnemyParent.Spawned
+                if (_spawnedField != null)
+                {
+                    var raw = _spawnedField.GetValue(parent);
+                    if (raw is bool b && !b)
+                    {
+                        SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: Spawned=false");
+                        return false;
+                    }
+                }
+
+                // Enemy.CurrentState == Despawn
+                if (_currentStateField != null || _currentStateProp != null)
+                {
+                    var state = _currentStateField != null
+                        ? _currentStateField.GetValue(enemy)
+                        : _currentStateProp.GetValue(enemy);
+                    if (state != null && state.ToString() == "Despawn")
+                    {
+                        SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: CurrentState=Despawn");
+                        return false;
+                    }
+                }
+
+                // EnemyHealth.dead / healthCurrent
+                var health = enemy.GetComponentInChildren<EnemyHealth>(true);
+                if (health != null)
+                {
+                    if (_deadField != null)
+                    {
+                        var raw = _deadField.GetValue(health);
+                        if (raw is bool dead && dead)
+                        {
+                            SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: dead=true");
+                            return false;
+                        }
+                    }
+                    if (_hpField != null)
+                    {
+                        var raw = _hpField.GetValue(health);
+                        if (raw != null && Convert.ToSingle(raw) <= 0f)
+                        {
+                            SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: healthCurrent<=0");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch { return true; } // fail-safe: allow
+            return true;
+        }
+
+        // ── Room-exploration visibility ───────────────────────────────────────
+
+        // Returns true if the room is explored or if it cannot be determined (fail-safe = show).
+        private static bool IsEnemyRoomExplored(Enemy enemy)
+        {
+            if (enemy == null || !enemy.gameObject) return true;
+            try
+            {
+                var cols = Physics.OverlapSphere(
+                    enemy.transform.position, 1f, ~0, QueryTriggerInteraction.Collide);
+                foreach (var col in cols)
+                {
+                    var rv = col.GetComponent<RoomVolume>();
+                    if (rv == null) continue;
+                    if (_roomExploredField != null)
+                    {
+                        var raw = _roomExploredField.GetValue(rv);
+                        if (raw is bool b) return b;
+                    }
+                    return true; // room found but can't read explored → show (fail-safe)
+                }
+            }
+            catch { }
+            return true; // no room or error → show
+        }
+
+        private static void SetMarkerEntityActive(MapCustom mc, bool active)
+        {
+            try
+            {
+                if (mc == null || _mceField == null) return;
+                var entity = _mceField.GetValue(mc) as MapCustomEntity;
+                if (entity != null && entity.gameObject != null)
+                    entity.gameObject.SetActive(active);
+            }
+            catch { }
+        }
+
+        // ── Public API ───────────────────────────────────────────────────────
 
         public static void AddMarker(EnemyParent parent)
         {
@@ -254,7 +439,10 @@ namespace SurveyorMap
                 var enemy = GetEnemy(parent);
                 if (enemy == null || !enemy.gameObject) return;
 
-                // Prefer rigidbody child as host
+                // Pre-filter: refuse to add marker for dead / inactive / despawned enemy
+                if (!IsAddAllowed(parent, enemy)) return;
+
+                // Host: prefer rigidbody child
                 GameObject host = enemy.gameObject;
                 try
                 {
@@ -267,12 +455,13 @@ namespace SurveyorMap
                 }
                 catch { }
 
-                var cat    = GetCategory(parent);
-                var sprite = GetOrCreateSprite(cat);
-                var color  = _colors[(int)cat];
+                var tier   = GetTier(parent);
+                var shape  = GetShape(parent, enemy, host);
+                var sprite = GetOrCreateSprite(shape);
+                var color  = _colors[(int)tier];
 
                 var mc = host.GetComponent<MapCustom>() ?? host.AddComponent<MapCustom>();
-                // Disable auto-registration before explicit AddCustom to prevent duplicate entries
+                // Prevent auto-registration before our explicit AddCustom call
                 if (_autoAddField != null)
                     try { _autoAddField.SetValue(mc, false); } catch { }
                 mc.sprite = sprite;
@@ -300,10 +489,12 @@ namespace SurveyorMap
                     Host   = host,
                     Mc     = mc,
                     Health = health,
+                    Tier   = tier,
+                    Shape  = shape,
                 };
 
                 SurveyorMapPlugin.Log.LogDebug(
-                    $"[SurveyorMap] Enemy marker added: id={id} cat={cat} host={host.name} total={_registry.Count}");
+                    $"[SurveyorMap] Enemy marker added: id={id} tier={tier} shape={shape} host={host.name} total={_registry.Count}");
             }
             catch (Exception ex)
             {
@@ -322,20 +513,28 @@ namespace SurveyorMap
         public static void SweepDeadMarkers()
         {
             if (_registry.Count == 0) return;
+
+            // 1. Remove stale (dead/inactive/despawned)
             var toRemove = new List<int>();
             foreach (var kv in _registry)
                 if (IsEntryStale(kv.Value)) toRemove.Add(kv.Key);
-
             foreach (int id in toRemove)
                 if (_registry.TryGetValue(id, out var entry))
                     CleanupEntry(id, entry);
-
             if (toRemove.Count > 0)
                 SurveyorMapPlugin.Log.LogDebug(
                     $"[SurveyorMap] Sweep removed {toRemove.Count} stale markers. Active={_registry.Count}");
+
+            // 2. Update room-exploration visibility for live markers
+            bool showUnexplored = SurveyorMapPlugin.Settings.ShowEnemiesInUnexploredRooms.Value;
+            foreach (var kv in _registry)
+            {
+                bool visible = showUnexplored || IsEnemyRoomExplored(kv.Value.Enemy);
+                SetMarkerEntityActive(kv.Value.Mc, visible);
+            }
         }
 
-        // Called on level load (GenerateDone) to reset state between runs
+        // Called on GenerateDone to reset state between levels
         public static void ClearAll()
         {
             var ids = new List<int>(_registry.Keys);
@@ -344,17 +543,17 @@ namespace SurveyorMap
                     CleanupEntry(id, entry);
         }
 
-        // ── Internal ─────────────────────────────────────────────────────────────
+        // ── Internal ─────────────────────────────────────────────────────────
 
         private static bool IsEntryStale(MarkerEntry e)
         {
             try
             {
-                if (e.Parent == null)                          return true;
-                if (e.Enemy  == null)                          return true;
-                if (e.Host   == null)                          return true;
-                if (!e.Host.activeInHierarchy)                 return true;
-                if (e.Mc     == null)                          return true;
+                if (e.Parent == null)              return true;
+                if (e.Enemy  == null)              return true;
+                if (e.Host   == null)              return true;
+                if (!e.Host.activeInHierarchy)     return true;
+                if (e.Mc     == null)              return true;
 
                 // EnemyParent.Spawned == false
                 if (_spawnedField != null)
@@ -376,7 +575,7 @@ namespace SurveyorMap
                     catch { }
                 }
 
-                // EnemyHealth checks (cached component)
+                // EnemyHealth.dead / healthCurrent
                 var health = e.Health;
                 if (health != null)
                 {

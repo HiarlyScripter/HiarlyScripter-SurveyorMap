@@ -1,167 +1,133 @@
 # SurveyorMap
 
-Este arquivo possui versao em Portugues e Ingles. A versao em Portugues vem primeiro; a English version is below.
+---
 
-This file includes Portuguese and English versions. Portuguese comes first; English version is below.
+## Português
 
-## Portugues
+O SurveyorMap adiciona um minimapa nativo persistente no HUD inferior esquerdo durante o gameplay do R.E.P.O. Ele espelha a saída real da câmera de mapa do jogo — mesma geometria, mesmas cores, mesma fidelidade que o TAB — sem overlays falsos.
 
-SurveyorMap adiciona um minimapa persistente e configuravel ao HUD do R.E.P.O. durante a gameplay. Ele espelha a camera nativa do mapa do jogo (`activeTexture`), mantendo geometria, cores e marcadores nativos sempre que possivel.
+### Funcionalidades
 
-### Principais recursos
+- **Minimapa persistente** — HUD inferior esquerdo, visível apenas durante o gameplay. Some nos menus e lobby.
+- **Fidelidade nativa** — lê a câmera de mapa real do jogo (`activeTexture`). Mostra a geometria real das salas, marcadores nativos e fidelidade das paredes.
+- **Tecla M** — pressione `M` para mostrar/ocultar o minimapa sem afetar o TAB nativo.
+- **TAB seguro** — ao abrir o TAB, o minimapa persistente some automaticamente. O TAB não é afetado.
+- **Marcadores de inimigos** — mostra posições de inimigos como marcadores no mapa. Inimigos mortos/despawnados são removidos automaticamente em até ~2s. A **cor** indica o nível de perigo (dificuldade) e a **forma geométrica** indica o tipo/família do inimigo.
+- **ShowEnemiesInUnexploredRooms** — `false` por padrão: inimigos em salas não exploradas ficam ocultos (mais vanilla). `true`: todos os marcadores aparecem independente da exploração.
+- **Modo de edição F8** — pressione `F8` para entrar no modo de edição: arraste para reposicionar, segure o canto inferior direito para redimensionar, scroll para zoom, `+`/`-` para ajustar tamanho, `Shift+scroll` para redimensionar, `R` para resetar para os valores padrão. Config salva automaticamente ao sair.
+- **RevealRooms (opt-in)** — defina `RevealRoomsMode = NativeGlobal` para revelar todas as salas ao entrar no nível. **Atenção:** este modo também afeta o TAB nativo. O padrão é `Vanilla` (TAB permanece original).
 
-- Minimap persistente no canto inferior esquerdo durante gameplay.
-- Visual nativo do mapa, sem overlay falso como base principal.
-- TAB-safe: ao abrir o mapa nativo com TAB, o minimapa do HUD some automaticamente.
-- Toggle com `M` para ligar/desligar o minimapa.
-- Marcadores de inimigos via `MapCustom`, com formas e cores por dificuldade.
-- Cleanup de marcadores em morte, despawn, inatividade e varredura periodica.
-- Modo de edicao in-game com `F8`.
-- `RevealRoomsMode` seguro por padrao: `Vanilla` nao chama `RoomVolume.SetExplored()`.
+### Quem precisa instalar
 
-### Instalacao
+Apenas o jogador que quer o HUD. O SurveyorMap não envia RPCs, não altera a rede e não requer instalação pelos outros jogadores.
 
-Instale o pacote no perfil desejado do r2modman. Para teste local, o DLL fica em:
+### Paleta de cores dos marcadores de inimigos
 
-`BepInEx/plugins/HiarlyScripter-SurveyorMap/SurveyorMap.dll`
+A **cor** representa o nível de perigo/dificuldade:
 
-Este pacote local ainda deve ser tratado como build de teste ate validacao final em gameplay e LogOutput fresco.
+| Dificuldade | Cor | Hex |
+|---|---|---|
+| Easy (nível 1) | Verde-gelo quase branco | `#DFFFE8` |
+| Medium (nível 2) | Azul / ciano | `#3DA5FF` |
+| Hard (nível 3) | Roxo / violeta | `#9B5CFF` |
+| Elite / Boss (nível 4+) | Vermelho / coral | `#FF3B30` |
 
-### Configuracao
+A **forma** representa o tipo/família do inimigo:
 
-O arquivo de config fica em:
+| Família | Forma | Exemplos de palavras-chave |
+|---|---|---|
+| Comum / básico | Círculo | fallback padrão |
+| Caçador / agressivo / melee | Triângulo | hunt, rush, bang, attack |
+| Especial / suporte / estranho | Losango | shadow, ghost, support, eye |
+| Boss / elite / extremo | Estrela | boss, elite, giant, king |
 
-`BepInEx/config/com.hiarlyscripter.surveyormap.cfg`
+### Configuração
 
-| Secao | Chave | Padrao | Efeito |
-|---|---:|---:|---|
-| Minimap | EnableMinimap | true | Ativa/desativa o HUD do minimapa. |
-| Minimap | ToggleKey | M | Tecla para mostrar/esconder o minimapa. |
+| Seção | Chave | Padrão | Efeito |
+|---|---|---|---|
+| Minimap | EnableMinimap | true | Liga/desliga o HUD do minimapa. |
+| Minimap | ToggleKey | M | Tecla para alternar o minimapa. |
 | Minimap | Width | 260 | Largura do minimapa em pixels. |
 | Minimap | Height | 260 | Altura do minimapa em pixels. |
-| Minimap | PosX | 24 | Distancia da borda esquerda. |
-| Minimap | PosY | 120 | Distancia da borda inferior. |
-| Minimap | Opacity | 0.85 | Opacidade do minimapa. |
-| Minimap | Zoom | 2.25 | Zoom/orthographic size da camera nativa enquanto o minimapa esta visivel. |
-| Features | RevealRoomsMode | Vanilla | `Vanilla` preserva TAB/minimap vanilla. `NativeGlobal` revela via `SetExplored()` e afeta TAB + minimap. |
-| Features | ShowEnemies | true | Mostra marcadores de inimigos no mapa. |
-| Features | EnemyMarkerSize | 1.0 | Multiplicador de tamanho dos marcadores. |
-| Features | EnemyMarkerShapeMode | DifficultyShape | `DifficultyShape` usa forma/cor por dificuldade. `Circle` usa circulos coloridos. |
-| EditMode | EditModeEnabled | true | Ativa o modo de edicao in-game. |
-| EditMode | EditModeKey | F8 | Tecla para entrar/sair do modo de edicao. |
+| Minimap | PosX | 24 | Offset horizontal a partir da borda esquerda. |
+| Minimap | PosY | 120 | Offset vertical a partir da borda inferior. |
+| Minimap | Opacity | 0.85 | Opacidade (0 = invisível, 1 = opaco). |
+| Minimap | Zoom | 2.25 | Fator de zoom ortográfico da câmera de mapa. |
+| Features | RevealRoomsMode | Vanilla | Vanilla = padrão (TAB original). NativeGlobal = revela via SetExplored, também afeta TAB. |
+| Features | ShowEnemies | true | Mostrar marcadores de inimigos no mapa. |
+| Features | EnemyMarkerSize | 1.0 | Multiplicador de escala dos marcadores (0.1–3.0). |
+| Features | ShowEnemiesInUnexploredRooms | false | false = ocultar inimigos em salas não exploradas. true = mostrar todos. |
+| EditMode | EditModeEnabled | true | Liga o modo de edição in-game (F8). |
+| EditMode | EditModeKey | F8 | Tecla para entrar/sair do modo de edição. |
 
-### Controles
+### Notas
 
-- `M`: mostra/esconde o minimapa.
-- `F8`: entra/sai do modo de edicao.
-- Arrastar o minimapa no edit mode: move a posicao.
-- Arrastar o canto inferior direito no edit mode: redimensiona.
-- Mouse wheel no edit mode: ajusta o zoom.
-- `Shift + mouse wheel` no edit mode: redimensiona.
-- `+ / -` no edit mode: aumenta/diminui o tamanho.
+- O minimapa é puramente client-side e não afeta outros jogadores.
+- `RevealRoomsMode = NativeGlobal` chama `RoomVolume.SetExplored()`, o que também revela salas no TAB nativo — comportamento opt-in documentado, não é o padrão.
+- RevealRooms apenas no minimapa (sem afetar o TAB): **BLOQUEADO** — nenhuma implementação segura encontrada sem mutar `RoomVolume.Explored`.
 
-### RevealRoomsMode
-
-- `Vanilla` (padrao): nao chama `RoomVolume.SetExplored()`. TAB e minimap seguem o comportamento vanilla, com salas nao exploradas pretas/com `?`.
-- `NativeGlobal`: chama `RoomVolume.SetExplored()` e revela salas no minimap e no TAB nativo. E intencionalmente global.
-- `MinimapOnly`: nao implementado/bloqueado. Nao ha caminho seguro confirmado para revelar apenas o minimap sem mutar o estado nativo das salas.
-
-### Marcadores de inimigos
-
-- Marcadores sao gerados por sprites procedurais proprios.
-- Em `DifficultyShape`, dificuldade 1 usa circulo verde, dificuldade 2 usa losango amarelo, dificuldade 3 usa triangulo laranja, e categorias especiais/fallback podem usar estrela vermelha.
-- `EnemyMarkerSize` controla o tamanho.
-- O cleanup remove marcadores em despawn, morte, inatividade e por varredura periodica.
-- A transparencia por andar diferente fica a cargo do sistema nativo `MapCustomEntity`.
-
-### Multiplayer
-
-SurveyorMap e client-side/local. Somente o jogador que quer o HUD precisa instalar. O mod nao envia RPCs proprios e nao exige instalacao por outros jogadores.
-
-### Limitacoes conhecidas
-
-- `MinimapOnly` para RevealRooms nao esta implementado.
-- `NativeGlobal` altera o estado nativo do mapa e tambem revela salas no TAB.
-- O modo de edicao deve ser usado com cuidado durante gameplay; ele foi feito para ajuste local do HUD.
-- Esta build local nao deve ser considerada publicada ate a validacao final e revisao do pacote.
+---
 
 ## English
 
-SurveyorMap adds a persistent configurable HUD minimap to R.E.P.O. gameplay. It mirrors the game's native map camera (`activeTexture`), preserving native geometry, colors, and markers whenever possible.
+SurveyorMap adds a persistent native-looking minimap to the bottom-left HUD during R.E.P.O. gameplay. It mirrors the real native map camera output — the same geometry, colors, and fidelity as the TAB map — no fake overlays.
 
-### Main features
+### Features
 
-- Persistent bottom-left minimap during gameplay.
-- Native map look, with no fake overlay as the primary map.
-- TAB-safe: when the native TAB map opens, the HUD minimap hides automatically.
-- `M` toggle for showing/hiding the minimap.
-- Enemy markers through native `MapCustom`, with shape and color by difficulty.
-- Marker cleanup on death, despawn, inactivity, and periodic sweep.
-- In-game edit mode with `F8`.
-- Safe default `RevealRoomsMode`: `Vanilla` does not call `RoomVolume.SetExplored()`.
+- **Persistent minimap** — bottom-left HUD, visible only during gameplay. Disappears in menus and lobby.
+- **Native map fidelity** — reads the game's own map camera (`activeTexture`). Shows real room geometry, native markers, and wall fidelity.
+- **M toggle** — press `M` to show/hide the minimap without affecting the native TAB map.
+- **TAB-safe** — when you open the TAB map, the persistent minimap hides automatically. TAB is unaffected.
+- **Enemy markers** — shows enemy positions on the map. Dead/despawned enemies are cleaned up automatically within ~2s. **Colour** indicates the danger level (difficulty), **shape** indicates enemy type/family.
+- **ShowEnemiesInUnexploredRooms** — `false` by default: enemies in unexplored rooms are hidden (more vanilla). `true`: all markers visible regardless of exploration.
+- **F8 Edit Mode** — press `F8` to enter edit mode: drag to reposition, grab the bottom-right corner to resize, scroll to zoom, `+`/`-` to adjust size, `Shift+scroll` to resize, `R` to reset to defaults. Config is saved automatically on exit.
+- **RevealRooms (opt-in)** — set `RevealRoomsMode = NativeGlobal` to reveal all rooms on level load. **Note:** this also affects the native TAB map. Default is `Vanilla` (TAB stays original).
 
-### Installation
+### Who needs to install it
 
-Install the package into the desired r2modman profile. For local testing, the DLL is placed at:
+Only the player who wants the HUD. SurveyorMap does not send RPCs, does not alter networking, and does not require other players to install it.
 
-`BepInEx/plugins/HiarlyScripter-SurveyorMap/SurveyorMap.dll`
+### Enemy marker colour palette
 
-This local package should still be treated as a test build until final gameplay validation and a fresh LogOutput are confirmed.
+**Colour** = danger level / difficulty:
+
+| Difficulty | Colour | Hex |
+|---|---|---|
+| Easy (level 1) | Ice-white green | `#DFFFE8` |
+| Medium (level 2) | Blue / cyan | `#3DA5FF` |
+| Hard (level 3) | Purple / violet | `#9B5CFF` |
+| Elite / Boss (level 4+) | Red / coral | `#FF3B30` |
+
+**Shape** = enemy type / family:
+
+| Family | Shape | Keyword examples |
+|---|---|---|
+| Common / basic | Circle | default fallback |
+| Hunter / aggressive / melee | Triangle | hunt, rush, bang, attack |
+| Special / support / strange | Diamond | shadow, ghost, support, eye |
+| Boss / elite / extreme | Star | boss, elite, giant, king |
 
 ### Configuration
 
-The config file is stored at:
-
-`BepInEx/config/com.hiarlyscripter.surveyormap.cfg`
-
 | Section | Key | Default | Effect |
-|---|---:|---:|---|
-| Minimap | EnableMinimap | true | Enables/disables the minimap HUD. |
-| Minimap | ToggleKey | M | Key to show/hide the minimap. |
+|---|---|---|---|
+| Minimap | EnableMinimap | true | Enable/disable the minimap HUD. |
+| Minimap | ToggleKey | M | Key to toggle the minimap. |
 | Minimap | Width | 260 | Minimap width in pixels. |
 | Minimap | Height | 260 | Minimap height in pixels. |
-| Minimap | PosX | 24 | Distance from the left edge. |
-| Minimap | PosY | 120 | Distance from the bottom edge. |
-| Minimap | Opacity | 0.85 | Minimap opacity. |
-| Minimap | Zoom | 2.25 | Native map camera zoom/orthographic size while the minimap is visible. |
-| Features | RevealRoomsMode | Vanilla | `Vanilla` preserves vanilla TAB/minimap behavior. `NativeGlobal` reveals through `SetExplored()` and affects TAB + minimap. |
-| Features | ShowEnemies | true | Shows enemy markers on the map. |
-| Features | EnemyMarkerSize | 1.0 | Enemy marker size multiplier. |
-| Features | EnemyMarkerShapeMode | DifficultyShape | `DifficultyShape` uses shape/color by difficulty. `Circle` uses colored circles. |
-| EditMode | EditModeEnabled | true | Enables the in-game edit mode. |
+| Minimap | PosX | 24 | Horizontal offset from the left edge. |
+| Minimap | PosY | 120 | Vertical offset from the bottom edge. |
+| Minimap | Opacity | 0.85 | Minimap opacity (0 = invisible, 1 = opaque). |
+| Minimap | Zoom | 2.25 | Native map camera orthographic zoom. |
+| Features | RevealRoomsMode | Vanilla | Vanilla = default (no SetExplored, TAB stays original). NativeGlobal = reveals via SetExplored, also affects TAB. |
+| Features | ShowEnemies | true | Show enemy markers on the map. |
+| Features | EnemyMarkerSize | 1.0 | Scale multiplier for enemy markers (0.1–3.0). |
+| Features | ShowEnemiesInUnexploredRooms | false | false = hide markers in unexplored rooms. true = show all. |
+| EditMode | EditModeEnabled | true | Enable in-game edit mode (F8). |
 | EditMode | EditModeKey | F8 | Key to enter/exit edit mode. |
 
-### Controls
+### Notes
 
-- `M`: show/hide the minimap.
-- `F8`: enter/exit edit mode.
-- Drag the minimap in edit mode: move position.
-- Drag the bottom-right corner in edit mode: resize.
-- Mouse wheel in edit mode: adjust zoom.
-- `Shift + mouse wheel` in edit mode: resize.
-- `+ / -` in edit mode: increase/decrease size.
-
-### RevealRoomsMode
-
-- `Vanilla` (default): does not call `RoomVolume.SetExplored()`. TAB and minimap follow vanilla behavior, with unexplored rooms black/marked with `?`.
-- `NativeGlobal`: calls `RoomVolume.SetExplored()` and reveals rooms on both minimap and native TAB. This is intentionally global.
-- `MinimapOnly`: not implemented/blocked. No safe confirmed path exists to reveal only the minimap without mutating native room state.
-
-### Enemy markers
-
-- Markers are generated from original procedural sprites.
-- In `DifficultyShape`, difficulty 1 uses a green circle, difficulty 2 a yellow diamond, difficulty 3 an orange triangle, and special/fallback categories may use a red star.
-- `EnemyMarkerSize` controls size.
-- Cleanup removes markers on despawn, death, inactivity, and periodic sweep.
-- Cross-floor transparency is handled by the native `MapCustomEntity` system.
-
-### Multiplayer
-
-SurveyorMap is client-side/local. Only the player who wants the HUD needs to install it. The mod does not send custom RPCs and does not require other players to install it.
-
-### Known limitations
-
-- `MinimapOnly` RevealRooms is not implemented.
-- `NativeGlobal` changes native map state and also reveals rooms on TAB.
-- Edit mode should be used carefully during gameplay; it is intended for local HUD adjustment.
-- This local build should not be considered published until final validation and package review.
+- The minimap is purely client-side and does not affect other players.
+- `RevealRoomsMode = NativeGlobal` calls `RoomVolume.SetExplored()` which also reveals rooms in the native TAB map — intentional opt-in, not the default.
+- MinimapOnly reveal (TAB stays vanilla): **BLOCKED** — no safe implementation found without mutating `RoomVolume.Explored`.
