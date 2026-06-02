@@ -1,60 +1,65 @@
-# Agent State
+# Agent State — SurveyorMap v2
 
-Updated 2026-05-30 after Codex TAB automation diagnostic round.
+**Atualizado:** 2026-06-02
+**Por:** Claude (checkpoint pos-validacao gameplay)
 
-## Current Status
+---
 
-| Item | Status |
+## Estado Atual
+
+| Item | Valor |
 |---|---|
 | Branch | `codex-exec` |
-| Current build/hash | `c0711156` |
-| Static Audit | PASS 22/22 |
-| Build Release | PASS 0 errors / 0 warnings (from prior Phase 2 validation, not rebuilt this round) |
-| Runtime Probe | PASS 12/12 |
-| Gameplay Validation | PASS 20/20 |
-| Full validation | PASS |
-| Phase 2 CenterOnPlayer | PASS |
+| Commit HEAD | `4d42c8a` |
+| Build hash | `8bdba81b` |
+| Static Audit | PASS 45/45 |
+| Gameplay (manual) | PASS — confirmado pelo usuario (build 8bdba81b) |
+| Tag | `checkpoint/validated-gameplay-before-log-cleanup-20260602` |
+| DLL instalado | `REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll` |
+| ZIP local | `releases\HiarlyScripter-SurveyorMap-v1.0.0-local.zip` |
+| Publicado | NAO |
+| Push | NAO |
 
-## C18 TAB Result
+## Arquitetura Atual (v2)
 
-C18 is now objectively validated by automation.
+| Arquivo | Responsabilidade |
+|---|---|
+| `src/Core.cs` | SurveyorMapPlugin — entrypoint, M toggle, OnGUI, sweep timer |
+| `src/SurveyorMapConfig.cs` | ConfigEntry bindings |
+| `src/NativeMapMirror.cs` | Camera "Dirt Finder Map Camera" + activeTexture + TAB detection — INTOCADO |
+| `src/RevealRoomsService.cs` | Harmony LevelGenerator.GenerateDone -> RoomVolume.SetExplored() — INTOCADO |
+| `src/EnemyMapMarkerService.cs` | SpawnRPC/DespawnRPC -> MapCustom markers; ThreatTier; sweep |
+| `src/SurveyorMapDiagnostics.cs` | JSON runtime state para validators |
 
-- Winning method: `SendInput`.
-- Winning hold: `2s`.
-- Window focus: `true`.
-- Window title: `R.E.P.O.`.
-- `keybd_event` attempts: 2s, 4s, 6s all sent but unconfirmed.
-- `SendInput` attempt: 2s sent and confirmed.
-- Fresh log delta: `nativeMapTabOpen=True/False` = `1/1`.
-- Fresh capture delta: `capturePaused/resumingCapture` = `1/1`.
-- Manual TAB fallback was not used.
+## Sistema Visual (commit 4d42c8a — APROVADO)
 
-## Phase 2 Evidence
+| Ameaca | Forma | Cor | Hex |
+|---|---|---|---|
+| Low | Circulo | Verde-gelo | `#DFFFE8` |
+| Medium | Quadrado | Azul escuro | `#1E6BFF` |
+| High | Triangulo | Lila | `#C084FC` |
+| Elite | Estrela | Vermelho/coral | `#FF3B30` |
 
-- `CenterOnPlayer=true`.
-- `centerOnPlayerApplied=true`.
-- `centerOnPlayerProjectionValid=true`.
-- `centerOnPlayerDistanceFromCenter=0`.
-- `currentRunState=Level`.
-- `hudVisible=true`.
-- `nativeTextureReady=true`.
-- `nativeMapCaptureReady=true`.
-- `minimapBaselineVisible=true`.
-- `ForceHudProofOfLife=false`.
-- M toggle validates by log/JSON.
-- TAB open/close validates by fresh log evidence through `SendInput`.
-- `lastException=null`.
-- `lastErrorStack=null`.
+Forma e cor derivam exclusivamente de ThreatTier (redundantes).
+Keywords elevam tier apenas; nao escolhem cor por familia.
 
-## Scope Notes
+## Validacao Manual (2026-06-02, build 8bdba81b)
 
-- `src\Core.cs` was not changed in this TAB diagnostic round.
-- No build was run for the final diagnostic change.
-- No DLL was installed in this TAB diagnostic round.
-- r2modman UI was not touched.
-- `mods.yml` was not edited.
-- `RevealRooms=false` and `ShowEnemies=false` remain out of scope.
+Confirmado PASS:
+- Minimap HUD bottom-left com fidelidade nativa
+- TAB abre normalmente, minimap some durante TAB e volta ao soltar
+- M toggle funcional
+- F8 edit mode funcional (drag, resize, zoom, +/-)
+- R reset no edit mode funcional
+- Inimigos aparecem com sistema visual correto
+- EnemyMarkerSize = 0.95 via REPOConfig (aplica em ~2s)
+- Cleanup/despawn em ~2s
+- Sem amarelo/dourado nos marcadores
 
-## Next Step
+## Proximo Passo
 
-Claude can treat Phase 2 as PASS and resume planning the next phase. Do not start RevealRooms or ShowEnemies unless explicitly requested in a new round.
+**Log cleanup** — adicionar `DebugLogging = false` config e tornar logs repetitivos condicionais.
+Ver `docs/NEXT_ACTIONS.md` para especificacao completa.
+
+Nao alterar: NativeMapMirror, RevealRoomsService, Core (minimap/TAB/M/F8/R), sistema visual.
+Nao publicar. Nao push. Nao mexer no Default profile.
