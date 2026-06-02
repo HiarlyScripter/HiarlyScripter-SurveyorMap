@@ -53,12 +53,12 @@ namespace SurveyorMap
             ShowEnemies = cfg.Bind("Features", "ShowEnemies", true,
                 "Show enemy positions on the map using native MapCustom markers.");
 
-            EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 0.65f,
-                "Scale multiplier for enemy markers (0.30–2.00). Default 0.65. Changes apply within ~2s without restart.");
+            EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 0.95f,
+                "Scale multiplier for enemy markers (0.30–2.00). Default 0.95. Changes apply within ~2s without restart.");
             ShowEnemiesInUnexploredRooms = cfg.Bind("Features", "ShowEnemiesInUnexploredRooms", false,
-                "false (default) = hide enemy markers in unexplored rooms (more vanilla). " +
-                "true = show all enemy markers regardless of room exploration. " +
-                "Detection uses physics overlap; if room cannot be determined, marker is shown (fail-safe).");
+                "[DEPRECATED — has no effect in v1.0] Room-based filtering was unreliable in Vanilla mode " +
+                "and caused a regression (all markers hidden). All live enemy markers are shown regardless " +
+                "of room exploration. This setting is retained for config file compatibility only.");
 
             EditModeEnabled = cfg.Bind("EditMode", "EditModeEnabled", true,
                 "Enable the in-game minimap edit mode (F8 by default).");

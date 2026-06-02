@@ -6,6 +6,19 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Portugues
 
+### v1.0.0 local - 2026-06-01 (patch 4 — sistema visual de inimigos v2)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Novo modelo visual: Forma = Ameaca, Cor = Familia.**
+  - Forma comunica o nivel de perigo: circulo (baixo) / quadrado (medio) / triangulo (alto) / estrela (elite/critico).
+  - Cor comunica o tipo: azul escuro `#1E6BFF` (comum), verde-gelo `#DFFFE8` (pequeno/critter), lila `#C084FC` (especial/sobrenatural), vermelho `#FF3B30` (bruto/cacador).
+- **Elevacao de ameaca por palavra-chave:** inimigos `veryheavy` elevam para Ameaca Alta automaticamente. `trudge`, `slow walker`, `boss`, `elite` elevam para Ameaca Critica (estrela).
+- **Quadrado substitui losango:** forma Medium agora e quadrado, mais legivel no minimapa pequeno.
+- **`ShowEnemiesInUnexploredRooms` depreciado:** a funcionalidade foi removida da logica ativa. O filtro por sala era nao confiavel em modo Vanilla (causou regressao anterior). Todos os inimigos validos aparecem normalmente.
+- **`EnemyMarkerSize` default 0.95** (era 0.65). Aplica em ~2s via REPOConfig sem reiniciar.
+- **Log detalhado de classificacao:** `diff=X threat=Y shape=Z family=W color=#XXXXXX elevated=keyword names=[...]`.
+
 ### v1.0.0 local - 2026-06-01 (patch 3 — UX inimigos + reset editmode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -47,6 +60,19 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Baseline de minimap nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
 
 ## English
+
+### v1.0.0 local - 2026-06-01 (patch 4 — enemy visual system v2)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **New visual model: Shape = Threat, Colour = Family.**
+  - Shape communicates danger level: circle (low) / square (medium) / triangle (high) / star (elite/critical).
+  - Colour communicates type: dark blue `#1E6BFF` (common), ice-white green `#DFFFE8` (small/critter), lilac `#C084FC` (special/supernatural), red `#FF3B30` (brute/hunter).
+- **Threat elevation by keyword:** `veryheavy` enemies are auto-elevated to High threat. `trudge`, `slow walker`, `boss`, `elite` elevate to Critical (star).
+- **Square replaces diamond:** Medium threat shape is now a square, more readable at minimap scale.
+- **`ShowEnemiesInUnexploredRooms` deprecated:** room-based filtering removed from active logic. The filter was unreliable in Vanilla mode (caused a prior regression). All valid enemies are shown normally.
+- **`EnemyMarkerSize` default 0.95** (was 0.65). Applies within ~2s via REPOConfig without restart.
+- **Detailed classification log:** `diff=X threat=Y shape=Z family=W color=#XXXXXX elevated=keyword names=[...]`.
 
 ### v1.0.0 local - 2026-06-01 (patch 3 — enemy UX + edit mode reset)
 

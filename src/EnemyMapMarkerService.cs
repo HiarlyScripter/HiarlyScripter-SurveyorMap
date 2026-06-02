@@ -55,21 +55,26 @@ namespace SurveyorMap
 
     // ── Data types ────────────────────────────────────────────────────────────
 
-    // Difficulty tier → controls COLOUR
-    internal enum MarkerCategory { Easy = 0, Medium = 1, Hard = 2, Elite = 3 }
+    // Threat tier — determines SHAPE (how immediately dangerous this enemy is).
+    // Derived from EnemyParent.difficulty + keyword elevation (never downgraded).
+    internal enum ThreatTier { Low = 0, Medium = 1, High = 2, Elite = 3 }
 
-    // Enemy family/type → controls SHAPE
-    internal enum MarkerShape    { Circle = 0, Triangle = 1, Diamond = 2, Star = 3 }
+    // Colour family — determines COLOUR (what kind/behaviour of enemy this is).
+    // Derived from enemy name/type/class keywords.
+    internal enum MarkerFamily { Common = 0, Small = 1, Special = 2, Brute = 3 }
+
+    // Marker shape glyph (one-to-one with ThreatTier)
+    internal enum MarkerShape { Circle = 0, Square = 1, Triangle = 2, Star = 3 }
 
     internal struct MarkerEntry
     {
-        public EnemyParent    Parent;
-        public Enemy          Enemy;
-        public GameObject     Host;
-        public MapCustom      Mc;
-        public EnemyHealth    Health; // cached — may be null
-        public MarkerCategory Tier;   // colour source (difficulty)
-        public MarkerShape    Shape;  // shape source  (type/name)
+        public EnemyParent  Parent;
+        public Enemy        Enemy;
+        public GameObject   Host;
+        public MapCustom    Mc;
+        public EnemyHealth  Health; // cached — may be null
+        public MarkerFamily Family; // colour source (family/behaviour)
+        public MarkerShape  Shape;  // shape source (threat tier → glyph)
     }
 
     // ── Service ───────────────────────────────────────────────────────────────
@@ -79,27 +84,30 @@ namespace SurveyorMap
         // Registry keyed by EnemyParent.GetInstanceID()
         private static readonly Dictionary<int, MarkerEntry> _registry = new Dictionary<int, MarkerEntry>();
 
-        // Sprite cache per shape (4 shapes × 1 sprite each — colour is applied via MapCustom.color)
+        // Sprite cache per shape (4 shapes × 1 sprite each — colour applied via MapCustom.color)
         private static readonly Sprite[] _sprites = new Sprite[4];
 
         // Room-exploration tracking — populated by RoomVolumeExploredPatch observing SetExplored() calls.
-        // Key = RoomVolume.GetInstanceID(). Fail-open: if no level rooms ever explored, show all markers.
-        private static readonly HashSet<int> _exploredRoomIds = new HashSet<int>();
-        private static bool _anyRoomExplored;       // true once any SetExplored() call observed (incl. truck)
-        private static int  _exploredLevelRoomCount; // non-truck rooms explored; 0 = level tracking inactive
+        // Used for diagnostics only; room-based marker filtering is DEPRECATED in v1.0.
+        private static readonly HashSet<int> _exploredRoomIds    = new HashSet<int>();
+        private static bool _anyRoomExplored;        // true once any SetExplored() call observed
+        private static int  _exploredLevelRoomCount; // non-truck rooms explored (diagnostic)
 
-        // ── Colours — colour = danger/difficulty ─────────────────────────────
-        // Easy  #DFFFE8  verde-gelo quase branco  (low danger)
-        // Med   #3DA5FF  azul/ciano               (medium danger)
-        // Hard  #9B5CFF  roxo/violeta             (high danger)
-        // Elite #FF3B30  vermelho/coral forte     (critical danger)
+        // ── Colours — colour = family/behaviour ──────────────────────────────
+        // Common  #1E6BFF  dark blue      (generic humanoid, fallback)
+        // Small   #DFFFE8  ice-white green (small/swarm/grabber/utility critters)
+        // Special #C084FC  lilac           (weird/supernatural/ranged/odd)
+        // Brute   #FF3B30  red/coral       (aggressive/hunter/melee/heavy threat)
         private static readonly Color[] _colors = new Color[]
         {
-            new Color(0.875f, 1.000f, 0.910f, 1f), // Easy  — #DFFFE8
-            new Color(0.239f, 0.647f, 1.000f, 1f), // Medium— #3DA5FF
-            new Color(0.608f, 0.361f, 1.000f, 1f), // Hard  — #9B5CFF
-            new Color(1.000f, 0.231f, 0.188f, 1f), // Elite — #FF3B30
+            new Color(0.118f, 0.420f, 1.000f, 1f), // Common  — #1E6BFF
+            new Color(0.875f, 1.000f, 0.910f, 1f), // Small   — #DFFFE8
+            new Color(0.753f, 0.518f, 0.988f, 1f), // Special — #C084FC
+            new Color(1.000f, 0.231f, 0.188f, 1f), // Brute   — #FF3B30
         };
+
+        // Hex strings for classification log (aligned to _colors / MarkerFamily)
+        private static readonly string[] _colorHex = { "#1E6BFF", "#DFFFE8", "#C084FC", "#FF3B30" };
 
         // ── Reflection cache ─────────────────────────────────────────────────
         private static bool         _reflected;
@@ -115,12 +123,11 @@ namespace SurveyorMap
         private static FieldInfo    _autoAddField;       // MapCustom.autoAdd
         private static FieldInfo    _currentStateField;  // Enemy.CurrentState
         private static PropertyInfo _currentStateProp;
-        private static FieldInfo    _enemyTypeField;     // Enemy.Type / EnemyType
+        private static FieldInfo    _enemyTypeField;     // Enemy.Type ("light"/"heavy"/"veryheavy")
         private static PropertyInfo _enemyTypeProp;
-        private static FieldInfo    _enemyNameField;     // EnemyParent.enemyName
+        private static FieldInfo    _enemyNameField;     // EnemyParent.enemyName (internal tag)
         private static PropertyInfo _enemyNameProp;
-        // Note: RoomVolume.explored is no longer accessed via reflection.
-        // Room tracking now uses RoomVolumeExploredPatch + _exploredRoomIds HashSet.
+        // RoomVolume.explored: NOT reflected — room tracking uses RoomVolumeExploredPatch.
 
         public static int ActiveMarkerCount => _registry.Count;
 
@@ -133,12 +140,12 @@ namespace SurveyorMap
             var bf = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
             var ep = typeof(EnemyParent);
-            _enemyField   = ep.GetField("Enemy",     bf);
+            _enemyField     = ep.GetField("Enemy",     bf);
             if (_enemyField == null)
-                _enemyProp = ep.GetProperty("Enemy", bf);
-            _diffField    = ep.GetField("difficulty", bf) ?? ep.GetField("Difficulty", bf);
-            _spawnedField = ep.GetField("Spawned",    bf) ?? ep.GetField("spawned",    bf);
-            _enemyNameField = ep.GetField("enemyName", bf) ?? ep.GetField("EnemyName", bf);
+                _enemyProp  = ep.GetProperty("Enemy",  bf);
+            _diffField      = ep.GetField("difficulty", bf) ?? ep.GetField("Difficulty", bf);
+            _spawnedField   = ep.GetField("Spawned",    bf) ?? ep.GetField("spawned",    bf);
+            _enemyNameField = ep.GetField("enemyName",  bf) ?? ep.GetField("EnemyName",  bf);
             if (_enemyNameField == null)
                 _enemyNameProp = ep.GetProperty("enemyName", bf) ?? ep.GetProperty("EnemyName", bf);
 
@@ -162,8 +169,6 @@ namespace SurveyorMap
             _deadField = eh.GetField("dead",          bf) ?? eh.GetField("Dead",          bf);
             _hpField   = eh.GetField("healthCurrent", bf) ?? eh.GetField("HealthCurrent", bf)
                       ?? eh.GetField("HP",            bf) ?? eh.GetField("hp",            bf);
-
-            // RoomVolume.explored is NOT reflected — room tracking uses RoomVolumeExploredPatch.
         }
 
         // ── Accessors ────────────────────────────────────────────────────────
@@ -179,39 +184,17 @@ namespace SurveyorMap
             return null;
         }
 
-        // ── Colour: derived from EnemyParent.difficulty ───────────────────────
+        // ── Name collection (shared by threat + family classifiers) ──────────
 
-        private static MarkerCategory GetTier(EnemyParent parent)
-        {
-            try
-            {
-                if (_diffField != null)
-                {
-                    var raw = _diffField.GetValue(parent);
-                    if (raw != null)
-                    {
-                        int d = Convert.ToInt32(raw);
-                        if (d == 1) return MarkerCategory.Easy;
-                        if (d == 2) return MarkerCategory.Medium;
-                        if (d == 3) return MarkerCategory.Hard;
-                        return MarkerCategory.Elite; // 0 / 4+ / unknown → critical
-                    }
-                }
-            }
-            catch { }
-            return MarkerCategory.Elite;
-        }
-
-        // ── Shape: derived from Enemy.Type / enemyName / C# type name / GO names ──
-        // NOTE: host is intentionally EXCLUDED — it is always the physics root "Controller",
-        //       which is generic and actively misleads classification.
-
-        private static MarkerShape GetShape(EnemyParent parent, Enemy enemy, GameObject host)
+        // Collects all meaningful name tokens from the enemy into a single lowercase string.
+        // Sources (in order): Enemy.Type enum, EnemyParent.enemyName, C# class name,
+        //   enemy gameObject name (skipping "Controller"), EnemyParent gameObject name.
+        private static string CollectNames(EnemyParent parent, Enemy enemy)
         {
             var name = "";
             try
             {
-                // 1. Enemy.Type enum — most reliable semantic tag if the game populates it
+                // 1. Enemy.Type — weight/mobility class: "light", "heavy", "veryheavy"
                 if (_enemyTypeField != null || _enemyTypeProp != null)
                 {
                     var raw = _enemyTypeField != null
@@ -220,7 +203,7 @@ namespace SurveyorMap
                     if (raw != null) name += " " + raw.ToString();
                 }
 
-                // 2. EnemyParent.enemyName — designer-assigned name, e.g. "Huntsman", "Bang"
+                // 2. EnemyParent.enemyName — internal tag: "huntsman", "trudge", "clown"
                 if (_enemyNameField != null || _enemyNameProp != null)
                 {
                     var raw = _enemyNameField != null
@@ -229,52 +212,142 @@ namespace SurveyorMap
                     if (raw != null) name += " " + raw.ToString();
                 }
 
-                // 3. C# class name of the Enemy component — reliable even without reflection data
-                //    e.g. "EnemyBang" → "bang", "EnemyHunter" → "hunt"
+                // 3. C# class name of the Enemy component — e.g. "EnemyBang" → contains "bang"
                 if (enemy != null)
                 {
-                    var csharpType = enemy.GetType().Name;
-                    if (!string.IsNullOrEmpty(csharpType) && csharpType != "Enemy")
-                        name += " " + csharpType;
+                    var csType = enemy.GetType().Name;
+                    if (!string.IsNullOrEmpty(csType) && csType != "Enemy")
+                        name += " " + csType;
                 }
 
-                // 4. Enemy gameObject name (prefab instance name, not physics root)
+                // 4. Enemy gameObject name — skip "Controller" (generic physics root, not semantic)
                 if (enemy != null && enemy.gameObject != null)
-                    name += " " + enemy.gameObject.name;
+                {
+                    var egn = enemy.gameObject.name;
+                    if (!string.IsNullOrEmpty(egn) &&
+                        !string.Equals(egn, "Controller", StringComparison.OrdinalIgnoreCase))
+                        name += " " + egn;
+                }
 
-                // 5. EnemyParent gameObject name (highest-level name, often most descriptive)
+                // 5. EnemyParent gameObject name — usually the most descriptive: "Enemy - Hunter(Clone)"
                 if (parent != null && parent.gameObject != null)
                     name += " " + parent.gameObject.name;
+            }
+            catch { }
+            return name.ToLower();
+        }
 
-                // Host intentionally omitted — it is named "Controller" (physics rigidbody root)
-                // and provides no useful semantic signal for enemy classification.
+        // ── Threat tier: determines SHAPE ────────────────────────────────────
+        //
+        // Base tier from difficulty int:  1=Low, 2=Medium, 3=High, 0/4+=Elite
+        // Keywords can only ELEVATE (never reduce) the tier.
+        //
+        // Elevation rules:
+        //   veryheavy  → at least High  (weight class alone)
+        //   trudge / slow walker / boss / elite / apex / king / titan / giant / mega / master
+        //              → Elite
+        //   hunt / huntsman / hunter / bang / rush / charge / attack / screamer / smasher / bowtie / robe
+        //              → at least High
+
+        private static ThreatTier GetThreatTier(EnemyParent parent, string names,
+                                                out ThreatTier baseTier, out string elevatedBy)
+        {
+            baseTier   = ThreatTier.Elite; // safe fallback if reflection fails
+            elevatedBy = "none";
+
+            try
+            {
+                if (_diffField != null)
+                {
+                    var raw = _diffField.GetValue(parent);
+                    if (raw != null)
+                    {
+                        int d = Convert.ToInt32(raw);
+                        baseTier = d == 1 ? ThreatTier.Low
+                                 : d == 2 ? ThreatTier.Medium
+                                 : d == 3 ? ThreatTier.High
+                                 : ThreatTier.Elite;
+                    }
+                }
             }
             catch { }
 
-            name = name.ToLower();
-            SurveyorMapPlugin.Log.LogDebug($"[SurveyorMap] GetShape names: [{name.Trim()}]");
+            var elevated = baseTier;
 
-            // Star — boss / elite / extreme threat
-            if (ContainsAny(name, "boss", "elite", "apex", "king", "titan", "lord", "chief",
-                                  "master", "giant", "mega", "alpha", "omega", "reaper"))
-                return MarkerShape.Star;
+            // veryheavy weight class → at least High
+            if (names.Contains("veryheavy") && elevated < ThreatTier.High)
+            {
+                elevated = ThreatTier.High;
+                elevatedBy = "veryheavy";
+            }
 
-            // Triangle — hunter / aggressive / pursuer / melee
-            if (ContainsAny(name, "hunt", "bang", "attack", "rush", "charge", "charg",
-                                  "chase", "stalk", "crawl", "bowtie", "runner", "raider",
-                                  "robe", "upscream", "screamer", "smasher"))
-                return MarkerShape.Triangle;
+            // Named critical threats → Elite
+            if (elevated < ThreatTier.Elite &&
+                ContainsAny(names, "trudge", "slow walker", "boss", "elite", "apex",
+                                   "king", "titan", "giant", "mega", "master"))
+            {
+                elevated = ThreatTier.Elite;
+                elevatedBy = FirstMatch(names, "trudge", "slow walker", "boss", "elite",
+                                               "apex", "king", "titan", "giant", "mega", "master");
+            }
 
-            // Diamond — special / support / ranged / strange / stealth
-            if (ContainsAny(name, "shadow", "duck", "child", "baby", "clown", "ghost",
-                                  "float", "eye", "mouth", "pet", "creep", "mentalist",
-                                  "support", "flower", "reap", "special", "weird", "krild",
-                                  "hidden", "janitor", "spider", "slug", "trap", "turret"))
-                return MarkerShape.Diamond;
+            // Named high threats → at least High
+            if (elevated < ThreatTier.High &&
+                ContainsAny(names, "hunt", "huntsman", "hunter", "bang", "rush", "charge",
+                                   "attack", "screamer", "smasher", "bowtie", "robe"))
+            {
+                elevated = ThreatTier.High;
+                if (elevatedBy == "none")
+                    elevatedBy = FirstMatch(names, "hunt", "huntsman", "hunter", "bang", "rush",
+                                                   "charge", "attack", "screamer", "smasher", "bowtie", "robe");
+            }
 
-            // Circle — common / basic / neutral fallback
-            return MarkerShape.Circle;
+            return elevated;
         }
+
+        // Shape glyph from threat tier (direct one-to-one mapping)
+        private static MarkerShape TierToShape(ThreatTier tier)
+        {
+            switch (tier)
+            {
+                case ThreatTier.Low:    return MarkerShape.Circle;
+                case ThreatTier.Medium: return MarkerShape.Square;
+                case ThreatTier.High:   return MarkerShape.Triangle;
+                case ThreatTier.Elite:  return MarkerShape.Star;
+                default:                return MarkerShape.Circle;
+            }
+        }
+
+        // ── Colour family: determines COLOUR ─────────────────────────────────
+        //
+        // Brute   (red/coral)      — aggressive hunters, melee, heavy threats
+        // Special (lilac)          — weird, supernatural, ranged, odd behaviour
+        // Small   (ice-green)      — small, swarm, grabbers, throwers, critters
+        // Common  (dark blue)      — fallback, generic humanoids, unknown types
+
+        private static MarkerFamily GetColorFamily(string names)
+        {
+            // Brute — aggressive/melee/heavy
+            if (ContainsAny(names, "hunt", "huntsman", "hunter", "trudge", "slow walker",
+                                   "bang", "rush", "charge", "attack", "smasher", "bowtie",
+                                   "screamer", "robe", "raider"))
+                return MarkerFamily.Brute;
+
+            // Special — weird/supernatural/ranged/utility
+            if (ContainsAny(names, "clown", "beamer", "elsa", "birthday", "oogly", "mentalist",
+                                   "ghost", "float", "eye", "shadow", "duck", "weird",
+                                   "flower", "reap", "spider", "turret", "hidden", "janitor"))
+                return MarkerFamily.Special;
+
+            // Small — small critters, grabbers, throwers
+            if (ContainsAny(names, "headgrab", "rugrat", "thrower", "gnome", "slug", "grabber",
+                                   "baby", "child", "pet", "swarm", "small", "creep", "krild"))
+                return MarkerFamily.Small;
+
+            return MarkerFamily.Common;
+        }
+
+        // ── Helpers ───────────────────────────────────────────────────────────
 
         private static bool ContainsAny(string haystack, params string[] needles)
         {
@@ -283,7 +356,19 @@ namespace SurveyorMap
             return false;
         }
 
-        // ── Sprite generation (shape only — colour applied via mc.color) ──────
+        private static string FirstMatch(string haystack, params string[] needles)
+        {
+            foreach (var n in needles)
+                if (haystack.Contains(n)) return n;
+            return "?";
+        }
+
+        // ── Sprite generation ─────────────────────────────────────────────────
+        //
+        // Circle   = Low threat  (filled disc)
+        // Square   = Med threat  (filled square — replaces old Diamond/losango)
+        // Triangle = High threat (upward-pointing, narrow apex / wide base)
+        // Star     = Elite threat (6-point star: two overlapping triangles)
 
         private static Sprite GetOrCreateSprite(MarkerShape shape)
         {
@@ -304,15 +389,15 @@ namespace SurveyorMap
                             px[py * 16 + pxc] = Color.white;
                     break;
 
-                case MarkerShape.Diamond:
-                    for (int py = 0; py < 16; py++)
-                    for (int pxc = 0; pxc < 16; pxc++)
-                        if (Mathf.Abs(pxc - 7.5f) + Mathf.Abs(py - 7.5f) <= 6.5f)
-                            px[py * 16 + pxc] = Color.white;
+                case MarkerShape.Square:
+                    // Filled square with 2-px margin on each side
+                    for (int py = 2; py <= 13; py++)
+                    for (int pxc = 2; pxc <= 13; pxc++)
+                        px[py * 16 + pxc] = Color.white;
                     break;
 
                 case MarkerShape.Triangle:
-                    // Upward-pointing — apex at top, base at bottom
+                    // Upward-pointing — narrow apex at top (py=2), wide base at py=14
                     for (int py = 2; py <= 14; py++)
                     {
                         float halfW = (py - 2f) / 12f * 6.5f;
@@ -351,8 +436,8 @@ namespace SurveyorMap
 
         private static void ApplyScale(MapCustom mc)
         {
-            // No early-return for size=1.0 — always enforce current config value so
-            // changes made in REPOConfig take effect within the next sweep cycle (~2s).
+            // Always enforce current config value — no early-return — so REPOConfig changes
+            // take effect within the next sweep cycle (~2 seconds), no restart required.
             try
             {
                 if (mc == null || _mceField == null) return;
@@ -364,7 +449,7 @@ namespace SurveyorMap
             catch { }
         }
 
-        // ── Pre-add filter — refuse to create a marker for dead/inactive enemies
+        // ── Pre-add filter — refuse to create a marker for dead/inactive enemies ──
 
         private static bool IsAddAllowed(EnemyParent parent, Enemy enemy)
         {
@@ -374,7 +459,6 @@ namespace SurveyorMap
                 if (!parent.gameObject.activeInHierarchy)          return false;
                 if (!enemy.gameObject.activeInHierarchy)           return false;
 
-                // EnemyParent.Spawned
                 if (_spawnedField != null)
                 {
                     var raw = _spawnedField.GetValue(parent);
@@ -385,7 +469,6 @@ namespace SurveyorMap
                     }
                 }
 
-                // Enemy.CurrentState == Despawn
                 if (_currentStateField != null || _currentStateProp != null)
                 {
                     var state = _currentStateField != null
@@ -398,7 +481,6 @@ namespace SurveyorMap
                     }
                 }
 
-                // EnemyHealth.dead / healthCurrent
                 var health = enemy.GetComponentInChildren<EnemyHealth>(true);
                 if (health != null)
                 {
@@ -422,32 +504,20 @@ namespace SurveyorMap
                     }
                 }
             }
-            catch { return true; } // fail-safe: allow
+            catch { return true; } // fail-safe: allow on any reflection error
             return true;
         }
 
-        // ── Room-exploration visibility ───────────────────────────────────────
+        // ── Room-exploration (diagnostics only — filtering deprecated in v1.0) ──────
 
-        // Returns true (show) if the room is explored, or if exploration state cannot be determined (fail-open).
-        //
-        // Fail-open rules (in order):
-        //   1. No SetExplored ever observed → show (exploration system completely inactive).
-        //   2. Only truck/lobby rooms explored (_exploredLevelRoomCount == 0) → show
-        //      (game calls SetExplored on truck every frame, but NOT on actual level rooms in Vanilla mode;
-        //       truck-only tracking is not useful for level-room filtering).
-        //   3. Level rooms tracked and enemy's room is in the explored set → show.
-        //   4. Level rooms tracked and enemy's room is NOT in explored set → hide (room unexplored).
-        //   5. No room found at enemy position → show (fail-open).
+        // NOTE: ShowEnemiesInUnexploredRooms is DEPRECATED in v1.0.
+        // Room-based marker filtering was unreliable in Vanilla mode (game calls SetExplored
+        // on the truck room but not on level rooms), causing regressions. All live markers
+        // are now shown unconditionally. This method is retained for future use.
         private static bool IsEnemyRoomExplored(Enemy enemy)
         {
             if (enemy == null || !enemy.gameObject) return true;
-
-            // Guard 1: no SetExplored calls at all
-            if (!_anyRoomExplored) return true;
-
-            // Guard 2: only lobby/truck explored — level exploration not tracked in Vanilla mode → fail-open
-            if (_exploredLevelRoomCount == 0) return true;
-
+            if (!_anyRoomExplored || _exploredLevelRoomCount == 0) return true;
             try
             {
                 var cols = Physics.OverlapSphere(
@@ -456,35 +526,27 @@ namespace SurveyorMap
                 {
                     var rv = col.GetComponent<RoomVolume>();
                     if (rv == null) continue;
-                    bool explored = _exploredRoomIds.Contains(rv.GetInstanceID());
-                    SurveyorMapPlugin.Log.LogDebug(
-                        $"[SurveyorMap] RoomCheck: {rv.gameObject.name} explored={explored}");
-                    return explored;
+                    return _exploredRoomIds.Contains(rv.GetInstanceID());
                 }
             }
             catch { }
-            return true; // no room found at enemy position → show (fail-open)
+            return true;
         }
 
-        // Called by RoomVolumeExploredPatch when the game or NativeGlobal calls SetExplored().
-        // We observe without mutating anything. Log only on FIRST observation of each room (dedup).
+        // Called by RoomVolumeExploredPatch — logs unique rooms only (deduplicates spam).
         public static void OnRoomExplored(RoomVolume room)
         {
             if (room == null) return;
-            bool isNew = _exploredRoomIds.Add(room.GetInstanceID()); // HashSet.Add returns false if already present
+            bool isNew = _exploredRoomIds.Add(room.GetInstanceID());
             if (!_anyRoomExplored) _anyRoomExplored = true;
-
             if (isNew)
             {
-                // "Truck" rooms are the lobby/staging area — not actual level rooms.
-                // We only count non-truck rooms for "level exploration active" determination.
                 bool isTruck = room.gameObject.name.IndexOf("Truck", StringComparison.OrdinalIgnoreCase) >= 0;
                 if (!isTruck) _exploredLevelRoomCount++;
                 SurveyorMapPlugin.Log.LogInfo(
                     $"[SurveyorMap] Room explored (new): {room.gameObject.name}" +
                     $" isTruck={isTruck} levelRooms={_exploredLevelRoomCount} total={_exploredRoomIds.Count}");
             }
-            // Duplicate SetExplored calls (same room) are silently discarded to avoid log spam.
         }
 
         private static void SetMarkerEntityActive(MapCustom mc, bool active)
@@ -512,10 +574,9 @@ namespace SurveyorMap
                 var enemy = GetEnemy(parent);
                 if (enemy == null || !enemy.gameObject) return;
 
-                // Pre-filter: refuse to add marker for dead / inactive / despawned enemy
                 if (!IsAddAllowed(parent, enemy)) return;
 
-                // Host: prefer rigidbody child
+                // Host: prefer rigidbody child for accurate world-space position on the map
                 GameObject host = enemy.gameObject;
                 try
                 {
@@ -528,13 +589,17 @@ namespace SurveyorMap
                 }
                 catch { }
 
-                var tier   = GetTier(parent);
-                var shape  = GetShape(parent, enemy, host);
-                var sprite = GetOrCreateSprite(shape);
-                var color  = _colors[(int)tier];
+                // ── Classify: collect names, derive threat tier + colour family ──
+                string names = CollectNames(parent, enemy);
+                ThreatTier baseTier;
+                string     elevatedBy;
+                ThreatTier threatTier = GetThreatTier(parent, names, out baseTier, out elevatedBy);
+                MarkerFamily family   = GetColorFamily(names);
+                MarkerShape  shape    = TierToShape(threatTier);
+                Color        color    = _colors[(int)family];
+                Sprite       sprite   = GetOrCreateSprite(shape);
 
                 var mc = host.GetComponent<MapCustom>() ?? host.AddComponent<MapCustom>();
-                // Prevent auto-registration before our explicit AddCustom call
                 if (_autoAddField != null)
                     try { _autoAddField.SetValue(mc, false); } catch { }
                 mc.sprite = sprite;
@@ -559,10 +624,9 @@ namespace SurveyorMap
 
                 ApplyScale(mc);
 
-                // Diagnostic: warn if the map entity was not created (field name mismatch or AddCustom failed)
                 if (_mceField != null && _mceField.GetValue(mc) == null)
                     SurveyorMapPlugin.Log.LogWarning(
-                        $"[SurveyorMap] mapCustomEntity is null after AddCustom — marker may be invisible. host={host.name}");
+                        $"[SurveyorMap] mapCustomEntity null after AddCustom — marker may be invisible. host={host.name}");
 
                 var health = enemy.GetComponentInChildren<EnemyHealth>(true)
                           ?? host.GetComponentInChildren<EnemyHealth>(true);
@@ -574,12 +638,16 @@ namespace SurveyorMap
                     Host   = host,
                     Mc     = mc,
                     Health = health,
-                    Tier   = tier,
+                    Family = family,
                     Shape  = shape,
                 };
 
+                // Detailed classification log — use to tune keywords post-gameplay
                 SurveyorMapPlugin.Log.LogDebug(
-                    $"[SurveyorMap] Enemy marker added: id={id} tier={tier} shape={shape} host={host.name} total={_registry.Count}");
+                    $"[SurveyorMap] Enemy marker: id={id}" +
+                    $" diff={baseTier} threat={threatTier} shape={shape}" +
+                    $" family={family} color={_colorHex[(int)family]}" +
+                    $" elevated={elevatedBy} names=[{names.Trim()}] total={_registry.Count}");
             }
             catch (Exception ex)
             {
@@ -610,21 +678,16 @@ namespace SurveyorMap
                 SurveyorMapPlugin.Log.LogDebug(
                     $"[SurveyorMap] Sweep removed {toRemove.Count} stale markers. Active={_registry.Count}");
 
-            // 2. Update room-exploration visibility + scale for live markers
-            bool showUnexplored = SurveyorMapPlugin.Settings.ShowEnemiesInUnexploredRooms.Value;
-            int nVisible = 0, nHidden = 0;
+            // 2. Ensure all live markers are active + scale is current.
+            // ShowEnemiesInUnexploredRooms is DEPRECATED — room filtering removed entirely.
+            // All valid (non-stale) markers are always shown.
             foreach (var kv in _registry)
             {
-                bool visible = showUnexplored || IsEnemyRoomExplored(kv.Value.Enemy);
-                SetMarkerEntityActive(kv.Value.Mc, visible);
-                ApplyScale(kv.Value.Mc); // re-apply scale every sweep so config changes take effect
-                if (visible) nVisible++; else nHidden++;
+                SetMarkerEntityActive(kv.Value.Mc, true);
+                ApplyScale(kv.Value.Mc);
             }
-            if (_registry.Count > 0)
-                SurveyorMapPlugin.Log.LogDebug(
-                    $"[SurveyorMap] SweepVisibility: showUnexplored={showUnexplored}" +
-                    $" anyRoom={_anyRoomExplored} levelRooms={_exploredLevelRoomCount}" +
-                    $" visible={nVisible} hidden={nHidden}");
+            SurveyorMapPlugin.Log.LogDebug(
+                $"[SurveyorMap] Sweep: active={_registry.Count}");
         }
 
         // Called on GenerateDone to reset state between levels
@@ -634,7 +697,6 @@ namespace SurveyorMap
             foreach (int id in ids)
                 if (_registry.TryGetValue(id, out var entry))
                     CleanupEntry(id, entry);
-            // Reset room-exploration tracking for new level
             _exploredRoomIds.Clear();
             _anyRoomExplored = false;
             _exploredLevelRoomCount = 0;
@@ -646,20 +708,18 @@ namespace SurveyorMap
         {
             try
             {
-                if (e.Parent == null)              return true;
-                if (e.Enemy  == null)              return true;
-                if (e.Host   == null)              return true;
-                if (!e.Host.activeInHierarchy)     return true;
-                if (e.Mc     == null)              return true;
+                if (e.Parent == null)          return true;
+                if (e.Enemy  == null)          return true;
+                if (e.Host   == null)          return true;
+                if (!e.Host.activeInHierarchy) return true;
+                if (e.Mc     == null)          return true;
 
-                // EnemyParent.Spawned == false
                 if (_spawnedField != null)
                 {
                     var raw = _spawnedField.GetValue(e.Parent);
                     if (raw is bool b && !b) return true;
                 }
 
-                // Enemy.CurrentState == Despawn
                 if (_currentStateField != null || _currentStateProp != null)
                 {
                     try
@@ -672,7 +732,6 @@ namespace SurveyorMap
                     catch { }
                 }
 
-                // EnemyHealth.dead / healthCurrent
                 var health = e.Health;
                 if (health != null)
                 {
