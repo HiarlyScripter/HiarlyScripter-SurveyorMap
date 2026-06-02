@@ -27,6 +27,18 @@ namespace SurveyorMap
         }
     }
 
+    // Observes every SetExplored() call (native game or NativeGlobal) to track explored rooms.
+    // We NEVER call SetExplored() ourselves here — we just watch when the game does.
+    [HarmonyPatch(typeof(RoomVolume), "SetExplored")]
+    internal static class RoomVolumeExploredPatch
+    {
+        [HarmonyPostfix]
+        private static void Postfix(RoomVolume __instance)
+        {
+            EnemyMapMarkerService.OnRoomExplored(__instance);
+        }
+    }
+
     // Postfix used by the manual DeathRPC / DeathImpulseRPC patches in Core.cs
     internal static class EnemyDeathHelper
     {
@@ -70,6 +82,11 @@ namespace SurveyorMap
         // Sprite cache per shape (4 shapes × 1 sprite each — colour is applied via MapCustom.color)
         private static readonly Sprite[] _sprites = new Sprite[4];
 
+        // Room-exploration tracking — populated by RoomVolumeExploredPatch observing SetExplored() calls.
+        // Key = RoomVolume.GetInstanceID(). Fail-open: if empty, show all markers.
+        private static readonly HashSet<int> _exploredRoomIds = new HashSet<int>();
+        private static bool _anyRoomExplored; // true once at least one SetExplored() call observed
+
         // ── Colours — colour = danger/difficulty ─────────────────────────────
         // Easy  #DFFFE8  verde-gelo quase branco  (low danger)
         // Med   #3DA5FF  azul/ciano               (medium danger)
@@ -101,7 +118,8 @@ namespace SurveyorMap
         private static PropertyInfo _enemyTypeProp;
         private static FieldInfo    _enemyNameField;     // EnemyParent.enemyName
         private static PropertyInfo _enemyNameProp;
-        private static FieldInfo    _roomExploredField;  // RoomVolume.explored
+        // Note: RoomVolume.explored is no longer accessed via reflection.
+        // Room tracking now uses RoomVolumeExploredPatch + _exploredRoomIds HashSet.
 
         public static int ActiveMarkerCount => _registry.Count;
 
@@ -144,8 +162,7 @@ namespace SurveyorMap
             _hpField   = eh.GetField("healthCurrent", bf) ?? eh.GetField("HealthCurrent", bf)
                       ?? eh.GetField("HP",            bf) ?? eh.GetField("hp",            bf);
 
-            _roomExploredField = typeof(RoomVolume).GetField("explored", bf)
-                              ?? typeof(RoomVolume).GetField("Explored", bf);
+            // RoomVolume.explored is NOT reflected — room tracking uses RoomVolumeExploredPatch.
         }
 
         // ── Accessors ────────────────────────────────────────────────────────
@@ -390,28 +407,57 @@ namespace SurveyorMap
 
         // ── Room-exploration visibility ───────────────────────────────────────
 
-        // Returns true if the room is explored or if it cannot be determined (fail-safe = show).
+        // Returns true (show) if the room is explored, or if exploration state cannot be determined (fail-open).
+        //
+        // Implementation: observes SetExplored() calls via RoomVolumeExploredPatch.
+        // Fail-open rule: if no room has EVER triggered SetExplored() this session,
+        // the exploration system is inactive (e.g. Vanilla mode with camera-based reveal) →
+        // we cannot determine exploration → show all markers.
         private static bool IsEnemyRoomExplored(Enemy enemy)
         {
             if (enemy == null || !enemy.gameObject) return true;
+
+            // Fail-open: if the game has never called SetExplored (Vanilla mode with
+            // non-field-based TAB reveal), we can't determine room state → show all.
+            if (!_anyRoomExplored)
+            {
+                SurveyorMapPlugin.Log.LogDebug(
+                    "[SurveyorMap] RoomCheck: exploration system inactive (no SetExplored observed) — fail-open show");
+                return true;
+            }
+
             try
             {
                 var cols = Physics.OverlapSphere(
-                    enemy.transform.position, 1f, ~0, QueryTriggerInteraction.Collide);
+                    enemy.transform.position, 2f, ~0, QueryTriggerInteraction.Collide);
                 foreach (var col in cols)
                 {
                     var rv = col.GetComponent<RoomVolume>();
                     if (rv == null) continue;
-                    if (_roomExploredField != null)
-                    {
-                        var raw = _roomExploredField.GetValue(rv);
-                        if (raw is bool b) return b;
-                    }
-                    return true; // room found but can't read explored → show (fail-safe)
+                    bool explored = _exploredRoomIds.Contains(rv.GetInstanceID());
+                    SurveyorMapPlugin.Log.LogDebug(
+                        $"[SurveyorMap] RoomCheck: {rv.gameObject.name} explored={explored}");
+                    return explored;
                 }
             }
             catch { }
-            return true; // no room or error → show
+            return true; // no room found or error → show (fail-open)
+        }
+
+        // Called by RoomVolumeExploredPatch when the game or NativeGlobal calls SetExplored().
+        // We observe without mutating anything.
+        public static void OnRoomExplored(RoomVolume room)
+        {
+            if (room == null) return;
+            _exploredRoomIds.Add(room.GetInstanceID());
+            if (!_anyRoomExplored)
+            {
+                _anyRoomExplored = true;
+                SurveyorMapPlugin.Log.LogInfo(
+                    "[SurveyorMap] Room exploration system active — SetExplored observed for first time.");
+            }
+            SurveyorMapPlugin.Log.LogDebug(
+                $"[SurveyorMap] Room explored: {room.gameObject.name} total={_exploredRoomIds.Count}");
         }
 
         private static void SetMarkerEntityActive(MapCustom mc, bool active)
@@ -470,14 +516,26 @@ namespace SurveyorMap
                 try
                 {
                     if (Map.Instance != null)
+                    {
                         Map.Instance.AddCustom(mc, sprite, color);
+                        SurveyorMapPlugin.Log.LogDebug($"[SurveyorMap] Map.AddCustom OK: host={host.name}");
+                    }
+                    else
+                    {
+                        SurveyorMapPlugin.Log.LogWarning("[SurveyorMap] Map.AddCustom skipped: Map.Instance is null");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    SurveyorMapPlugin.Log.LogDebug($"[SurveyorMap] Map.AddCustom: {ex.Message}");
+                    SurveyorMapPlugin.Log.LogWarning($"[SurveyorMap] Map.AddCustom FAILED: {ex.Message}");
                 }
 
                 ApplyScale(mc);
+
+                // Diagnostic: warn if the map entity was not created (field name mismatch or AddCustom failed)
+                if (_mceField != null && _mceField.GetValue(mc) == null)
+                    SurveyorMapPlugin.Log.LogWarning(
+                        $"[SurveyorMap] mapCustomEntity is null after AddCustom — marker may be invisible. host={host.name}");
 
                 var health = enemy.GetComponentInChildren<EnemyHealth>(true)
                           ?? host.GetComponentInChildren<EnemyHealth>(true);
@@ -527,6 +585,11 @@ namespace SurveyorMap
 
             // 2. Update room-exploration visibility for live markers
             bool showUnexplored = SurveyorMapPlugin.Settings.ShowEnemiesInUnexploredRooms.Value;
+            if (!showUnexplored && _registry.Count > 0)
+                SurveyorMapPlugin.Log.LogDebug(
+                    $"[SurveyorMap] SweepVisibility: showUnexplored={showUnexplored}" +
+                    $" anyRoomExplored={_anyRoomExplored} exploredRooms={_exploredRoomIds.Count}" +
+                    $" liveMarkers={_registry.Count}");
             foreach (var kv in _registry)
             {
                 bool visible = showUnexplored || IsEnemyRoomExplored(kv.Value.Enemy);
@@ -541,6 +604,9 @@ namespace SurveyorMap
             foreach (int id in ids)
                 if (_registry.TryGetValue(id, out var entry))
                     CleanupEntry(id, entry);
+            // Reset room-exploration tracking for new level
+            _exploredRoomIds.Clear();
+            _anyRoomExplored = false;
         }
 
         // ── Internal ─────────────────────────────────────────────────────────
