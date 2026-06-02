@@ -29,6 +29,7 @@ namespace SurveyorMap
         public readonly ConfigEntry<bool>    EditModeEnabled;
         public readonly ConfigEntry<KeyCode> EditModeKey;
         public readonly ConfigEntry<bool>    UnlockCursorInEditMode;
+        public readonly ConfigEntry<bool>    FreezeCameraInEditMode;
 
         // --- Debug ---
         public readonly ConfigEntry<bool>    DebugLogging;
@@ -73,6 +74,10 @@ namespace SurveyorMap
                 "so you can drag and resize the minimap without pressing ESC first. " +
                 "The cursor state is restored when you exit edit mode. " +
                 "If the game still captures the cursor, press ESC once to release it manually.");
+            FreezeCameraInEditMode = cfg.Bind("EditMode", "FreezeCameraInEditMode", true,
+                "When true, the game camera look (mouse-look) is suspended while F8 edit mode is active. " +
+                "Uses the game's own CameraAim.OverridePlayerAimDisable API — no patches. " +
+                "Camera control is restored automatically when you exit edit mode.");
 
             DebugLogging = cfg.Bind("Debug", "DebugLogging", false,
                 "Enable verbose debug logging to BepInEx/LogOutput.log. " +

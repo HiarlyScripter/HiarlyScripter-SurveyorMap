@@ -100,6 +100,7 @@ namespace SurveyorMap
                         $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
                         $" EditModeEnabled={Settings.EditModeEnabled.Value}" +
                         $" UnlockCursor={Settings.UnlockCursorInEditMode.Value}" +
+                        $" FreezeCamera={Settings.FreezeCameraInEditMode.Value}" +
                         $" DebugLogging={Settings.DebugLogging.Value}");
         }
 
@@ -160,6 +161,9 @@ namespace SurveyorMap
                         Cursor.lockState = _savedCursorLockState;
                         Cursor.visible   = _savedCursorVisible;
                     }
+                    // Re-enable camera look using the game's own API
+                    if (Settings.FreezeCameraInEditMode.Value)
+                        TryRestoreCameraAim();
                     Config.Save();
                     Log.LogInfo("[SurveyorMap] Edit mode OFF — config saved.");
                 }
@@ -171,6 +175,9 @@ namespace SurveyorMap
                         _savedCursorLockState = Cursor.lockState;
                         _savedCursorVisible   = Cursor.visible;
                     }
+                    // Disable camera look using the game's own API
+                    if (Settings.FreezeCameraInEditMode.Value)
+                        TryFreezeCameraAim();
                     Log.LogInfo("[SurveyorMap] Edit mode ON.");
                 }
             }
@@ -381,14 +388,60 @@ namespace SurveyorMap
 
         private void OnDestroy()
         {
-            // Restore cursor if plugin is destroyed while edit mode is active
-            if (_editMode && Settings?.UnlockCursorInEditMode?.Value == true)
+            // Restore cursor and camera look if plugin is destroyed while edit mode is active
+            if (_editMode)
             {
-                try { Cursor.lockState = _savedCursorLockState; Cursor.visible = _savedCursorVisible; }
-                catch { }
+                if (Settings?.UnlockCursorInEditMode?.Value == true)
+                {
+                    try { Cursor.lockState = _savedCursorLockState; Cursor.visible = _savedCursorVisible; }
+                    catch { }
+                }
+                if (Settings?.FreezeCameraInEditMode?.Value == true)
+                    TryRestoreCameraAim();
             }
             try { _harmony?.UnpatchSelf(); } catch { }
             _mirror = null;
+        }
+
+        // Disable player camera look via the game's own CameraAim singleton.
+        // Uses CameraAim.OverridePlayerAimDisable(true) — no patches, no Windows API.
+        private void TryFreezeCameraAim()
+        {
+            try
+            {
+                var aim = CameraAim.Instance;
+                if (aim != null)
+                {
+                    aim.OverridePlayerAimDisable(true);
+                    LogDbg("[SurveyorMap] CameraAim.OverridePlayerAimDisable(true)");
+                }
+                else
+                {
+                    Log.LogWarning("[SurveyorMap] FreezeCameraInEditMode: CameraAim.Instance is null (not in gameplay?).");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning($"[SurveyorMap] FreezeCameraInEditMode: could not disable aim: {ex.Message}");
+            }
+        }
+
+        // Re-enable player camera look.
+        private void TryRestoreCameraAim()
+        {
+            try
+            {
+                var aim = CameraAim.Instance;
+                if (aim != null)
+                {
+                    aim.OverridePlayerAimDisable(false);
+                    LogDbg("[SurveyorMap] CameraAim.OverridePlayerAimDisable(false)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning($"[SurveyorMap] FreezeCameraInEditMode: could not restore aim: {ex.Message}");
+            }
         }
     }
 }

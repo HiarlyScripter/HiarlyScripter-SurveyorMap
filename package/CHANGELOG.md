@@ -6,6 +6,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.0 local — 2026-06-02 (patch 8 — suspensão de câmera no F8 edit mode)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Nova config `FreezeCameraInEditMode = true` (seção `[EditMode]`).** Ao entrar no modo F8, a câmera do jogador é suspensa automaticamente usando a API nativa do jogo (`CameraAim.OverridePlayerAimDisable`). Mover o mouse edita o minimapa sem girar a câmera.
+- O controle da câmera é restaurado ao sair do modo F8, junto com o cursor.
+- Implementação via API pública do jogo — sem patches, sem Windows API, sem simulação de ESC.
+- Se `CameraAim.Instance` for nulo (fora de gameplay), o mod emite um aviso e continua sem travar.
+- Nenhuma alteração funcional: minimap, TAB, M, R reset, inimigos, cleanup, DebugLogging inalterados.
+
 ### v1.0.0 local — 2026-06-02 (patch 7 — cursor automático no F8 e revisão de documentação)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -82,6 +92,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.0 local — 2026-06-02 (patch 8 — camera suspension during F8 edit mode)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **New config `FreezeCameraInEditMode = true` (section `[EditMode]`).** When entering F8 edit mode, the player camera look is suspended automatically using the game's own API (`CameraAim.OverridePlayerAimDisable`). Moving the mouse edits the minimap without spinning the camera.
+- Camera control is restored when you exit F8 edit mode, together with cursor state.
+- Implemented via the game's public API — no patches, no Windows API, no ESC simulation.
+- If `CameraAim.Instance` is null (e.g. not in gameplay), the mod emits a warning and continues without crashing.
+- No functional changes: minimap, TAB, M, R reset, enemy markers, cleanup, DebugLogging unchanged.
 
 ### v1.0.0 local — 2026-06-02 (patch 7 — automatic cursor in F8 edit mode and documentation review)
 
