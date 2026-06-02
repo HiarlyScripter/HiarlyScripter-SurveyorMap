@@ -12,7 +12,7 @@ O SurveyorMap adiciona um minimapa nativo persistente no HUD inferior esquerdo d
 - **Fidelidade nativa** — lê a câmera de mapa real do jogo (`activeTexture`). Mostra a geometria real das salas, marcadores nativos e fidelidade das paredes.
 - **Tecla M** — pressione `M` para mostrar/ocultar o minimapa sem afetar o TAB nativo.
 - **TAB seguro** — ao abrir o TAB, o minimapa persistente some automaticamente. O TAB não é afetado.
-- **Marcadores de inimigos** — mostra posições de inimigos como marcadores no mapa. Inimigos mortos/despawnados são removidos automaticamente em até ~2s. A **forma** indica o nível de ameaça e a **cor** indica o tipo/família do inimigo.
+- **Marcadores de inimigos** — mostra posições de inimigos como marcadores no mapa. Inimigos mortos/despawnados são removidos automaticamente em até ~2s. A **forma** e a **cor** indicam o nível de ameaça do inimigo (redundantes para máxima legibilidade no minimapa pequeno).
 - **Modo de edição F8** — pressione `F8` para entrar no modo de edição: arraste para reposicionar, segure o canto inferior direito para redimensionar, scroll para zoom, `+`/`-` para ajustar tamanho, `Shift+scroll` para redimensionar, `R` para resetar para os valores padrão. Config salva automaticamente ao sair.
 - **RevealRooms (opt-in)** — defina `RevealRoomsMode = NativeGlobal` para revelar todas as salas ao entrar no nível. **Atenção:** este modo também afeta o TAB nativo. O padrão é `Vanilla` (TAB permanece original).
 
@@ -74,7 +74,7 @@ SurveyorMap adds a persistent native-looking minimap to the bottom-left HUD duri
 - **Native map fidelity** — reads the game's own map camera (`activeTexture`). Shows real room geometry, native markers, and wall fidelity.
 - **M toggle** — press `M` to show/hide the minimap without affecting the native TAB map.
 - **TAB-safe** — when you open the TAB map, the persistent minimap hides automatically. TAB is unaffected.
-- **Enemy markers** — shows enemy positions on the map. Dead/despawned enemies are cleaned up automatically within ~2s. **Shape** indicates threat level; **colour** indicates enemy type/family.
+- **Enemy markers** — shows enemy positions on the map. Dead/despawned enemies are cleaned up automatically within ~2s. **Shape** and **colour** both indicate threat level (redundant for maximum readability at minimap scale).
 - **F8 Edit Mode** — press `F8` to enter edit mode: drag to reposition, grab the bottom-right corner to resize, scroll to zoom, `+`/`-` to adjust size, `Shift+scroll` to resize, `R` to reset to defaults. Config is saved automatically on exit.
 - **RevealRooms (opt-in)** — set `RevealRoomsMode = NativeGlobal` to reveal all rooms on level load. **Note:** this also affects the native TAB map. Default is `Vanilla` (TAB stays original).
 
