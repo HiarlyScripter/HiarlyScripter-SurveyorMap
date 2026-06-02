@@ -83,9 +83,10 @@ namespace SurveyorMap
         private static readonly Sprite[] _sprites = new Sprite[4];
 
         // Room-exploration tracking — populated by RoomVolumeExploredPatch observing SetExplored() calls.
-        // Key = RoomVolume.GetInstanceID(). Fail-open: if empty, show all markers.
+        // Key = RoomVolume.GetInstanceID(). Fail-open: if no level rooms ever explored, show all markers.
         private static readonly HashSet<int> _exploredRoomIds = new HashSet<int>();
-        private static bool _anyRoomExplored; // true once at least one SetExplored() call observed
+        private static bool _anyRoomExplored;       // true once any SetExplored() call observed (incl. truck)
+        private static int  _exploredLevelRoomCount; // non-truck rooms explored; 0 = level tracking inactive
 
         // ── Colours — colour = danger/difficulty ─────────────────────────────
         // Easy  #DFFFE8  verde-gelo quase branco  (low danger)
@@ -201,15 +202,16 @@ namespace SurveyorMap
             return MarkerCategory.Elite;
         }
 
-        // ── Shape: derived from Enemy.Type / enemyName / host name ───────────
+        // ── Shape: derived from Enemy.Type / enemyName / C# type name / GO names ──
+        // NOTE: host is intentionally EXCLUDED — it is always the physics root "Controller",
+        //       which is generic and actively misleads classification.
 
         private static MarkerShape GetShape(EnemyParent parent, Enemy enemy, GameObject host)
         {
-            // Collect candidate names to inspect
             var name = "";
             try
             {
-                // 1. Enemy.Type enum (toString)
+                // 1. Enemy.Type enum — most reliable semantic tag if the game populates it
                 if (_enemyTypeField != null || _enemyTypeProp != null)
                 {
                     var raw = _enemyTypeField != null
@@ -218,7 +220,7 @@ namespace SurveyorMap
                     if (raw != null) name += " " + raw.ToString();
                 }
 
-                // 2. EnemyParent.enemyName
+                // 2. EnemyParent.enemyName — designer-assigned name, e.g. "Huntsman", "Bang"
                 if (_enemyNameField != null || _enemyNameProp != null)
                 {
                     var raw = _enemyNameField != null
@@ -227,29 +229,47 @@ namespace SurveyorMap
                     if (raw != null) name += " " + raw.ToString();
                 }
 
-                // 3. Host / enemy GameObject names as last fallback
-                if (host   != null) name += " " + host.name;
-                if (enemy  != null) name += " " + enemy.gameObject.name;
-                if (parent != null) name += " " + parent.gameObject.name;
+                // 3. C# class name of the Enemy component — reliable even without reflection data
+                //    e.g. "EnemyBang" → "bang", "EnemyHunter" → "hunt"
+                if (enemy != null)
+                {
+                    var csharpType = enemy.GetType().Name;
+                    if (!string.IsNullOrEmpty(csharpType) && csharpType != "Enemy")
+                        name += " " + csharpType;
+                }
+
+                // 4. Enemy gameObject name (prefab instance name, not physics root)
+                if (enemy != null && enemy.gameObject != null)
+                    name += " " + enemy.gameObject.name;
+
+                // 5. EnemyParent gameObject name (highest-level name, often most descriptive)
+                if (parent != null && parent.gameObject != null)
+                    name += " " + parent.gameObject.name;
+
+                // Host intentionally omitted — it is named "Controller" (physics rigidbody root)
+                // and provides no useful semantic signal for enemy classification.
             }
             catch { }
 
             name = name.ToLower();
+            SurveyorMapPlugin.Log.LogDebug($"[SurveyorMap] GetShape names: [{name.Trim()}]");
 
             // Star — boss / elite / extreme threat
             if (ContainsAny(name, "boss", "elite", "apex", "king", "titan", "lord", "chief",
-                                  "master", "giant", "mega", "alpha", "omega"))
+                                  "master", "giant", "mega", "alpha", "omega", "reaper"))
                 return MarkerShape.Star;
 
             // Triangle — hunter / aggressive / pursuer / melee
             if (ContainsAny(name, "hunt", "bang", "attack", "rush", "charge", "charg",
-                                  "chase", "stalk", "crawl", "bowtie", "runner", "raider"))
+                                  "chase", "stalk", "crawl", "bowtie", "runner", "raider",
+                                  "robe", "upscream", "screamer", "smasher"))
                 return MarkerShape.Triangle;
 
-            // Diamond — special / support / strange / non-standard behavior
+            // Diamond — special / support / ranged / strange / stealth
             if (ContainsAny(name, "shadow", "duck", "child", "baby", "clown", "ghost",
                                   "float", "eye", "mouth", "pet", "creep", "mentalist",
-                                  "support", "flower", "reap", "special", "weird"))
+                                  "support", "flower", "reap", "special", "weird", "krild",
+                                  "hidden", "janitor", "spider", "slug", "trap", "turret"))
                 return MarkerShape.Diamond;
 
             // Circle — common / basic / neutral fallback
@@ -331,14 +351,15 @@ namespace SurveyorMap
 
         private static void ApplyScale(MapCustom mc)
         {
-            float size = SurveyorMapPlugin.Settings.EnemyMarkerSize.Value;
-            if (Mathf.Abs(size - 1f) < 0.01f) return;
+            // No early-return for size=1.0 — always enforce current config value so
+            // changes made in REPOConfig take effect within the next sweep cycle (~2s).
             try
             {
-                if (_mceField == null) return;
+                if (mc == null || _mceField == null) return;
                 var entity = _mceField.GetValue(mc) as MapCustomEntity;
-                if (entity != null && entity.gameObject != null)
-                    entity.transform.localScale = Vector3.one * size;
+                if (entity == null || entity.gameObject == null) return;
+                float size = Mathf.Clamp(SurveyorMapPlugin.Settings.EnemyMarkerSize.Value, 0.30f, 2.00f);
+                entity.transform.localScale = Vector3.one * size;
             }
             catch { }
         }
@@ -409,22 +430,23 @@ namespace SurveyorMap
 
         // Returns true (show) if the room is explored, or if exploration state cannot be determined (fail-open).
         //
-        // Implementation: observes SetExplored() calls via RoomVolumeExploredPatch.
-        // Fail-open rule: if no room has EVER triggered SetExplored() this session,
-        // the exploration system is inactive (e.g. Vanilla mode with camera-based reveal) →
-        // we cannot determine exploration → show all markers.
+        // Fail-open rules (in order):
+        //   1. No SetExplored ever observed → show (exploration system completely inactive).
+        //   2. Only truck/lobby rooms explored (_exploredLevelRoomCount == 0) → show
+        //      (game calls SetExplored on truck every frame, but NOT on actual level rooms in Vanilla mode;
+        //       truck-only tracking is not useful for level-room filtering).
+        //   3. Level rooms tracked and enemy's room is in the explored set → show.
+        //   4. Level rooms tracked and enemy's room is NOT in explored set → hide (room unexplored).
+        //   5. No room found at enemy position → show (fail-open).
         private static bool IsEnemyRoomExplored(Enemy enemy)
         {
             if (enemy == null || !enemy.gameObject) return true;
 
-            // Fail-open: if the game has never called SetExplored (Vanilla mode with
-            // non-field-based TAB reveal), we can't determine room state → show all.
-            if (!_anyRoomExplored)
-            {
-                SurveyorMapPlugin.Log.LogDebug(
-                    "[SurveyorMap] RoomCheck: exploration system inactive (no SetExplored observed) — fail-open show");
-                return true;
-            }
+            // Guard 1: no SetExplored calls at all
+            if (!_anyRoomExplored) return true;
+
+            // Guard 2: only lobby/truck explored — level exploration not tracked in Vanilla mode → fail-open
+            if (_exploredLevelRoomCount == 0) return true;
 
             try
             {
@@ -441,23 +463,28 @@ namespace SurveyorMap
                 }
             }
             catch { }
-            return true; // no room found or error → show (fail-open)
+            return true; // no room found at enemy position → show (fail-open)
         }
 
         // Called by RoomVolumeExploredPatch when the game or NativeGlobal calls SetExplored().
-        // We observe without mutating anything.
+        // We observe without mutating anything. Log only on FIRST observation of each room (dedup).
         public static void OnRoomExplored(RoomVolume room)
         {
             if (room == null) return;
-            _exploredRoomIds.Add(room.GetInstanceID());
-            if (!_anyRoomExplored)
+            bool isNew = _exploredRoomIds.Add(room.GetInstanceID()); // HashSet.Add returns false if already present
+            if (!_anyRoomExplored) _anyRoomExplored = true;
+
+            if (isNew)
             {
-                _anyRoomExplored = true;
+                // "Truck" rooms are the lobby/staging area — not actual level rooms.
+                // We only count non-truck rooms for "level exploration active" determination.
+                bool isTruck = room.gameObject.name.IndexOf("Truck", StringComparison.OrdinalIgnoreCase) >= 0;
+                if (!isTruck) _exploredLevelRoomCount++;
                 SurveyorMapPlugin.Log.LogInfo(
-                    "[SurveyorMap] Room exploration system active — SetExplored observed for first time.");
+                    $"[SurveyorMap] Room explored (new): {room.gameObject.name}" +
+                    $" isTruck={isTruck} levelRooms={_exploredLevelRoomCount} total={_exploredRoomIds.Count}");
             }
-            SurveyorMapPlugin.Log.LogDebug(
-                $"[SurveyorMap] Room explored: {room.gameObject.name} total={_exploredRoomIds.Count}");
+            // Duplicate SetExplored calls (same room) are silently discarded to avoid log spam.
         }
 
         private static void SetMarkerEntityActive(MapCustom mc, bool active)
@@ -583,18 +610,21 @@ namespace SurveyorMap
                 SurveyorMapPlugin.Log.LogDebug(
                     $"[SurveyorMap] Sweep removed {toRemove.Count} stale markers. Active={_registry.Count}");
 
-            // 2. Update room-exploration visibility for live markers
+            // 2. Update room-exploration visibility + scale for live markers
             bool showUnexplored = SurveyorMapPlugin.Settings.ShowEnemiesInUnexploredRooms.Value;
-            if (!showUnexplored && _registry.Count > 0)
-                SurveyorMapPlugin.Log.LogDebug(
-                    $"[SurveyorMap] SweepVisibility: showUnexplored={showUnexplored}" +
-                    $" anyRoomExplored={_anyRoomExplored} exploredRooms={_exploredRoomIds.Count}" +
-                    $" liveMarkers={_registry.Count}");
+            int nVisible = 0, nHidden = 0;
             foreach (var kv in _registry)
             {
                 bool visible = showUnexplored || IsEnemyRoomExplored(kv.Value.Enemy);
                 SetMarkerEntityActive(kv.Value.Mc, visible);
+                ApplyScale(kv.Value.Mc); // re-apply scale every sweep so config changes take effect
+                if (visible) nVisible++; else nHidden++;
             }
+            if (_registry.Count > 0)
+                SurveyorMapPlugin.Log.LogDebug(
+                    $"[SurveyorMap] SweepVisibility: showUnexplored={showUnexplored}" +
+                    $" anyRoom={_anyRoomExplored} levelRooms={_exploredLevelRoomCount}" +
+                    $" visible={nVisible} hidden={nHidden}");
         }
 
         // Called on GenerateDone to reset state between levels
@@ -607,6 +637,7 @@ namespace SurveyorMap
             // Reset room-exploration tracking for new level
             _exploredRoomIds.Clear();
             _anyRoomExplored = false;
+            _exploredLevelRoomCount = 0;
         }
 
         // ── Internal ─────────────────────────────────────────────────────────

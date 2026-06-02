@@ -53,8 +53,8 @@ namespace SurveyorMap
             ShowEnemies = cfg.Bind("Features", "ShowEnemies", true,
                 "Show enemy positions on the map using native MapCustom markers.");
 
-            EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 1.0f,
-                "Scale multiplier for enemy markers (0.1–3.0). Default 1.0.");
+            EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 0.65f,
+                "Scale multiplier for enemy markers (0.30–2.00). Default 0.65. Changes apply within ~2s without restart.");
             ShowEnemiesInUnexploredRooms = cfg.Bind("Features", "ShowEnemiesInUnexploredRooms", false,
                 "false (default) = hide enemy markers in unexplored rooms (more vanilla). " +
                 "true = show all enemy markers regardless of room exploration. " +
