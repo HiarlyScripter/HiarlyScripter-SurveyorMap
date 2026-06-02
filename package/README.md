@@ -22,30 +22,20 @@ Apenas o jogador que quer o HUD. O SurveyorMap não envia RPCs, não altera a re
 
 ### Sistema visual dos marcadores de inimigos
 
-#### Forma = nível de ameaça
+**Forma e cor comunicam a mesma coisa de forma redundante: o nivel de ameaca do inimigo.**
+Isso maximiza a legibilidade no minimapa pequeno — voce identifica o perigo tanto pela forma quanto pela cor.
 
-A **forma** comunica o perigo imediato do inimigo, derivado de `difficulty` + elevação por palavras-chave do nome/tipo:
-
-| Ameaça | Forma | Exemplos |
-|---|---|---|
-| Baixa (Easy) | Circulo | Head Grabber, Valuable Thrower |
-| Media (Medium) | Quadrado | Oogly, inimigos genericos |
-| Alta (High) | Triangulo | Hunter/Huntsman, Beamer (veryheavy) |
-| Critica (Elite) | Estrela | Trudge/Slow Walker, Birthday Boy, Elsa, chefes |
-
-Inimigos classificados como `veryheavy` sao elevados automaticamente para Ameaca Alta (triangulo) mesmo que o `difficulty` base seja Medio.
-Palavras-chave como `trudge`, `slow walker`, `boss`, `elite` elevam para Ameaca Critica (estrela).
-
-#### Cor = tipo/familia do inimigo
-
-A **cor** diferencia o comportamento/familia do inimigo:
-
-| Familia | Cor | Hex | Exemplos |
+| Ameaca | Forma | Cor | Hex |
 |---|---|---|---|
-| Comum / generico | Azul escuro | `#1E6BFF` | fallback para desconhecidos |
-| Pequeno / critter | Verde-gelo | `#DFFFE8` | Head Grabber, Valuable Thrower |
-| Especial / sobrenatural | Lila | `#C084FC` | Beamer (Clown), Oogly, Elsa, Birthday Boy |
-| Bruto / cacador | Vermelho | `#FF3B30` | Hunter/Huntsman, Trudge/Slow Walker |
+| Baixa (Easy) | Circulo | Verde-gelo | `#DFFFE8` |
+| Media (Medium) | Quadrado | Azul escuro | `#1E6BFF` |
+| Alta (High) | Triangulo | Lila | `#C084FC` |
+| Critica (Elite) | Estrela | Vermelho/coral | `#FF3B30` |
+
+O nivel de ameaca e derivado do campo `difficulty` do inimigo. Palavras-chave no nome/tipo podem elevar o nivel (nunca reduzir):
+- `veryheavy` → elevado para pelo menos Alta (triangulo/lila)
+- `trudge`, `slow walker`, `boss`, `elite` → elevado para Critica (estrela/vermelho)
+- `hunt`, `huntsman`, `bang`, `rush`, `charge` → elevado para pelo menos Alta (triangulo/lila)
 
 ### Configuracao
 
@@ -93,30 +83,22 @@ Only the player who wants the HUD. SurveyorMap does not send RPCs, does not alte
 
 ### Enemy marker visual system
 
-#### Shape = threat level
+#### Shape and colour = threat level (redundant)
 
-**Shape** communicates how immediately dangerous the enemy is, derived from `difficulty` + keyword elevation:
+**Both shape and colour communicate the same thing: how dangerous the enemy is.**
+This redundancy maximises readability on a small minimap — you recognise the threat level by either glyph or colour at a glance.
 
-| Threat | Shape | Examples |
-|---|---|---|
-| Low (Easy) | Circle | Head Grabber, Valuable Thrower |
-| Medium | Square | Oogly, generic enemies |
-| High | Triangle | Hunter/Huntsman, Beamer (veryheavy) |
-| Critical (Elite) | Star | Trudge/Slow Walker, Birthday Boy, Elsa, bosses |
-
-Enemies classified as `veryheavy` are automatically elevated to High threat (triangle) even if their base `difficulty` is Medium.
-Keywords like `trudge`, `slow walker`, `boss`, `elite` elevate to Critical (star).
-
-#### Colour = enemy type/family
-
-**Colour** differentiates enemy behaviour and family:
-
-| Family | Colour | Hex | Examples |
+| Threat | Shape | Colour | Hex |
 |---|---|---|---|
-| Common / generic | Dark blue | `#1E6BFF` | fallback for unknown types |
-| Small / critter | Ice-white green | `#DFFFE8` | Head Grabber, Valuable Thrower |
-| Special / supernatural | Lilac | `#C084FC` | Beamer (Clown), Oogly, Elsa, Birthday Boy |
-| Brute / hunter | Red / coral | `#FF3B30` | Hunter/Huntsman, Trudge/Slow Walker |
+| Low (Easy) | Circle | Ice-green | `#DFFFE8` |
+| Medium | Square | Dark blue | `#1E6BFF` |
+| High | Triangle | Lilac | `#C084FC` |
+| Critical (Elite) | Star | Red / coral | `#FF3B30` |
+
+Threat level is derived from the enemy's `difficulty` field. Name/type keywords can only elevate the tier (never reduce it):
+- `veryheavy` → elevated to at least High (triangle / lilac)
+- `trudge`, `slow walker`, `boss`, `elite` → elevated to Critical (star / red)
+- `hunt`, `huntsman`, `bang`, `rush`, `charge` → elevated to at least High (triangle / lilac)
 
 ### Configuration
 

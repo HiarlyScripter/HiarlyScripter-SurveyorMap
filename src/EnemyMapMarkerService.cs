@@ -59,10 +59,6 @@ namespace SurveyorMap
     // Derived from EnemyParent.difficulty + keyword elevation (never downgraded).
     internal enum ThreatTier { Low = 0, Medium = 1, High = 2, Elite = 3 }
 
-    // Colour family — determines COLOUR (what kind/behaviour of enemy this is).
-    // Derived from enemy name/type/class keywords.
-    internal enum MarkerFamily { Common = 0, Small = 1, Special = 2, Brute = 3 }
-
     // Marker shape glyph (one-to-one with ThreatTier)
     internal enum MarkerShape { Circle = 0, Square = 1, Triangle = 2, Star = 3 }
 
@@ -72,9 +68,9 @@ namespace SurveyorMap
         public Enemy        Enemy;
         public GameObject   Host;
         public MapCustom    Mc;
-        public EnemyHealth  Health; // cached — may be null
-        public MarkerFamily Family; // colour source (family/behaviour)
-        public MarkerShape  Shape;  // shape source (threat tier → glyph)
+        public EnemyHealth  Health;    // cached — may be null
+        public ThreatTier   Tier;      // final threat tier (determines both shape and colour)
+        public MarkerShape  Shape;     // glyph (derived from Tier)
     }
 
     // ── Service ───────────────────────────────────────────────────────────────
@@ -93,21 +89,22 @@ namespace SurveyorMap
         private static bool _anyRoomExplored;        // true once any SetExplored() call observed
         private static int  _exploredLevelRoomCount; // non-truck rooms explored (diagnostic)
 
-        // ── Colours — colour = family/behaviour ──────────────────────────────
-        // Common  #1E6BFF  dark blue      (generic humanoid, fallback)
-        // Small   #DFFFE8  ice-white green (small/swarm/grabber/utility critters)
-        // Special #C084FC  lilac           (weird/supernatural/ranged/odd)
-        // Brute   #FF3B30  red/coral       (aggressive/hunter/melee/heavy threat)
+        // ── Colours — colour = threat tier (redundant with shape; both communicate danger) ──
+        // Low    #DFFFE8  ice-green      (easy, non-threatening)
+        // Medium #1E6BFF  dark blue      (moderate threat)
+        // High   #C084FC  lilac          (significant threat)
+        // Elite  #FF3B30  red/coral      (critical / boss / elevated threat)
+        // Indexed by (int)ThreatTier — must stay aligned with ThreatTier enum order.
         private static readonly Color[] _colors = new Color[]
         {
-            new Color(0.118f, 0.420f, 1.000f, 1f), // Common  — #1E6BFF
-            new Color(0.875f, 1.000f, 0.910f, 1f), // Small   — #DFFFE8
-            new Color(0.753f, 0.518f, 0.988f, 1f), // Special — #C084FC
-            new Color(1.000f, 0.231f, 0.188f, 1f), // Brute   — #FF3B30
+            new Color(0.875f, 1.000f, 0.910f, 1f), // Low    — #DFFFE8
+            new Color(0.118f, 0.420f, 1.000f, 1f), // Medium — #1E6BFF
+            new Color(0.753f, 0.518f, 0.988f, 1f), // High   — #C084FC
+            new Color(1.000f, 0.231f, 0.188f, 1f), // Elite  — #FF3B30
         };
 
-        // Hex strings for classification log (aligned to _colors / MarkerFamily)
-        private static readonly string[] _colorHex = { "#1E6BFF", "#DFFFE8", "#C084FC", "#FF3B30" };
+        // Hex strings for classification log (indexed by ThreatTier)
+        private static readonly string[] _colorHex = { "#DFFFE8", "#1E6BFF", "#C084FC", "#FF3B30" };
 
         // ── Reflection cache ─────────────────────────────────────────────────
         private static bool         _reflected;
@@ -316,35 +313,6 @@ namespace SurveyorMap
                 case ThreatTier.Elite:  return MarkerShape.Star;
                 default:                return MarkerShape.Circle;
             }
-        }
-
-        // ── Colour family: determines COLOUR ─────────────────────────────────
-        //
-        // Brute   (red/coral)      — aggressive hunters, melee, heavy threats
-        // Special (lilac)          — weird, supernatural, ranged, odd behaviour
-        // Small   (ice-green)      — small, swarm, grabbers, throwers, critters
-        // Common  (dark blue)      — fallback, generic humanoids, unknown types
-
-        private static MarkerFamily GetColorFamily(string names)
-        {
-            // Brute — aggressive/melee/heavy
-            if (ContainsAny(names, "hunt", "huntsman", "hunter", "trudge", "slow walker",
-                                   "bang", "rush", "charge", "attack", "smasher", "bowtie",
-                                   "screamer", "robe", "raider"))
-                return MarkerFamily.Brute;
-
-            // Special — weird/supernatural/ranged/utility
-            if (ContainsAny(names, "clown", "beamer", "elsa", "birthday", "oogly", "mentalist",
-                                   "ghost", "float", "eye", "shadow", "duck", "weird",
-                                   "flower", "reap", "spider", "turret", "hidden", "janitor"))
-                return MarkerFamily.Special;
-
-            // Small — small critters, grabbers, throwers
-            if (ContainsAny(names, "headgrab", "rugrat", "thrower", "gnome", "slug", "grabber",
-                                   "baby", "child", "pet", "swarm", "small", "creep", "krild"))
-                return MarkerFamily.Small;
-
-            return MarkerFamily.Common;
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
@@ -589,15 +557,14 @@ namespace SurveyorMap
                 }
                 catch { }
 
-                // ── Classify: collect names, derive threat tier + colour family ──
+                // ── Classify: collect names → threat tier → shape + colour (both = tier) ──
                 string names = CollectNames(parent, enemy);
                 ThreatTier baseTier;
                 string     elevatedBy;
                 ThreatTier threatTier = GetThreatTier(parent, names, out baseTier, out elevatedBy);
-                MarkerFamily family   = GetColorFamily(names);
-                MarkerShape  shape    = TierToShape(threatTier);
-                Color        color    = _colors[(int)family];
-                Sprite       sprite   = GetOrCreateSprite(shape);
+                MarkerShape shape     = TierToShape(threatTier);
+                Color       color     = _colors[(int)threatTier]; // colour = tier (redundant with shape)
+                Sprite      sprite    = GetOrCreateSprite(shape);
 
                 var mc = host.GetComponent<MapCustom>() ?? host.AddComponent<MapCustom>();
                 if (_autoAddField != null)
@@ -638,15 +605,15 @@ namespace SurveyorMap
                     Host   = host,
                     Mc     = mc,
                     Health = health,
-                    Family = family,
+                    Tier   = threatTier,
                     Shape  = shape,
                 };
 
-                // Detailed classification log — use to tune keywords post-gameplay
+                // Detailed classification log — use to tune elevation keywords post-gameplay
                 SurveyorMapPlugin.Log.LogDebug(
                     $"[SurveyorMap] Enemy marker: id={id}" +
                     $" diff={baseTier} threat={threatTier} shape={shape}" +
-                    $" family={family} color={_colorHex[(int)family]}" +
+                    $" color={_colorHex[(int)threatTier]}" +
                     $" elevated={elevatedBy} names=[{names.Trim()}] total={_registry.Count}");
             }
             catch (Exception ex)

@@ -6,6 +6,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Portugues
 
+### v1.0.0 local - 2026-06-02 (patch 5 — alinhamento visual: cor = ameaca)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Forma e cor agora representam o mesmo nivel de ameaca (redundantes).** Circulo+verde-gelo = Easy; Quadrado+azul = Medium; Triangulo+lila = High; Estrela+vermelho = Elite/Critico.
+- **Removido modelo `Cor = Familia`:** cor por tipo/comportamento (Common/Small/Special/Brute) foi removido. Cor agora deriva exclusivamente do threat tier, igual a forma.
+- Keywords de nome/tipo continuam servindo apenas para **elevar** threat tier, nunca para escolher cor separada.
+- Log de classificacao atualizado: removido campo `family=`, mantidos `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=`.
+
 ### v1.0.0 local - 2026-06-01 (patch 4 — sistema visual de inimigos v2)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -60,6 +69,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Baseline de minimap nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
 
 ## English
+
+### v1.0.0 local - 2026-06-02 (patch 5 — visual alignment: colour = threat)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Shape and colour now represent the same threat level (redundant).** Circle+ice-green = Easy; Square+blue = Medium; Triangle+lilac = High; Star+red = Elite/Critical.
+- **Removed `Colour = Family` model:** colour-by-behaviour-type (Common/Small/Special/Brute) removed. Colour is now derived exclusively from threat tier, same as shape.
+- Name/type keywords still serve only to **elevate** threat tier, never to choose a separate colour.
+- Classification log updated: `family=` field removed; `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=` retained.
 
 ### v1.0.0 local - 2026-06-01 (patch 4 — enemy visual system v2)
 
