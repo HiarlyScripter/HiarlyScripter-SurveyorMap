@@ -1,85 +1,100 @@
-# Changelog - SurveyorMap
+# Changelog — SurveyorMap
 
-Este arquivo possui versao em Portugues e Ingles. A versao em Portugues vem primeiro; a English version is below.
+Este arquivo contém versão em Português e em Inglês. O Português vem primeiro; o English version is below.
 
 This file includes Portuguese and English versions. Portuguese comes first; English version is below.
 
-## Portugues
+## Português
 
-### v1.0.0 local - 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+### v1.0.0 local — 2026-06-02 (patch 7 — cursor automático no F8 e revisão de documentação)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
-- **Nova config `DebugLogging = false` (secao `[Debug]`).** Por padrao o log fica silencioso em uso normal. Ative `DebugLogging = true` apenas para diagnostico de classificacao de inimigos, sweep e room tracking.
+- **Nova config `UnlockCursorInEditMode = true` (seção `[EditMode]`).** O cursor é liberado automaticamente ao pressionar F8 para entrar no modo de edição, sem precisar apertar ESC. O estado anterior do cursor é restaurado ao sair do modo de edição.
+- A liberação do cursor é reaplicada a cada frame enquanto o modo de edição estiver ativo, garantindo que o jogo não reloque o mouse durante a edição.
+- Ao alternar o modo de edição, `Input.ResetInputAxes()` é chamado para evitar movimento residual da câmera.
+- Se o jogo ainda capturar o mouse após F8, pressione ESC uma vez para liberar manualmente.
+- Revisão editorial da documentação: acentuação e pontuação em português corrigidas em README e CHANGELOG.
+- Nenhuma alteração funcional: minimap, TAB, M, R reset, inimigos, cleanup, DebugLogging inalterados.
+
+### v1.0.0 local — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Nova config `DebugLogging = false` (seção `[Debug]`).** Por padrão, o log fica silencioso em uso normal. Ative `DebugLogging = true` apenas para diagnóstico de classificação de inimigos, sweep e room tracking.
 - Logs movidos para debug condicional: `Sweep: active=`, `Enemy marker: id=`, `Map.AddCustom OK`, `Room explored (new)`, `AddMarker skipped`, `M toggle`, `Patched EnemyHealth.*`.
-- Logs que continuam sempre visiveis: BuildTag md5=, plugin carregado, resumo de config, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
-- Nenhuma alteracao funcional: cores, formas, cleanup, scale, TAB/M/F8/R inalterados.
+- Logs que continuam sempre visíveis: BuildTag md5=, plugin carregado, resumo de config, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
+- Nenhuma alteração funcional: cores, formas, cleanup, scale, TAB/M/F8/R inalterados.
 
-### v1.0.0 local - 2026-06-02 (patch 5 — alinhamento visual: cor = ameaca)
-
-**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
-
-- **Forma e cor agora representam o mesmo nivel de ameaca (redundantes).** Circulo+verde-gelo = Easy; Quadrado+azul = Medium; Triangulo+lila = High; Estrela+vermelho = Elite/Critico.
-- **Removido modelo `Cor = Familia`:** cor por tipo/comportamento (Common/Small/Special/Brute) foi removido. Cor agora deriva exclusivamente do threat tier, igual a forma.
-- Keywords de nome/tipo continuam servindo apenas para **elevar** threat tier, nunca para escolher cor separada.
-- Log de classificacao atualizado: removido campo `family=`, mantidos `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=`.
-
-### v1.0.0 local - 2026-06-01 (patch 4 — sistema visual de inimigos v2)
+### v1.0.0 local — 2026-06-02 (patch 5 — alinhamento visual: cor = ameaça)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
-- **Novo modelo visual: Forma = Ameaca, Cor = Familia.**
-  - Forma comunica o nivel de perigo: circulo (baixo) / quadrado (medio) / triangulo (alto) / estrela (elite/critico).
-  - Cor comunica o tipo: azul escuro `#1E6BFF` (comum), verde-gelo `#DFFFE8` (pequeno/critter), lila `#C084FC` (especial/sobrenatural), vermelho `#FF3B30` (bruto/cacador).
-- **Elevacao de ameaca por palavra-chave:** inimigos `veryheavy` elevam para Ameaca Alta automaticamente. `trudge`, `slow walker`, `boss`, `elite` elevam para Ameaca Critica (estrela).
-- **Quadrado substitui losango:** forma Medium agora e quadrado, mais legivel no minimapa pequeno.
-- **`ShowEnemiesInUnexploredRooms` depreciado:** a funcionalidade foi removida da logica ativa. O filtro por sala era nao confiavel em modo Vanilla (causou regressao anterior). Todos os inimigos validos aparecem normalmente.
-- **`EnemyMarkerSize` default 0.95** (era 0.65). Aplica em ~2s via REPOConfig sem reiniciar.
-- **Log detalhado de classificacao:** `diff=X threat=Y shape=Z family=W color=#XXXXXX elevated=keyword names=[...]`.
+- **Forma e cor agora representam o mesmo nível de ameaça (redundantes).** Círculo+verde-gelo = Easy; Quadrado+azul = Medium; Triângulo+lilás = High; Estrela+vermelho = Elite/Crítico.
+- **Removido modelo `Cor = Família`:** cor por tipo/comportamento (Common/Small/Special/Brute) removida. A cor agora deriva exclusivamente do threat tier, igual à forma.
+- Keywords de nome/tipo continuam servindo apenas para **elevar** o threat tier; nunca para escolher cor separada.
+- Log de classificação atualizado: campo `family=` removido; mantidos `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=`.
 
-### v1.0.0 local - 2026-06-01 (patch 3 — UX inimigos + reset editmode)
+### v1.0.0 local — 2026-06-01 (patch 4 — sistema visual de inimigos v2)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
-- **Cor separada da forma**: cor = nivel de perigo/dificuldade; forma = tipo/familia do inimigo.
-- Nova paleta de cores por dificuldade: Easy = verde-gelo `#DFFFE8`; Medium = azul/ciano `#3DA5FF`; Hard = roxo/violeta `#9B5CFF`; Elite/Boss = vermelho/coral `#FF3B30`. Removido amarelo/dourado como cor principal.
-- Formas por tipo/nome/prefab: Circulo (comum/basico), Triangulo (cacador/agressivo), Losango (especial/suporte), Estrela (boss/elite).
-- Filtro pre-spawn em `AddMarker`: inimigos mortos, inativos, despawnados ou com `CurrentState=Despawn` sao recusados antes de criar marcador.
-- Nova config `ShowEnemiesInUnexploredRooms = false`: oculta marcadores em salas nao exploradas por padrao. `true` = mostrar todos. Fail-safe: mostrar se a sala nao puder ser determinada.
-- Tecla `R` no modo de edicao reseta para os valores padrao (PosX=24, PosY=120, W=260, H=260, Zoom=2.25, Opacity=0.85). Funciona apenas com F8 ativo.
-- Overlay do modo edicao atualizado com `[R=reset]`.
+- Novo modelo visual: Forma = Ameaça, Cor = Família (substituído no patch 5).
+- Elevação de ameaça por palavra-chave: `veryheavy`, `trudge`, `slow walker`, `boss`, `elite`.
+- Quadrado substitui losango: forma Medium agora é quadrado.
+- `ShowEnemiesInUnexploredRooms` depreciado: filtro por sala removido da lógica ativa.
+- `EnemyMarkerSize` padrão 0.95 (era 0.65). Aplica em ~2s via REPOConfig sem reiniciar.
 
-### v1.0.0 local - 2026-06-01 (patch 2 — marcadores e edit mode)
+### v1.0.0 local — 2026-06-01 (patch 3 — UX inimigos + reset editmode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
-- Cleanup de marcadores por registry: sweep a cada 2s, ClearAll no carregamento do nivel, patch manual em `EnemyHealth.DeathRPC`/`DeathImpulseRPC`.
-- Marcadores com formas (circulo/losango/triangulo/estrela) e cores por dificuldade.
-- Configs `EnemyMarkerSize` e `EnemyMarkerShapeMode`.
-- Modo de edicao F8: mover, redimensionar pelo canto, zoom com scroll, `Shift+wheel`, `+/-`, salvar ao sair.
-- `RevealRoomsMode = Vanilla` como padrao seguro. `NativeGlobal` e opt-in e tambem afeta o TAB.
-- `autoAdd = false` antes de `Map.Instance.AddCustom` para evitar duplicatas.
+- Cor separada da forma: cor = nível de perigo/dificuldade; forma = tipo/família do inimigo.
+- Filtro pré-spawn em `AddMarker`: inimigos mortos, inativos ou com `CurrentState=Despawn` rejeitados.
+- Tecla `R` no modo de edição: reseta para os valores padrão (PosX=24, PosY=120, W=260, H=260, Zoom=2.25, Opacity=0.85). Funciona apenas com F8 ativo.
 
-### v1.0.0 local - 2026-06-01
+### v1.0.0 local — 2026-06-01 (patch 2 — marcadores e edit mode)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- Cleanup de marcadores por registry: sweep a cada 2s, ClearAll no carregamento do nível.
+- Marcadores com formas (círculo/losango/triângulo/estrela) e cores por dificuldade.
+- Modo de edição F8: mover, redimensionar pelo canto, zoom com scroll, `Shift+wheel`, `+/-`, salvar ao sair.
+- `RevealRoomsMode = Vanilla` como padrão seguro. `NativeGlobal` é opt-in e também afeta o TAB.
+
+### v1.0.0 local — 2026-06-01
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
 - Rebuild v2 com arquitetura limpa baseada no espelho do mapa nativo.
-- Minimap persistente via camera nativa `activeTexture`.
-- Comportamento TAB-safe: o minimapa some enquanto o TAB nativo esta aberto.
+- Minimapa persistente via câmera nativa `activeTexture`.
+- Comportamento TAB-safe: o minimapa some enquanto o TAB nativo está aberto.
 - Toggle `M` para mostrar/esconder o minimapa.
-- Marcadores de inimigos por `MapCustom`, com cleanup por despawn.
-- `RevealRoomsMode` substitui o booleano antigo: `Vanilla` (padrao, sem SetExplored), `NativeGlobal` (afeta TAB), `MinimapOnly` BLOQUEADO.
+- Marcadores de inimigos via `MapCustom`, com cleanup por despawn.
+- `RevealRoomsMode`: `Vanilla` (padrão, sem SetExplored), `NativeGlobal` (afeta TAB), `MinimapOnly` bloqueado.
 
-### v1.0.0 local - 2026-05-31
+### v1.0.0 local — 2026-05-31
 
 - Rebuild inicial da arquitetura v2.
-- Remocao de RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, overlays falsos, RenderTexture proprio e proof HUD.
-- Baseline de minimap nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
+- Remoção de RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, overlays falsos, RenderTexture próprio e proof HUD.
+- Baseline de minimapa nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
+
+---
 
 ## English
 
-### v1.0.0 local - 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+### v1.0.0 local — 2026-06-02 (patch 7 — automatic cursor in F8 edit mode and documentation review)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **New config `UnlockCursorInEditMode = true` (section `[EditMode]`).** The cursor is unlocked and made visible automatically when you press F8 to enter edit mode — no need to press ESC first. The previous cursor state is restored when you exit edit mode.
+- Cursor unlock is reapplied every frame while edit mode is active, ensuring the game cannot re-lock the cursor during editing.
+- `Input.ResetInputAxes()` is called when toggling edit mode to prevent residual camera movement.
+- If the game still captures the mouse after pressing F8, press ESC once to release it manually.
+- Editorial review of documentation: corrected accents and punctuation in the Portuguese README and CHANGELOG.
+- No functional changes: minimap, TAB, M, R reset, enemy markers, cleanup, DebugLogging unchanged.
+
+### v1.0.0 local — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -88,7 +103,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Always visible: BuildTag md5=, plugin loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors.
 - No functional changes: colours, shapes, cleanup, scale, TAB/M/F8/R unchanged.
 
-### v1.0.0 local - 2026-06-02 (patch 5 — visual alignment: colour = threat)
+### v1.0.0 local — 2026-06-02 (patch 5 — visual alignment: colour = threat)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -97,55 +112,46 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Name/type keywords still serve only to **elevate** threat tier, never to choose a separate colour.
 - Classification log updated: `family=` field removed; `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=` retained.
 
-### v1.0.0 local - 2026-06-01 (patch 4 — enemy visual system v2)
+### v1.0.0 local — 2026-06-01 (patch 4 — enemy visual system v2)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
-- **New visual model: Shape = Threat, Colour = Family.**
-  - Shape communicates danger level: circle (low) / square (medium) / triangle (high) / star (elite/critical).
-  - Colour communicates type: dark blue `#1E6BFF` (common), ice-white green `#DFFFE8` (small/critter), lilac `#C084FC` (special/supernatural), red `#FF3B30` (brute/hunter).
-- **Threat elevation by keyword:** `veryheavy` enemies are auto-elevated to High threat. `trudge`, `slow walker`, `boss`, `elite` elevate to Critical (star).
-- **Square replaces diamond:** Medium threat shape is now a square, more readable at minimap scale.
-- **`ShowEnemiesInUnexploredRooms` deprecated:** room-based filtering removed from active logic. The filter was unreliable in Vanilla mode (caused a prior regression). All valid enemies are shown normally.
-- **`EnemyMarkerSize` default 0.95** (was 0.65). Applies within ~2s via REPOConfig without restart.
-- **Detailed classification log:** `diff=X threat=Y shape=Z family=W color=#XXXXXX elevated=keyword names=[...]`.
+- New visual model: Shape = Threat, Colour = Family (superseded by patch 5).
+- Threat elevation by keyword: `veryheavy`, `trudge`, `slow walker`, `boss`, `elite`.
+- Square replaces diamond: Medium threat shape is now a square.
+- `ShowEnemiesInUnexploredRooms` deprecated: room-based filtering removed from active logic.
+- `EnemyMarkerSize` default 0.95 (was 0.65). Applies within ~2s via REPOConfig without restart.
 
-### v1.0.0 local - 2026-06-01 (patch 3 — enemy UX + edit mode reset)
+### v1.0.0 local — 2026-06-01 (patch 3 — enemy UX + edit mode reset)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
-- **Colour separated from shape**: colour = danger/difficulty level; shape = enemy type/family.
-- New colour palette by difficulty: Easy = ice-white `#DFFFE8`; Medium = blue/cyan `#3DA5FF`; Hard = purple/violet `#9B5CFF`; Elite/Boss = red/coral `#FF3B30`. Removed yellow/gold as primary marker colour.
-- Shapes by enemy type/name/prefab: Circle (common/basic), Triangle (hunter/aggressive), Diamond (special/support), Star (boss/elite).
-- Pre-spawn filter in `AddMarker`: dead, inactive, despawned or `CurrentState=Despawn` enemies are rejected before creating a marker.
-- New config `ShowEnemiesInUnexploredRooms = false`: hides markers in unexplored rooms by default. `true` = show all. Fail-safe: show if room cannot be determined.
-- `R` key in edit mode resets to default values (PosX=24, PosY=120, W=260, H=260, Zoom=2.25, Opacity=0.85). Only works when F8 edit mode is active.
-- Edit mode overlay updated to include `[R=reset]`.
+- Colour separated from shape: colour = danger/difficulty level; shape = enemy type/family.
+- Pre-spawn filter in `AddMarker`: dead, inactive, or `CurrentState=Despawn` enemies rejected.
+- `R` key in edit mode resets to default values. Only works when F8 edit mode is active.
 
-### v1.0.0 local - 2026-06-01 (patch 2 — markers and edit mode)
+### v1.0.0 local — 2026-06-01 (patch 2 — markers and edit mode)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
-- Registry-based marker cleanup: 2s sweep, ClearAll on level load, manual patch of `EnemyHealth.DeathRPC`/`DeathImpulseRPC`.
+- Registry-based marker cleanup: 2s sweep, ClearAll on level load.
 - Marker shapes (circle/diamond/triangle/star) and colours by difficulty.
-- `EnemyMarkerSize` and `EnemyMarkerShapeMode` configs.
 - F8 edit mode: move, resize from corner, scroll zoom, `Shift+wheel`, `+/-`, save on exit.
 - `RevealRoomsMode = Vanilla` as safe default. `NativeGlobal` is opt-in and also affects TAB.
-- `autoAdd = false` before `Map.Instance.AddCustom` to prevent duplicates.
 
-### v1.0.0 local - 2026-06-01
+### v1.0.0 local — 2026-06-01
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
 - v2 rebuild with a clean native-map mirror architecture.
 - Persistent minimap through the native map camera `activeTexture`.
-- TAB-safe behavior: the minimap hides while the native TAB map is open.
+- TAB-safe behaviour: the minimap hides while the native TAB map is open.
 - `M` toggle to show/hide the minimap.
 - Enemy markers through `MapCustom`, with cleanup on despawn.
-- `RevealRoomsMode` replaces the old boolean: `Vanilla` (default, no SetExplored), `NativeGlobal` (also affects TAB), `MinimapOnly` BLOCKED.
+- `RevealRoomsMode`: `Vanilla` (default, no SetExplored), `NativeGlobal` (also affects TAB), `MinimapOnly` blocked.
 
-### v1.0.0 local - 2026-05-31
+### v1.0.0 local — 2026-05-31
 
 - Initial v2 architecture rebuild.
 - Removed RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, fake overlays, owned RenderTexture, and proof HUD.
-- Baseline native minimap, M toggle, TAB-safe behavior, global RevealRooms, and initial ShowEnemies.
+- Baseline native minimap, M toggle, TAB-safe behaviour, global RevealRooms, and initial ShowEnemies.

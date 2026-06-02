@@ -28,6 +28,7 @@ namespace SurveyorMap
         // --- Edit mode ---
         public readonly ConfigEntry<bool>    EditModeEnabled;
         public readonly ConfigEntry<KeyCode> EditModeKey;
+        public readonly ConfigEntry<bool>    UnlockCursorInEditMode;
 
         // --- Debug ---
         public readonly ConfigEntry<bool>    DebugLogging;
@@ -67,6 +68,11 @@ namespace SurveyorMap
                 "Enable the in-game minimap edit mode (F8 by default).");
             EditModeKey = cfg.Bind("EditMode", "EditModeKey", KeyCode.F8,
                 "Key to enter/exit minimap edit mode. In edit mode: drag to move, resize from corner, scroll to zoom.");
+            UnlockCursorInEditMode = cfg.Bind("EditMode", "UnlockCursorInEditMode", true,
+                "When true, the cursor is unlocked and made visible automatically when F8 edit mode is active, " +
+                "so you can drag and resize the minimap without pressing ESC first. " +
+                "The cursor state is restored when you exit edit mode. " +
+                "If the game still captures the cursor, press ESC once to release it manually.");
 
             DebugLogging = cfg.Bind("Debug", "DebugLogging", false,
                 "Enable verbose debug logging to BepInEx/LogOutput.log. " +

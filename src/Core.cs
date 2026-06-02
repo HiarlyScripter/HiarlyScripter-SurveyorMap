@@ -38,14 +38,18 @@ namespace SurveyorMap
         private int             _onGuiCount;
 
         // Edit mode state
-        private bool    _editMode;
-        private bool    _editDragActive;
-        private bool    _editResizeActive;
-        private Vector2 _editDragOrigin;
-        private float   _editStartPosX;
-        private float   _editStartPosY;
-        private float   _editStartW;
-        private float   _editStartH;
+        private bool            _editMode;
+        private bool            _editDragActive;
+        private bool            _editResizeActive;
+        private Vector2         _editDragOrigin;
+        private float           _editStartPosX;
+        private float           _editStartPosY;
+        private float           _editStartW;
+        private float           _editStartH;
+
+        // Cursor state captured on edit mode entry — restored on exit
+        private bool            _savedCursorVisible;
+        private CursorLockMode  _savedCursorLockState;
 
         private const float ToggleCooldown      = 0.25f;
         private const float DiagWriteInterval   = 5f;
@@ -95,6 +99,7 @@ namespace SurveyorMap
                         $" ShowEnemies={Settings.ShowEnemies.Value}" +
                         $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
                         $" EditModeEnabled={Settings.EditModeEnabled.Value}" +
+                        $" UnlockCursor={Settings.UnlockCursorInEditMode.Value}" +
                         $" DebugLogging={Settings.DebugLogging.Value}");
         }
 
@@ -146,15 +151,36 @@ namespace SurveyorMap
                 Input.GetKeyDown(Settings.EditModeKey.Value))
             {
                 _editMode = !_editMode;
+                Input.ResetInputAxes(); // prevent camera drift after toggle
                 if (!_editMode)
                 {
+                    // Restore cursor state that was captured on entry
+                    if (Settings.UnlockCursorInEditMode.Value)
+                    {
+                        Cursor.lockState = _savedCursorLockState;
+                        Cursor.visible   = _savedCursorVisible;
+                    }
                     Config.Save();
                     Log.LogInfo("[SurveyorMap] Edit mode OFF — config saved.");
                 }
                 else
                 {
+                    // Capture current cursor state before unlocking
+                    if (Settings.UnlockCursorInEditMode.Value)
+                    {
+                        _savedCursorLockState = Cursor.lockState;
+                        _savedCursorVisible   = Cursor.visible;
+                    }
                     Log.LogInfo("[SurveyorMap] Edit mode ON.");
                 }
+            }
+
+            // Re-apply cursor unlock every frame while edit mode is active.
+            // The game may re-lock the cursor each frame; we override it while editing.
+            if (_editMode && Settings.UnlockCursorInEditMode.Value)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible   = true;
             }
 
             // Cancel drag/resize if TAB opens while editing
@@ -355,6 +381,12 @@ namespace SurveyorMap
 
         private void OnDestroy()
         {
+            // Restore cursor if plugin is destroyed while edit mode is active
+            if (_editMode && Settings?.UnlockCursorInEditMode?.Value == true)
+            {
+                try { Cursor.lockState = _savedCursorLockState; Cursor.visible = _savedCursorVisible; }
+                catch { }
+            }
             try { _harmony?.UnpatchSelf(); } catch { }
             _mirror = null;
         }
