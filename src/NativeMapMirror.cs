@@ -46,12 +46,12 @@ namespace SurveyorMap
                 if (IsNativeTabActive)
                 {
                     TabOpenCount++;
-                    SurveyorMapPlugin.Log.LogInfo($"[SurveyorMap] nativeMapTabOpen=True tabOpenCount={TabOpenCount}");
+                    SurveyorMapPlugin.LogDbg($"[SurveyorMap] nativeMapTabOpen=True tabOpenCount={TabOpenCount}");
                 }
                 else
                 {
                     TabCloseCount++;
-                    SurveyorMapPlugin.Log.LogInfo($"[SurveyorMap] nativeMapTabOpen=False tabCloseCount={TabCloseCount}");
+                    SurveyorMapPlugin.LogDbg($"[SurveyorMap] nativeMapTabOpen=False tabCloseCount={TabCloseCount}");
                 }
                 SurveyorMapDiagnostics.TabOpenCount  = TabOpenCount;
                 SurveyorMapDiagnostics.TabCloseCount = TabCloseCount;
@@ -99,7 +99,7 @@ namespace SurveyorMap
                 if (Time.unscaledTime >= _nextNullTexLog)
                 {
                     _nextNullTexLog = Time.unscaledTime + 5f;
-                    SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] Map camera activeTexture null — waiting for native render.");
+                    SurveyorMapPlugin.LogDbg("[SurveyorMap] Map camera activeTexture null — waiting for native render.");
                 }
                 NativeTexture = null;
             }
@@ -169,7 +169,7 @@ namespace SurveyorMap
                 {
                     _mapCamera = cam;
                     _capturedDefaultSize = -1f; // reset on camera (re)discovery
-                    SurveyorMapPlugin.Log.LogInfo($"[SurveyorMap] Map camera found: {cam.name} orthoSize={cam.orthographicSize}");
+                    SurveyorMapPlugin.LogDbg($"[SurveyorMap] Map camera found: {cam.name} orthoSize={cam.orthographicSize}");
                     break;
                 }
             }

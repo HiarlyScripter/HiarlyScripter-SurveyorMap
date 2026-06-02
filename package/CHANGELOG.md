@@ -6,6 +6,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.0 local — 2026-06-02 (patch 9 — câmera real congelada, logs silenciosos, config limpa, ícone premium)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Câmera realmente congelada no F8.** A abordagem anterior (`CameraAim.OverridePlayerAimDisable`) não bloqueava o input de forma confiável. Substituída por patch Harmony em `CameraAim.Update`: enquanto o modo F8 está ativo, o método é suprimido inteiramente, impedindo que qualquer mouse delta chegue à câmera. Ao sair do F8, a supressão é removida e `Input.ResetInputAxes()` limpa qualquer delta acumulado.
+- **`ShowEnemiesInUnexploredRooms` removida como config pública.** A feature era instável e já estava marcada como no-op. A entrada foi removida do código e do arquivo de configuração. Nenhuma funcionalidade foi perdida — todos os marcadores ativos já eram exibidos.
+- **`DebugLogging=false` agora realmente silencia o log.** Chamadas `Log.LogInfo()` e `Log.LogDebug()` diretas em `NativeMapMirror.cs` (TAB open/close, câmera encontrada, activeTexture null) foram convertidas para `LogDbg()`. Com `DebugLogging=false`, o SurveyorMap emite apenas: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
+- **Novo ícone premium aplicado.** `package/icon.png` substituído pelo arquivo `surveyormap-v2-256.png` (256×256). Master 1024px salvo em `assets/icon/`.
+- Nenhuma alteração em minimap, TAB, M, R reset, inimigos, cores/formas, cleanup ou RevealRoomsMode.
+
 ### v1.0.0 local — 2026-06-02 (patch 8 — suspensão de câmera no F8 edit mode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -92,6 +102,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.0 local — 2026-06-02 (patch 9 — real camera freeze, silent logs, config cleanup, premium icon)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Camera actually frozen during F8.** The previous approach (`CameraAim.OverridePlayerAimDisable`) did not reliably block mouse-look input. Replaced with a Harmony prefix patch on `CameraAim.Update`: while F8 edit mode is active, the method is suppressed entirely, preventing any mouse delta from reaching the camera. On exit, suppression is removed and `Input.ResetInputAxes()` clears any accumulated delta.
+- **`ShowEnemiesInUnexploredRooms` removed as a public config.** The feature was unstable and already a no-op. The config entry has been removed from code and from the config file. No functionality lost — all live markers were already shown unconditionally.
+- **`DebugLogging=false` now truly silences the log.** Direct `Log.LogInfo()` and `Log.LogDebug()` calls in `NativeMapMirror.cs` (TAB open/close, camera found, activeTexture null) were converted to `LogDbg()`. With `DebugLogging=false`, SurveyorMap only emits: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors.
+- **New premium icon applied.** `package/icon.png` replaced with `surveyormap-v2-256.png` (256×256). 1024px master saved to `assets/icon/`.
+- No changes to minimap, TAB, M, R reset, enemy markers, colours/shapes, cleanup, or RevealRoomsMode.
 
 ### v1.0.0 local — 2026-06-02 (patch 8 — camera suspension during F8 edit mode)
 

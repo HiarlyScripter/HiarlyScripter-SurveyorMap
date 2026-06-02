@@ -51,11 +51,11 @@ O nível de ameaça é derivado do campo `difficulty` do inimigo. Palavras-chave
 | Minimap | Zoom | 2.25 | Fator de zoom ortográfico da câmera de mapa. |
 | Features | RevealRoomsMode | Vanilla | Vanilla = padrão (TAB original). NativeGlobal = revela via SetExplored, também afeta TAB. |
 | Features | ShowEnemies | true | Mostrar marcadores de inimigos no mapa. |
-| Features | EnemyMarkerSize | 0.95 | Escala dos marcadores (0.30–2.00). Aplica em ~2s sem reiniciar. |
+| Features | EnemyMarkerSize | 0.95 | Escala dos marcadores (0.30–2.00). Aplica em ~2s sem reiniciar. Não requer reinício. |
 | EditMode | EditModeEnabled | true | Liga o modo de edição in-game (F8). |
 | EditMode | EditModeKey | F8 | Tecla para entrar/sair do modo de edição. |
 | EditMode | UnlockCursorInEditMode | true | Libera o cursor automaticamente ao entrar no modo de edição F8. Se o jogo ainda capturar o mouse, pressione ESC uma vez. |
-| EditMode | FreezeCameraInEditMode | true | Suspende o mouse-look da câmera ao entrar no modo F8, usando a API nativa `CameraAim.OverridePlayerAimDisable`. O controle da câmera é restaurado ao sair. |
+| EditMode | FreezeCameraInEditMode | true | Suspende o mouse-look da câmera ao entrar no modo F8 (patch Harmony em `CameraAim.Update`). Nenhuma API de sistema, nenhuma simulação de tecla. O controle da câmera é restaurado ao sair. |
 | Debug | DebugLogging | false | Habilita logs verbosos no BepInEx/LogOutput.log. Padrão false (silencioso em release). Ative somente para diagnóstico. |
 
 ### Notas
@@ -117,11 +117,11 @@ Threat level is derived from the enemy's `difficulty` field. Name/type keywords 
 | Minimap | Zoom | 2.25 | Native map camera orthographic zoom. |
 | Features | RevealRoomsMode | Vanilla | Vanilla = default (no SetExplored, TAB stays original). NativeGlobal = reveals via SetExplored, also affects TAB. |
 | Features | ShowEnemies | true | Show enemy markers on the map. |
-| Features | EnemyMarkerSize | 0.95 | Marker scale multiplier (0.30–2.00). Applies within ~2s, no restart needed. |
+| Features | EnemyMarkerSize | 0.95 | Marker scale multiplier (0.30–2.00). Applies within ~2s without restart. |
 | EditMode | EditModeEnabled | true | Enable in-game edit mode (F8). |
 | EditMode | EditModeKey | F8 | Key to enter/exit edit mode. |
 | EditMode | UnlockCursorInEditMode | true | Unlocks and shows the cursor automatically when F8 edit mode is active. If the game still captures the mouse, press ESC once to release it manually. |
-| EditMode | FreezeCameraInEditMode | true | Suspends camera mouse-look when F8 edit mode is active, using the game's own `CameraAim.OverridePlayerAimDisable` API. Camera control is restored on exit. |
+| EditMode | FreezeCameraInEditMode | true | Suspends camera mouse-look when F8 edit mode is active (Harmony prefix on `CameraAim.Update`). No system API, no key simulation. Camera control is restored on exit. |
 | Debug | DebugLogging | false | Enable verbose logging to BepInEx/LogOutput.log. Default false (silent in release). Enable only for diagnostics. |
 
 ### Notes

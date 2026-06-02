@@ -16,9 +16,11 @@ namespace SurveyorMap
         public const string PluginName    = "SurveyorMap";
         public const string PluginVersion = "1.0.0";
 
-        internal static ManualLogSource   Log      { get; private set; }
-        internal static SurveyorMapConfig Settings { get; private set; }
-        internal static SurveyorMapPlugin Instance { get; private set; }
+        internal static ManualLogSource   Log          { get; private set; }
+        internal static SurveyorMapConfig Settings     { get; private set; }
+        internal static SurveyorMapPlugin Instance     { get; private set; }
+        // True while F8 edit mode is active — read by CameraAimEditModePatch
+        internal static bool              EditModeActive { get; private set; }
 
         // Conditional debug helper — writes to BepInEx log only when DebugLogging=true.
         // Use for all verbose/repetitive diagnostics; warnings/errors bypass this.
@@ -152,7 +154,7 @@ namespace SurveyorMap
                 Input.GetKeyDown(Settings.EditModeKey.Value))
             {
                 _editMode = !_editMode;
-                Input.ResetInputAxes(); // prevent camera drift after toggle
+                EditModeActive = _editMode; // read by CameraAimEditModePatch
                 if (!_editMode)
                 {
                     // Restore cursor state that was captured on entry
@@ -161,9 +163,8 @@ namespace SurveyorMap
                         Cursor.lockState = _savedCursorLockState;
                         Cursor.visible   = _savedCursorVisible;
                     }
-                    // Re-enable camera look using the game's own API
-                    if (Settings.FreezeCameraInEditMode.Value)
-                        TryRestoreCameraAim();
+                    // Clear accumulated mouse delta from edit-mode UI interaction
+                    Input.ResetInputAxes();
                     Config.Save();
                     Log.LogInfo("[SurveyorMap] Edit mode OFF — config saved.");
                 }
@@ -175,9 +176,6 @@ namespace SurveyorMap
                         _savedCursorLockState = Cursor.lockState;
                         _savedCursorVisible   = Cursor.visible;
                     }
-                    // Disable camera look using the game's own API
-                    if (Settings.FreezeCameraInEditMode.Value)
-                        TryFreezeCameraAim();
                     Log.LogInfo("[SurveyorMap] Edit mode ON.");
                 }
             }
@@ -388,60 +386,36 @@ namespace SurveyorMap
 
         private void OnDestroy()
         {
-            // Restore cursor and camera look if plugin is destroyed while edit mode is active
-            if (_editMode)
+            // Ensure edit-mode state is cleared so CameraAimEditModePatch stops suppressing
+            EditModeActive = false;
+            _editMode      = false;
+
+            // Restore cursor if plugin is destroyed while edit mode was active
+            if (Settings?.UnlockCursorInEditMode?.Value == true)
             {
-                if (Settings?.UnlockCursorInEditMode?.Value == true)
-                {
-                    try { Cursor.lockState = _savedCursorLockState; Cursor.visible = _savedCursorVisible; }
-                    catch { }
-                }
-                if (Settings?.FreezeCameraInEditMode?.Value == true)
-                    TryRestoreCameraAim();
+                try { Cursor.lockState = _savedCursorLockState; Cursor.visible = _savedCursorVisible; }
+                catch { }
             }
             try { _harmony?.UnpatchSelf(); } catch { }
             _mirror = null;
         }
+    }
 
-        // Disable player camera look via the game's own CameraAim singleton.
-        // Uses CameraAim.OverridePlayerAimDisable(true) — no patches, no Windows API.
-        private void TryFreezeCameraAim()
+    // ── CameraAim suppression patch ─────────────────────────────────────────
+    // While F8 edit mode is active AND FreezeCameraInEditMode=true, skip
+    // CameraAim.Update() entirely so mouse movement does not rotate the camera.
+    // This is the only place camera state is affected — no API calls, no Windows hooks.
+    // CameraAim.Update() is restored to normal execution as soon as edit mode exits.
+    [HarmonyPatch(typeof(CameraAim), "Update")]
+    internal static class CameraAimEditModePatch
+    {
+        [HarmonyPrefix]
+        private static bool Prefix()
         {
-            try
-            {
-                var aim = CameraAim.Instance;
-                if (aim != null)
-                {
-                    aim.OverridePlayerAimDisable(true);
-                    LogDbg("[SurveyorMap] CameraAim.OverridePlayerAimDisable(true)");
-                }
-                else
-                {
-                    Log.LogWarning("[SurveyorMap] FreezeCameraInEditMode: CameraAim.Instance is null (not in gameplay?).");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogWarning($"[SurveyorMap] FreezeCameraInEditMode: could not disable aim: {ex.Message}");
-            }
-        }
-
-        // Re-enable player camera look.
-        private void TryRestoreCameraAim()
-        {
-            try
-            {
-                var aim = CameraAim.Instance;
-                if (aim != null)
-                {
-                    aim.OverridePlayerAimDisable(false);
-                    LogDbg("[SurveyorMap] CameraAim.OverridePlayerAimDisable(false)");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogWarning($"[SurveyorMap] FreezeCameraInEditMode: could not restore aim: {ex.Message}");
-            }
+            if (SurveyorMapPlugin.EditModeActive &&
+                SurveyorMapPlugin.Settings?.FreezeCameraInEditMode?.Value == true)
+                return false; // skip CameraAim.Update() — camera stays frozen
+            return true;      // normal execution outside edit mode
         }
     }
 }

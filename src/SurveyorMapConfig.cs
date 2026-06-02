@@ -22,8 +22,6 @@ namespace SurveyorMap
 
         // --- Enemy markers ---
         public readonly ConfigEntry<float>   EnemyMarkerSize;
-        // ShowEnemiesInUnexploredRooms: false (default) = hide in unexplored rooms; true = always show
-        public readonly ConfigEntry<bool>    ShowEnemiesInUnexploredRooms;
 
         // --- Edit mode ---
         public readonly ConfigEntry<bool>    EditModeEnabled;
@@ -60,10 +58,6 @@ namespace SurveyorMap
 
             EnemyMarkerSize = cfg.Bind("Features", "EnemyMarkerSize", 0.95f,
                 "Scale multiplier for enemy markers (0.30–2.00). Default 0.95. Changes apply within ~2s without restart.");
-            ShowEnemiesInUnexploredRooms = cfg.Bind("Features", "ShowEnemiesInUnexploredRooms", false,
-                "[DEPRECATED — has no effect in v1.0] Room-based filtering was unreliable in Vanilla mode " +
-                "and caused a regression (all markers hidden). All live enemy markers are shown regardless " +
-                "of room exploration. This setting is retained for config file compatibility only.");
 
             EditModeEnabled = cfg.Bind("EditMode", "EditModeEnabled", true,
                 "Enable the in-game minimap edit mode (F8 by default).");
