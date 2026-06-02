@@ -54,6 +54,7 @@ O nivel de ameaca e derivado do campo `difficulty` do inimigo. Palavras-chave no
 | Features | EnemyMarkerSize | 0.95 | Escala dos marcadores (0.30-2.00). Aplica em ~2s sem reiniciar. |
 | EditMode | EditModeEnabled | true | Liga o modo de edicao in-game (F8). |
 | EditMode | EditModeKey | F8 | Tecla para entrar/sair do modo de edicao. |
+| Debug | DebugLogging | false | Habilita logs verbosos no BepInEx/LogOutput.log. Padrao false (silencioso em release). Ative somente para diagnostico. |
 
 ### Notas
 
@@ -117,6 +118,7 @@ Threat level is derived from the enemy's `difficulty` field. Name/type keywords 
 | Features | EnemyMarkerSize | 0.95 | Marker scale multiplier (0.30-2.00). Applies within ~2s, no restart needed. |
 | EditMode | EditModeEnabled | true | Enable in-game edit mode (F8). |
 | EditMode | EditModeKey | F8 | Key to enter/exit edit mode. |
+| Debug | DebugLogging | false | Enable verbose logging to BepInEx/LogOutput.log. Default false (silent in release). Enable only for diagnostics. |
 
 ### Notes
 

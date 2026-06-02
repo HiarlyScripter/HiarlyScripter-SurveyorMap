@@ -432,7 +432,7 @@ namespace SurveyorMap
                     var raw = _spawnedField.GetValue(parent);
                     if (raw is bool b && !b)
                     {
-                        SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: Spawned=false");
+                        SurveyorMapPlugin.LogDbg("[SurveyorMap] AddMarker skipped: Spawned=false");
                         return false;
                     }
                 }
@@ -444,7 +444,7 @@ namespace SurveyorMap
                         : _currentStateProp.GetValue(enemy);
                     if (state != null && state.ToString() == "Despawn")
                     {
-                        SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: CurrentState=Despawn");
+                        SurveyorMapPlugin.LogDbg("[SurveyorMap] AddMarker skipped: CurrentState=Despawn");
                         return false;
                     }
                 }
@@ -457,7 +457,7 @@ namespace SurveyorMap
                         var raw = _deadField.GetValue(health);
                         if (raw is bool dead && dead)
                         {
-                            SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: dead=true");
+                            SurveyorMapPlugin.LogDbg("[SurveyorMap] AddMarker skipped: dead=true");
                             return false;
                         }
                     }
@@ -466,7 +466,7 @@ namespace SurveyorMap
                         var raw = _hpField.GetValue(health);
                         if (raw != null && Convert.ToSingle(raw) <= 0f)
                         {
-                            SurveyorMapPlugin.Log.LogDebug("[SurveyorMap] AddMarker skipped: healthCurrent<=0");
+                            SurveyorMapPlugin.LogDbg("[SurveyorMap] AddMarker skipped: healthCurrent<=0");
                             return false;
                         }
                     }
@@ -511,7 +511,7 @@ namespace SurveyorMap
             {
                 bool isTruck = room.gameObject.name.IndexOf("Truck", StringComparison.OrdinalIgnoreCase) >= 0;
                 if (!isTruck) _exploredLevelRoomCount++;
-                SurveyorMapPlugin.Log.LogInfo(
+                SurveyorMapPlugin.LogDbg(
                     $"[SurveyorMap] Room explored (new): {room.gameObject.name}" +
                     $" isTruck={isTruck} levelRooms={_exploredLevelRoomCount} total={_exploredRoomIds.Count}");
             }
@@ -577,7 +577,7 @@ namespace SurveyorMap
                     if (Map.Instance != null)
                     {
                         Map.Instance.AddCustom(mc, sprite, color);
-                        SurveyorMapPlugin.Log.LogDebug($"[SurveyorMap] Map.AddCustom OK: host={host.name}");
+                        SurveyorMapPlugin.LogDbg($"[SurveyorMap] Map.AddCustom OK: host={host.name}");
                     }
                     else
                     {
@@ -610,7 +610,7 @@ namespace SurveyorMap
                 };
 
                 // Detailed classification log — use to tune elevation keywords post-gameplay
-                SurveyorMapPlugin.Log.LogDebug(
+                SurveyorMapPlugin.LogDbg(
                     $"[SurveyorMap] Enemy marker: id={id}" +
                     $" diff={baseTier} threat={threatTier} shape={shape}" +
                     $" color={_colorHex[(int)threatTier]}" +
@@ -642,7 +642,7 @@ namespace SurveyorMap
                 if (_registry.TryGetValue(id, out var entry))
                     CleanupEntry(id, entry);
             if (toRemove.Count > 0)
-                SurveyorMapPlugin.Log.LogDebug(
+                SurveyorMapPlugin.LogDbg(
                     $"[SurveyorMap] Sweep removed {toRemove.Count} stale markers. Active={_registry.Count}");
 
             // 2. Ensure all live markers are active + scale is current.
@@ -653,7 +653,7 @@ namespace SurveyorMap
                 SetMarkerEntityActive(kv.Value.Mc, true);
                 ApplyScale(kv.Value.Mc);
             }
-            SurveyorMapPlugin.Log.LogDebug(
+            SurveyorMapPlugin.LogDbg(
                 $"[SurveyorMap] Sweep: active={_registry.Count}");
         }
 

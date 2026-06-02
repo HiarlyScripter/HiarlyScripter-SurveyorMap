@@ -20,6 +20,14 @@ namespace SurveyorMap
         internal static SurveyorMapConfig Settings { get; private set; }
         internal static SurveyorMapPlugin Instance { get; private set; }
 
+        // Conditional debug helper — writes to BepInEx log only when DebugLogging=true.
+        // Use for all verbose/repetitive diagnostics; warnings/errors bypass this.
+        internal static void LogDbg(string msg)
+        {
+            if (Settings?.DebugLogging?.Value == true)
+                Log.LogDebug(msg);
+        }
+
         private Harmony         _harmony;
         private NativeMapMirror _mirror;
         private bool            _hudVisible     = true;
@@ -85,9 +93,9 @@ namespace SurveyorMap
             Log.LogInfo($"[SurveyorMap] EnableMinimap={Settings.EnableMinimap.Value}" +
                         $" RevealRoomsMode={Settings.RevealRoomsMode.Value}" +
                         $" ShowEnemies={Settings.ShowEnemies.Value}" +
-                        $" ShowEnemiesInUnexploredRooms={Settings.ShowEnemiesInUnexploredRooms.Value}" +
                         $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
-                        $" EditModeEnabled={Settings.EditModeEnabled.Value}");
+                        $" EditModeEnabled={Settings.EditModeEnabled.Value}" +
+                        $" DebugLogging={Settings.DebugLogging.Value}");
         }
 
         private static void TryPatchDeathMethods(Harmony harmony)
@@ -105,11 +113,11 @@ namespace SurveyorMap
                 try
                 {
                     harmony.Patch(m, postfix: postfix);
-                    Log.LogInfo($"[SurveyorMap] Patched EnemyHealth.{mName}");
+                    LogDbg($"[SurveyorMap] Patched EnemyHealth.{mName}");
                 }
                 catch (Exception ex)
                 {
-                    Log.LogDebug($"[SurveyorMap] Could not patch EnemyHealth.{mName}: {ex.Message}");
+                    LogDbg($"[SurveyorMap] Could not patch EnemyHealth.{mName}: {ex.Message}");
                 }
             }
         }
@@ -129,7 +137,7 @@ namespace SurveyorMap
                 _hudVisible     = !_hudVisible;
                 _toggleCooldown = ToggleCooldown;
                 SurveyorMapDiagnostics.ToggleKeyDetectedCount++;
-                Log.LogInfo($"[SurveyorMap] M toggle -> HUD={_hudVisible} count={SurveyorMapDiagnostics.ToggleKeyDetectedCount}");
+                LogDbg($"[SurveyorMap] M toggle -> HUD={_hudVisible} count={SurveyorMapDiagnostics.ToggleKeyDetectedCount}");
             }
 
             // F8 edit mode toggle (not during TAB)

@@ -6,6 +6,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Portugues
 
+### v1.0.0 local - 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Nova config `DebugLogging = false` (secao `[Debug]`).** Por padrao o log fica silencioso em uso normal. Ative `DebugLogging = true` apenas para diagnostico de classificacao de inimigos, sweep e room tracking.
+- Logs movidos para debug condicional: `Sweep: active=`, `Enemy marker: id=`, `Map.AddCustom OK`, `Room explored (new)`, `AddMarker skipped`, `M toggle`, `Patched EnemyHealth.*`.
+- Logs que continuam sempre visiveis: BuildTag md5=, plugin carregado, resumo de config, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
+- Nenhuma alteracao funcional: cores, formas, cleanup, scale, TAB/M/F8/R inalterados.
+
 ### v1.0.0 local - 2026-06-02 (patch 5 — alinhamento visual: cor = ameaca)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -69,6 +78,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Baseline de minimap nativo, M toggle, TAB-safe, RevealRooms global e ShowEnemies inicial.
 
 ## English
+
+### v1.0.0 local - 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **New config `DebugLogging = false` (section `[Debug]`).** Log is silent by default for end users. Set `DebugLogging = true` only for diagnostics (enemy classification, sweep, room tracking).
+- Moved to conditional debug: `Sweep: active=`, `Enemy marker: id=`, `Map.AddCustom OK`, `Room explored (new)`, `AddMarker skipped`, `M toggle`, `Patched EnemyHealth.*`.
+- Always visible: BuildTag md5=, plugin loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors.
+- No functional changes: colours, shapes, cleanup, scale, TAB/M/F8/R unchanged.
 
 ### v1.0.0 local - 2026-06-02 (patch 5 — visual alignment: colour = threat)
 

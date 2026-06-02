@@ -29,6 +29,9 @@ namespace SurveyorMap
         public readonly ConfigEntry<bool>    EditModeEnabled;
         public readonly ConfigEntry<KeyCode> EditModeKey;
 
+        // --- Debug ---
+        public readonly ConfigEntry<bool>    DebugLogging;
+
         public SurveyorMapConfig(ConfigFile cfg)
         {
             EnableMinimap = cfg.Bind("Minimap", "EnableMinimap", true,
@@ -64,6 +67,11 @@ namespace SurveyorMap
                 "Enable the in-game minimap edit mode (F8 by default).");
             EditModeKey = cfg.Bind("EditMode", "EditModeKey", KeyCode.F8,
                 "Key to enter/exit minimap edit mode. In edit mode: drag to move, resize from corner, scroll to zoom.");
+
+            DebugLogging = cfg.Bind("Debug", "DebugLogging", false,
+                "Enable verbose debug logging to BepInEx/LogOutput.log. " +
+                "Default false (silent in release). Set true only for diagnostics: " +
+                "exposes sweep, AddCustom, enemy classification, and room-exploration logs.");
         }
     }
 }
