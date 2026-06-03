@@ -69,8 +69,8 @@ namespace SurveyorMap
                 "The cursor state is restored when you exit edit mode. " +
                 "If the game still captures the cursor, press ESC once to release it manually.");
             FreezeCameraInEditMode = cfg.Bind("EditMode", "FreezeCameraInEditMode", true,
-                "When true, the game camera look (mouse-look) is suspended while F8 edit mode is active. " +
-                "Uses the game's own CameraAim.OverridePlayerAimDisable API — no patches. " +
+                "When true, mouse-look is suspended while F8 edit mode is active. " +
+                "Calls InputManager.DisableAiming() every frame so the camera ignores mouse delta. " +
                 "Camera control is restored automatically when you exit edit mode.");
 
             DebugLogging = cfg.Bind("Debug", "DebugLogging", false,

@@ -6,6 +6,14 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.0 local — 2026-06-02 (patch 10 — congelar câmera via InputManager.DisableAiming)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Correção definitiva do F8 edit mode.** Diagnóstico completo do pipeline de mouse-look: `CameraAim.Update()` → `SemiFunc.InputMouseX/Y()` → `InputManager.GetMouseX/Y()`, que verifica internamente `InputManager.disableAimingTimer`. O patch anterior (`CameraAimEditModePatch`) nunca foi testado (o jogo rodou com DLL anterior). A correção real chama `InputManager.instance.DisableAiming()` a cada frame enquanto o edit mode está ativo. `InputManager.FixedUpdate()` decrementa o timer a cada physics step; chamando no `Update()` a cada frame, o timer nunca expira e `GetMouseX/Y` retorna 0 constantemente.
+- `CameraAimEditModePatch` mantido como segunda camada de proteção (suprime `CameraAim.Update()` inteiramente quando `EditModeActive`).
+- Nenhuma alteração em minimap, TAB, M, R reset, inimigos, cores/formas, cleanup ou RevealRoomsMode.
+
 ### v1.0.0 local — 2026-06-02 (patch 9 — câmera real congelada, logs silenciosos, config limpa, ícone premium)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -102,6 +110,14 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.0 local — 2026-06-02 (patch 10 — camera freeze via InputManager.DisableAiming)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Definitive F8 edit mode camera fix.** Full pipeline analysis: `CameraAim.Update()` → `SemiFunc.InputMouseX/Y()` → `InputManager.GetMouseX/Y()`, which checks `InputManager.disableAimingTimer` internally. The previous patch (`CameraAimEditModePatch`) was never tested (the game ran with an older DLL). The real fix calls `InputManager.instance.DisableAiming()` every frame while edit mode is active. `InputManager.FixedUpdate()` decrements the timer every physics step; by calling it in `Update()` every frame, the timer never expires and `GetMouseX/Y` always returns 0.
+- `CameraAimEditModePatch` retained as a second layer (suppresses `CameraAim.Update()` entirely when `EditModeActive`).
+- No changes to minimap, TAB, M, R reset, enemy markers, colours/shapes, cleanup, or RevealRoomsMode.
 
 ### v1.0.0 local — 2026-06-02 (patch 9 — real camera freeze, silent logs, config cleanup, premium icon)
 

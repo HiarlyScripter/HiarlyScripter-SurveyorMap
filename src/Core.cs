@@ -188,6 +188,25 @@ namespace SurveyorMap
                 Cursor.visible   = true;
             }
 
+            // Per-frame mouse-look freeze via InputManager.DisableAiming().
+            // InputManager.GetMouseX/Y returns 0 while disableAimingTimer > 0.
+            // InputManager.FixedUpdate() decrements the timer each physics step —
+            // we re-set it every Update frame to keep it active throughout edit mode.
+            // CameraAimEditModePatch (below) additionally skips CameraAim.Update()
+            // as a second layer of protection.
+            if (_editMode && Settings.FreezeCameraInEditMode.Value)
+            {
+                try
+                {
+                    if (InputManager.instance != null)
+                        InputManager.instance.DisableAiming();
+                }
+                catch (Exception ex)
+                {
+                    LogDbg($"[SurveyorMap] DisableAiming failed: {ex.Message}");
+                }
+            }
+
             // Cancel drag/resize if TAB opens while editing
             if (_mirror.IsNativeTabActive)
             {
