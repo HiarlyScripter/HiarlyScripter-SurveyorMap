@@ -1,65 +1,74 @@
-# Agent State — SurveyorMap v2
+﻿# SurveyorMap - Agent State
 
-**Atualizado:** 2026-06-02
-**Por:** Claude (checkpoint pos-validacao gameplay)
+## Status: RELEASE CANDIDATE APPROVED - v1.0.0
+
+Data de aprovacao: 2026-06-03
 
 ---
 
-## Estado Atual
+## Build final aprovada
 
 | Item | Valor |
 |---|---|
-| Branch | `codex-exec` |
-| Commit HEAD | `4d42c8a` |
-| Build hash | `8bdba81b` |
-| Static Audit | PASS 45/45 |
-| Gameplay (manual) | PASS — confirmado pelo usuario (build 8bdba81b) |
-| Tag | `checkpoint/validated-gameplay-before-log-cleanup-20260602` |
-| DLL instalado | `REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll` |
-| ZIP local | `releases\HiarlyScripter-SurveyorMap-v1.0.0-local.zip` |
-| Publicado | NAO |
-| Push | NAO |
+| Hash (md5 primeiros 8) | 468672de |
+| Commit | b77f4a9 |
+| Tag local | v1.0.0-release-candidate |
+| Branch | codex-exec |
+| Build: 0 erros / 0 warnings | CONFIRMADO |
 
-## Arquitetura Atual (v2)
+---
 
-| Arquivo | Responsabilidade |
-|---|---|
-| `src/Core.cs` | SurveyorMapPlugin — entrypoint, M toggle, OnGUI, sweep timer |
-| `src/SurveyorMapConfig.cs` | ConfigEntry bindings |
-| `src/NativeMapMirror.cs` | Camera "Dirt Finder Map Camera" + activeTexture + TAB detection — INTOCADO |
-| `src/RevealRoomsService.cs` | Harmony LevelGenerator.GenerateDone -> RoomVolume.SetExplored() — INTOCADO |
-| `src/EnemyMapMarkerService.cs` | SpawnRPC/DespawnRPC -> MapCustom markers; ThreatTier; sweep |
-| `src/SurveyorMapDiagnostics.cs` | JSON runtime state para validators |
+## Auditoria Codex - resultado final
 
-## Sistema Visual (commit 4d42c8a — APROVADO)
+- Auditoria APROVADO 45/45
+- Log release-clean com DebugLogging=false: uma unica linha
+- Camera freeze F8 validada (usuario confirmou)
+- ShowEnemiesInUnexploredRooms: removida de codigo, config, docs
+- Risco de plagio/originalidade: BAIXO (implementacao clean-room)
 
-| Ameaca | Forma | Cor | Hex |
-|---|---|---|---|
-| Low | Circulo | Verde-gelo | `#DFFFE8` |
-| Medium | Quadrado | Azul escuro | `#1E6BFF` |
-| High | Triangulo | Lila | `#C084FC` |
-| Elite | Estrela | Vermelho/coral | `#FF3B30` |
+---
 
-Forma e cor derivam exclusivamente de ThreatTier (redundantes).
-Keywords elevam tier apenas; nao escolhem cor por familia.
+## Package / ZIP
 
-## Validacao Manual (2026-06-02, build 8bdba81b)
+Estrutura final do ZIP:
+  manifest.json
+  README.md
+  CHANGELOG.md
+  icon.png
+  LICENSE
+  plugins/HiarlyScripter-SurveyorMap/SurveyorMap.dll
 
-Confirmado PASS:
-- Minimap HUD bottom-left com fidelidade nativa
-- TAB abre normalmente, minimap some durante TAB e volta ao soltar
-- M toggle funcional
-- F8 edit mode funcional (drag, resize, zoom, +/-)
-- R reset no edit mode funcional
-- Inimigos aparecem com sistema visual correto
-- EnemyMarkerSize = 0.95 via REPOConfig (aplica em ~2s)
-- Cleanup/despawn em ~2s
-- Sem amarelo/dourado nos marcadores
+ZIP path: releases/HiarlyScripter-SurveyorMap-v1.0.0-local.zip
+DLL interna: 468672de
 
-## Proximo Passo
+---
 
-**Log cleanup** — adicionar `DebugLogging = false` config e tornar logs repetitivos condicionais.
-Ver `docs/NEXT_ACTIONS.md` para especificacao completa.
+## Funcionalidades v1.0.0
 
-Nao alterar: NativeMapMirror, RevealRoomsService, Core (minimap/TAB/M/F8/R), sistema visual.
-Nao publicar. Nao push. Nao mexer no Default profile.
+- Minimapa persistente nativo (camera activeTexture)
+- TAB-safe (some ao abrir TAB)
+- M toggle
+- F8 edit mode: drag, resize, scroll=tamanho, +/-=zoom, R=reset
+- EnableZoomHotkeysOutsideEdit: +/- zoom fora do F8
+- FreezeCameraInEditMode: InputManager.DisableAiming() por frame + CameraAimEditModePatch
+- UnlockCursorInEditMode: cursor desbloqueado no F8
+- Marcadores de inimigos com shape+cor por tier de ameaca
+- RevealRoomsMode: Vanilla (padrao) / NativeGlobal (opt-in)
+- DebugLogging: false por padrao (log limpo em release)
+
+---
+
+## Proxima etapa
+
+Publicacao no Thunderstore / GitHub Release somente com autorizacao explicita do usuario.
+Nao publicar, nao fazer push, nao mexer no Default profile sem instrucao direta.
+
+---
+
+## Pastas
+
+Canonica:
+  C:\Users\Hiarly\.claude\PROJETOS\REPO\HiarlyScripter-SurveyorMap
+
+Codex arquivada (historico apenas):
+  C:\Users\Hiarly\.codex\PROJETOS\REPO\HiarlyScripter-SurveyorMap-Exec_DISABLED_*
