@@ -13,7 +13,8 @@ O SurveyorMap adiciona um minimapa nativo persistente no HUD inferior esquerdo d
 - **Tecla M** — pressione `M` para mostrar/ocultar o minimapa sem afetar o TAB nativo.
 - **TAB seguro** — ao abrir o TAB, o minimapa persistente some automaticamente. O TAB não é afetado.
 - **Marcadores de inimigos** — mostra posições de inimigos como marcadores no mapa. Inimigos mortos/despawnados são removidos automaticamente em até ~2s. A **forma** e a **cor** indicam o nível de ameaça do inimigo de forma redundante, para máxima legibilidade no minimapa pequeno.
-- **Modo de edição F8** — pressione `F8` para entrar no modo de edição. O cursor é liberado e a câmera é suspensa automaticamente — você pode editar o minimapa sem mover a câmera do jogador. Arraste para reposicionar, segure o canto inferior direito para redimensionar, scroll para zoom, `+`/`-` para ajustar tamanho, `Shift+scroll` para redimensionar, `R` para resetar para os valores padrão. Tudo é restaurado ao sair com `F8`. Config salva automaticamente.
+- **Modo de edição F8** — pressione `F8` para entrar no modo de edição. O cursor é liberado e a câmera é suspensa automaticamente — você pode editar o minimapa sem mover a câmera do jogador. Arraste para reposicionar, segure o canto inferior direito para redimensionar, **scroll** para ajustar o tamanho, **`+`/`-`** para ajustar o zoom, `R` para resetar para os valores padrão. Tudo é restaurado ao sair com `F8`. Config salva automaticamente.
+- **Zoom rápido fora do F8** — com `EnableZoomHotkeysOutsideEdit=true` (padrão), `+`/`-` ajustam o zoom do minimapa durante o gameplay normal, sem precisar entrar no modo de edição.
 - **RevealRooms (opt-in)** — defina `RevealRoomsMode = NativeGlobal` para revelar todas as salas ao entrar no nível. **Atenção:** este modo também afeta o TAB nativo. O padrão é `Vanilla` (TAB permanece original).
 
 ### Quem precisa instalar
@@ -55,7 +56,8 @@ O nível de ameaça é derivado do campo `difficulty` do inimigo. Palavras-chave
 | EditMode | EditModeEnabled | true | Liga o modo de edição in-game (F8). |
 | EditMode | EditModeKey | F8 | Tecla para entrar/sair do modo de edição. |
 | EditMode | UnlockCursorInEditMode | true | Libera o cursor automaticamente ao entrar no modo de edição F8. Se o jogo ainda capturar o mouse, pressione ESC uma vez. |
-| EditMode | FreezeCameraInEditMode | true | Suspende o mouse-look da câmera ao entrar no modo F8 (patch Harmony em `CameraAim.Update`). Nenhuma API de sistema, nenhuma simulação de tecla. O controle da câmera é restaurado ao sair. |
+| EditMode | FreezeCameraInEditMode | true | Suspende o mouse-look da câmera ao entrar no modo F8. O controle da câmera é restaurado ao sair. |
+| EditMode | EnableZoomHotkeysOutsideEdit | true | Permite usar `+`/`-` (teclado principal e numpad) para ajustar o zoom do minimapa durante gameplay normal, sem entrar no F8. Só funciona com o minimapa visível e TAB fechado. |
 | Debug | DebugLogging | false | Habilita logs verbosos no BepInEx/LogOutput.log. Padrão false (silencioso em release). Ative somente para diagnóstico. |
 
 ### Notas
@@ -77,7 +79,8 @@ SurveyorMap adds a persistent native-looking minimap to the bottom-left HUD duri
 - **M toggle** — press `M` to show/hide the minimap without affecting the native TAB map.
 - **TAB-safe** — when you open the TAB map, the persistent minimap hides automatically. TAB is unaffected.
 - **Enemy markers** — shows enemy positions on the map. Dead/despawned enemies are cleaned up automatically within ~2s. **Shape** and **colour** both indicate threat level, redundantly, for maximum readability at minimap scale.
-- **F8 Edit Mode** — press `F8` to enter edit mode. The cursor is unlocked and camera look is suspended automatically — you can edit the minimap without spinning the player's view. Drag to reposition, grab the bottom-right corner to resize, scroll to zoom, `+`/`-` to adjust size, `Shift+scroll` to resize, `R` to reset to defaults. Everything is restored on `F8` exit. Config is saved automatically.
+- **F8 Edit Mode** — press `F8` to enter edit mode. The cursor is unlocked and camera look is suspended automatically — you can edit the minimap without spinning the player's view. Drag to reposition, grab the bottom-right corner to resize, **scroll** to adjust size, **`+`/`-`** to adjust zoom, `R` to reset to defaults. Everything is restored on `F8` exit. Config is saved automatically.
+- **Quick zoom outside F8** — with `EnableZoomHotkeysOutsideEdit=true` (default), `+`/`-` adjust minimap zoom during normal gameplay without entering edit mode.
 - **RevealRooms (opt-in)** — set `RevealRoomsMode = NativeGlobal` to reveal all rooms on level load. **Note:** this also affects the native TAB map. Default is `Vanilla` (TAB stays original).
 
 ### Who needs to install it
@@ -121,7 +124,8 @@ Threat level is derived from the enemy's `difficulty` field. Name/type keywords 
 | EditMode | EditModeEnabled | true | Enable in-game edit mode (F8). |
 | EditMode | EditModeKey | F8 | Key to enter/exit edit mode. |
 | EditMode | UnlockCursorInEditMode | true | Unlocks and shows the cursor automatically when F8 edit mode is active. If the game still captures the mouse, press ESC once to release it manually. |
-| EditMode | FreezeCameraInEditMode | true | Suspends camera mouse-look when F8 edit mode is active (Harmony prefix on `CameraAim.Update`). No system API, no key simulation. Camera control is restored on exit. |
+| EditMode | FreezeCameraInEditMode | true | Suspends camera mouse-look when F8 edit mode is active. Camera control is restored on exit. |
+| EditMode | EnableZoomHotkeysOutsideEdit | true | Allows `+`/`-` (main keyboard and numpad) to adjust minimap zoom during normal gameplay without entering F8. Only active when the minimap is visible and TAB is not open. |
 | Debug | DebugLogging | false | Enable verbose logging to BepInEx/LogOutput.log. Default false (silent in release). Enable only for diagnostics. |
 
 ### Notes

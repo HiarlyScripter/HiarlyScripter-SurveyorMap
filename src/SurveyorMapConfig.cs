@@ -28,6 +28,7 @@ namespace SurveyorMap
         public readonly ConfigEntry<KeyCode> EditModeKey;
         public readonly ConfigEntry<bool>    UnlockCursorInEditMode;
         public readonly ConfigEntry<bool>    FreezeCameraInEditMode;
+        public readonly ConfigEntry<bool>    EnableZoomHotkeysOutsideEdit;
 
         // --- Debug ---
         public readonly ConfigEntry<bool>    DebugLogging;
@@ -72,6 +73,10 @@ namespace SurveyorMap
                 "When true, mouse-look is suspended while F8 edit mode is active. " +
                 "Calls InputManager.DisableAiming() every frame so the camera ignores mouse delta. " +
                 "Camera control is restored automatically when you exit edit mode.");
+            EnableZoomHotkeysOutsideEdit = cfg.Bind("EditMode", "EnableZoomHotkeysOutsideEdit", true,
+                "When true, + and - keys (main keyboard and numpad) adjust the minimap zoom level " +
+                "during normal gameplay without entering F8 edit mode. " +
+                "Only active when the minimap is visible, edit mode is off, and the TAB map is not open.");
 
             DebugLogging = cfg.Bind("Debug", "DebugLogging", false,
                 "Enable verbose debug logging to BepInEx/LogOutput.log. " +

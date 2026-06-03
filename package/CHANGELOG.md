@@ -6,6 +6,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.0 local — 2026-06-02 (patch 11 — log mínimo, controles F8 invertidos, zoom fora do F8)
+
+**Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Log mínimo com `DebugLogging=false`.** Com a config padrão, o SurveyorMap emite exatamente uma linha: `[SurveyorMap] v1.0.0 loaded. BuildTag md5=<hash>`. Tudo o mais (caminho da DLL, resumo de config, Edit mode ON/OFF, Edit mode reset) foi movido para `LogDbg`, visível somente com `DebugLogging=true`.
+- **Controles do F8 edit mode invertidos.** Scroll do mouse agora controla o tamanho do minimapa (scroll para cima = maior, scroll para baixo = menor). `+`/`-` agora controlam o zoom (zoom in = visão mais próxima/detalhada, zoom out = visão mais ampla). `Shift+scroll` removido (redundante).
+- **Nova config `EnableZoomHotkeysOutsideEdit = true` (seção `[EditMode]`).** Com esta opção ativa, `+`/`-` (teclado principal e numpad) ajustam o zoom do minimapa durante gameplay normal, sem precisar entrar no modo F8. Só funciona quando o minimapa está visível, o modo de edição está desativado e o TAB não está aberto.
+- Nenhuma alteração em minimap nativo, TAB, M, F8 camera freeze, inimigos, cores/formas ou RevealRoomsMode.
+
 ### v1.0.0 local — 2026-06-02 (patch 10 — congelar câmera via InputManager.DisableAiming)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -110,6 +119,15 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.0 local — 2026-06-02 (patch 11 — minimal log, inverted F8 controls, zoom outside F8)
+
+**Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
+
+- **Minimal log with `DebugLogging=false`.** With the default config, SurveyorMap emits exactly one line: `[SurveyorMap] v1.0.0 loaded. BuildTag md5=<hash>`. Everything else (DLL path, config summary, Edit mode ON/OFF, reset) has been moved to `LogDbg`, visible only when `DebugLogging=true`.
+- **F8 edit mode controls inverted.** Scroll wheel now controls minimap size (scroll up = bigger, scroll down = smaller). `+`/`-` now control zoom (zoom in = closer/more-detailed view, zoom out = wider view). `Shift+scroll` removed (redundant).
+- **New config `EnableZoomHotkeysOutsideEdit = true` (section `[EditMode]`).** When enabled, `+`/`-` (main keyboard and numpad) adjust minimap zoom during normal gameplay without entering F8 edit mode. Only active when the minimap is visible, edit mode is off, and the TAB map is not open.
+- No changes to native minimap, TAB, M, F8 camera freeze, enemy markers, colours/shapes, or RevealRoomsMode.
 
 ### v1.0.0 local — 2026-06-02 (patch 10 — camera freeze via InputManager.DisableAiming)
 

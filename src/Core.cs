@@ -87,23 +87,25 @@ namespace SurveyorMap
                 {
                     var hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
                     SurveyorMapDiagnostics.BuildMd5Short = hash.Substring(0, 8);
-                    Log.LogInfo($"[SurveyorMap] BuildTag md5={SurveyorMapDiagnostics.BuildMd5Short}");
+                    Log.LogInfo($"[SurveyorMap] v{PluginVersion} loaded. BuildTag md5={SurveyorMapDiagnostics.BuildMd5Short}");
                 }
             }
             catch (Exception ex)
             {
+                Log.LogInfo($"[SurveyorMap] v{PluginVersion} loaded.");
                 Log.LogWarning($"[SurveyorMap] MD5 compute failed: {ex.Message}");
             }
 
-            Log.LogInfo($"[SurveyorMap] v{PluginVersion} loaded. asm={asmPath}");
-            Log.LogInfo($"[SurveyorMap] EnableMinimap={Settings.EnableMinimap.Value}" +
-                        $" RevealRoomsMode={Settings.RevealRoomsMode.Value}" +
-                        $" ShowEnemies={Settings.ShowEnemies.Value}" +
-                        $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
-                        $" EditModeEnabled={Settings.EditModeEnabled.Value}" +
-                        $" UnlockCursor={Settings.UnlockCursorInEditMode.Value}" +
-                        $" FreezeCamera={Settings.FreezeCameraInEditMode.Value}" +
-                        $" DebugLogging={Settings.DebugLogging.Value}");
+            LogDbg($"[SurveyorMap] asm={asmPath}");
+            LogDbg($"[SurveyorMap] EnableMinimap={Settings.EnableMinimap.Value}" +
+                   $" RevealRoomsMode={Settings.RevealRoomsMode.Value}" +
+                   $" ShowEnemies={Settings.ShowEnemies.Value}" +
+                   $" EnemyMarkerSize={Settings.EnemyMarkerSize.Value}" +
+                   $" EditModeEnabled={Settings.EditModeEnabled.Value}" +
+                   $" UnlockCursor={Settings.UnlockCursorInEditMode.Value}" +
+                   $" FreezeCamera={Settings.FreezeCameraInEditMode.Value}" +
+                   $" ZoomHotkeys={Settings.EnableZoomHotkeysOutsideEdit.Value}" +
+                   $" DebugLogging={Settings.DebugLogging.Value}");
         }
 
         private static void TryPatchDeathMethods(Harmony harmony)
@@ -166,7 +168,7 @@ namespace SurveyorMap
                     // Clear accumulated mouse delta from edit-mode UI interaction
                     Input.ResetInputAxes();
                     Config.Save();
-                    Log.LogInfo("[SurveyorMap] Edit mode OFF — config saved.");
+                    LogDbg("[SurveyorMap] Edit mode OFF — config saved.");
                 }
                 else
                 {
@@ -176,7 +178,7 @@ namespace SurveyorMap
                         _savedCursorLockState = Cursor.lockState;
                         _savedCursorVisible   = Cursor.visible;
                     }
-                    Log.LogInfo("[SurveyorMap] Edit mode ON.");
+                    LogDbg("[SurveyorMap] Edit mode ON.");
                 }
             }
 
@@ -204,6 +206,31 @@ namespace SurveyorMap
                 catch (Exception ex)
                 {
                     LogDbg($"[SurveyorMap] DisableAiming failed: {ex.Message}");
+                }
+            }
+
+            // Zoom hotkeys outside edit mode: + / - adjust Zoom without entering F8.
+            // GetKeyDown fires once per press — no per-frame spam, Config.Save() is safe here.
+            if (!_editMode &&
+                Settings.EnableMinimap.Value &&
+                _hudVisible &&
+                !_mirror.IsNativeTabActive &&
+                Settings.EnableZoomHotkeysOutsideEdit.Value)
+            {
+                bool zoomIn  = Input.GetKeyDown(KeyCode.Plus)  || Input.GetKeyDown(KeyCode.Equals) ||
+                               Input.GetKeyDown(KeyCode.KeypadPlus);
+                bool zoomOut = Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus);
+                if (zoomIn)
+                {
+                    Settings.Zoom.Value = Mathf.Clamp(Settings.Zoom.Value - 0.1f, 0.5f, 10f);
+                    Config.Save();
+                    LogDbg($"[SurveyorMap] Zoom-in (outside edit): {Settings.Zoom.Value:0.00}");
+                }
+                else if (zoomOut)
+                {
+                    Settings.Zoom.Value = Mathf.Clamp(Settings.Zoom.Value + 0.1f, 0.5f, 10f);
+                    Config.Save();
+                    LogDbg($"[SurveyorMap] Zoom-out (outside edit): {Settings.Zoom.Value:0.00}");
                 }
             }
 
@@ -285,7 +312,7 @@ namespace SurveyorMap
             var info = $"X:{Settings.PosX.Value:0}  Y:{Settings.PosY.Value:0}" +
                        $"  W:{Settings.Width.Value:0}  H:{Settings.Height.Value:0}" +
                        $"  Z:{Settings.Zoom.Value:0.00}" +
-                       $"  [drag=move] [corner=resize] [+/-=size] [wheel=zoom] [Shift+wheel=size] [R=reset] [F8=exit]";
+                       $"  [drag=move] [corner=resize] [wheel=size] [+/-=zoom] [R=reset] [F8=exit]";
             var labelRect = new Rect(x, y - 20f, w + 200f, 18f);
             GUI.color = new Color(1f, 0.85f, 0f, 1f);
             GUI.Label(labelRect, info);
@@ -354,37 +381,26 @@ namespace SurveyorMap
                 case EventType.ScrollWheel:
                     if (minimapRect.Contains(evt.mousePosition))
                     {
-                        if (evt.shift)
-                        {
-                            // Shift+wheel → resize (scroll up = bigger)
-                            float step = -evt.delta.y * 8f;
-                            Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  + step, 64f, Screen.width);
-                            Settings.Height.Value = Mathf.Clamp(Settings.Height.Value + step, 64f, Screen.height);
-                        }
-                        else
-                        {
-                            // Plain wheel → zoom
-                            Settings.Zoom.Value = Mathf.Clamp(
-                                Settings.Zoom.Value + evt.delta.y * 0.1f, 0.5f, 10f);
-                        }
+                        // Scroll wheel → size (up = bigger, down = smaller)
+                        float step = -evt.delta.y * 8f;
+                        Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  + step, 64f, Screen.width);
+                        Settings.Height.Value = Mathf.Clamp(Settings.Height.Value + step, 64f, Screen.height);
                         evt.Use();
                     }
                     break;
 
                 case EventType.KeyDown:
-                    // +/= keys → increase size
+                    // + / = → zoom in (decrease orthographic size → closer/more-detailed view)
                     if (evt.keyCode == KeyCode.Plus || evt.keyCode == KeyCode.Equals ||
                         evt.keyCode == KeyCode.KeypadPlus)
                     {
-                        Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  + 10f, 64f, Screen.width);
-                        Settings.Height.Value = Mathf.Clamp(Settings.Height.Value + 10f, 64f, Screen.height);
+                        Settings.Zoom.Value = Mathf.Clamp(Settings.Zoom.Value - 0.1f, 0.5f, 10f);
                         evt.Use();
                     }
-                    // - key → decrease size
+                    // - → zoom out (increase orthographic size → wider view)
                     else if (evt.keyCode == KeyCode.Minus || evt.keyCode == KeyCode.KeypadMinus)
                     {
-                        Settings.Width.Value  = Mathf.Clamp(Settings.Width.Value  - 10f, 64f, Screen.width);
-                        Settings.Height.Value = Mathf.Clamp(Settings.Height.Value - 10f, 64f, Screen.height);
+                        Settings.Zoom.Value = Mathf.Clamp(Settings.Zoom.Value + 0.1f, 0.5f, 10f);
                         evt.Use();
                     }
                     // R → reset minimap to defaults (only active in edit mode)
@@ -396,7 +412,7 @@ namespace SurveyorMap
                         Settings.Height.Value  = 260f;
                         Settings.Zoom.Value    = 2.25f;
                         Settings.Opacity.Value = 0.85f;
-                        Log.LogInfo("[SurveyorMap] Edit mode: reset to defaults.");
+                        LogDbg("[SurveyorMap] Edit mode: reset to defaults.");
                         evt.Use();
                     }
                     break;
