@@ -1,0 +1,339 @@
+[center][size=5][b]🗺️ SurveyorMap[/b][/size]
+[i]Minimapa persistente e client-side no HUD inferior esquerdo do R.E.P.O.[/i][/center]
+
+[hr]
+
+[size=4][b]✨ O que faz[/b][/size]
+
+O SurveyorMap lê a câmera de mapa real do jogo e exibe um minimapa persistente no canto inferior esquerdo da tela durante o gameplay. Mesma geometria, mesmas cores e mesma fidelidade que o TAB — sem render textures próprias, sem overlays falsos.
+
+Ajuste posição, tamanho e zoom sem sair do jogo, com cursor liberado e câmera congelada durante a edição.
+
+[hr]
+
+[size=4][b]🎯 Funcionalidades[/b][/size]
+
+[list]
+[*][b]Minimapa persistente[/b] — HUD inferior esquerdo, visível apenas durante o gameplay. Some nos menus e no lobby.
+[*][b]Fidelidade nativa[/b] — lê a câmera real do mapa ([font=Courier New]activeTexture[/font]). Mesma geometria, cores e paredes que o TAB.
+[*][b]Tecla M[/b] — pressione para mostrar ou ocultar o minimapa sem afetar o TAB nativo.
+[*][b]TAB seguro[/b] — o minimapa some automaticamente ao abrir o TAB. O mapa nativo não é afetado.
+[*][b]Modo de edição F8[/b] — cursor liberado e câmera congelada automaticamente. Arraste, redimensione e ajuste sem girar o personagem.
+[*][b]Scroll (no F8)[/b] — ajusta o tamanho do minimapa.
+[*][b]+ / - [/b] — ajustam o zoom dentro ou fora do F8.
+[*][b]Enemy markers opcionais[/b] — forma e cor indicam o nível de ameaça. Inimigos mortos removidos em ~2s.
+[*][b]Silencioso por padrão[/b] — DebugLogging=false. Emite apenas uma linha no log em uso normal.
+[*][b]Client-side[/b] — nenhum outro jogador precisa instalar. Sem RPCs. Sem alteração de rede.
+[/list]
+
+[hr]
+
+[size=4][b]🎮 Controles[/b][/size]
+
+[list]
+[*][b]M[/b] (qualquer contexto) — Mostrar / ocultar o minimapa
+[*][b]F8[/b] (qualquer contexto) — Entrar / sair do modo de edição
+[*][b]Arrastar[/b] (F8 ativo) — Mover o minimapa
+[*][b]Scroll[/b] (F8 ativo) — Ajustar tamanho
+[*][b]+ / -[/b] (F8 ativo) — Ajustar zoom
+[*][b]R[/b] (F8 ativo) — Resetar para valores padrão
+[*][b]+ / -[/b] (gameplay normal) — Ajustar zoom com EnableZoomHotkeysOutsideEdit=true (padrão ativo)
+[/list]
+
+[hr]
+
+[size=4][b]👁️ Marcadores de inimigos[/b][/size]
+
+Forma e cor indicam o nível de ameaça de forma redundante — para máxima legibilidade no minimapa pequeno.
+
+[list]
+[*][b]Baixa (Easy)[/b] — Círculo · Verde-gelo (#DFFFE8)
+[*][b]Média (Medium)[/b] — Quadrado · Azul escuro (#1E6BFF)
+[*][b]Alta (High)[/b] — Triângulo · Lilás (#C084FC)
+[*][b]Crítica (Elite)[/b] — Estrela · Vermelho/coral (#FF3B30)
+[/list]
+
+O nível de ameaça é derivado do campo [font=Courier New]difficulty[/font] do inimigo. Palavras-chave no nome/tipo podem elevar o nível (nunca reduzir):
+
+[list]
+[*][font=Courier New]veryheavy[/font] → elevado para pelo menos Alta (triângulo/lilás)
+[*][font=Courier New]trudge, slow walker, boss, elite[/font] → elevado para Crítica (estrela/vermelho)
+[*][font=Courier New]hunt, huntsman, bang, rush, charge[/font] → elevado para pelo menos Alta (triângulo/lilás)
+[/list]
+
+[hr]
+
+[size=4][b]⚙️ Configurações[/b][/size]
+
+[b]EnableMinimap[/b] [i](Seção: Minimap · padrão: true)[/i]
+Liga/desliga o HUD do minimapa.
+
+[b]ToggleKey[/b] [i](Seção: Minimap · padrão: M)[/i]
+Tecla para alternar o minimapa.
+
+[b]Width / Height[/b] [i](Seção: Minimap · padrão: 260)[/i]
+Tamanho inicial do minimapa em pixels.
+
+[b]PosX / PosY[/b] [i](Seção: Minimap · padrão: 24 / 120)[/i]
+Posição inicial — offset da borda esquerda e inferior.
+
+[b]Zoom[/b] [i](Seção: Minimap · padrão: 2.25)[/i]
+Fator de zoom ortográfico da câmera de mapa.
+
+[b]Opacity[/b] [i](Seção: Minimap · padrão: 0.85)[/i]
+Opacidade do minimapa (0 = invisível, 1 = opaco).
+
+[b]ShowEnemies[/b] [i](Seção: Features · padrão: true)[/i]
+Mostrar marcadores de inimigos no mapa.
+
+[b]EnemyMarkerSize[/b] [i](Seção: Features · padrão: 0.95)[/i]
+Escala dos marcadores de inimigos (0.30–2.00). Aplica em ~2s sem reiniciar.
+
+[b]RevealRoomsMode[/b] [i](Seção: Features · padrão: Vanilla)[/i]
+Vanilla = padrão (TAB original). NativeGlobal = revela salas via SetExplored (também afeta o TAB).
+
+[b]EditModeKey[/b] [i](Seção: EditMode · padrão: F8)[/i]
+Tecla para entrar/sair do modo de edição.
+
+[b]UnlockCursorInEditMode[/b] [i](Seção: EditMode · padrão: true)[/i]
+Libera o cursor automaticamente ao entrar no F8.
+
+[b]FreezeCameraInEditMode[/b] [i](Seção: EditMode · padrão: true)[/i]
+Congela a câmera ao entrar no F8. O controle é restaurado ao sair.
+
+[b]EnableZoomHotkeysOutsideEdit[/b] [i](Seção: EditMode · padrão: true)[/i]
+Permite + / - ajustarem o zoom durante gameplay normal, sem entrar no F8.
+
+[b]DebugLogging[/b] [i](Seção: Debug · padrão: false)[/i]
+Log verboso no BepInEx/LogOutput.log. Use somente para diagnóstico.
+
+[hr]
+
+[size=4][b]👥 Multiplayer[/b][/size]
+
+Apenas o jogador que quer o minimapa precisa instalar.
+
+[list]
+[*][b]Só você tem o mod[/b] — O minimapa aparece apenas para você. Outros jogadores não são afetados.
+[*][b]Todos têm o mod[/b] — Cada jogador vê seu próprio minimapa normalmente.
+[*][b]Ninguém tem o mod[/b] — Nenhum efeito.
+[/list]
+
+O SurveyorMap não envia RPCs, não altera a rede e não requer instalação pelos demais jogadores.
+
+[hr]
+
+[size=4][b]📦 Instalação via Vortex[/b][/size]
+
+[list]
+[*]Instale o [b]BepInExPack para R.E.P.O.[/b] se ainda não tiver.
+[*]Baixe o arquivo [font=Courier New]SurveyorMap-v1.0.0-NexusMods.zip[/font] nesta página.
+[*]Arraste o ZIP para o Vortex ou use o botão [b]Mod Manager Download[/b].
+[*]Ative o mod no Vortex e inicie o jogo.
+[/list]
+
+[size=4][b]📦 Instalação manual[/b][/size]
+
+[list]
+[*]Instale o BepInExPack para R.E.P.O.
+[*]Copie a DLL para: [font=Courier New]BepInEx/plugins/HiarlyScripter-SurveyorMap/SurveyorMap.dll[/font]
+[*]Inicie o jogo.
+[/list]
+
+[hr]
+
+[size=4][b]📋 Notas[/b][/size]
+
+[list]
+[*][b]RevealRoomsMode = NativeGlobal[/b] chama RoomVolume.SetExplored() — também revela salas no TAB nativo. É um opt-in documentado. O padrão é Vanilla.
+[*][b]DebugLogging = false[/b] por padrão — o mod emite apenas uma linha no log em uso normal. Ative somente para diagnóstico.
+[/list]
+
+[hr]
+
+[size=4][b]🔗 Links[/b][/size]
+
+[list]
+[*][b]Código-fonte e changelog completo:[/b] [url=https://github.com/HiarlyScripter/HiarlyScripter-SurveyorMap]GitHub — HiarlyScripter/HiarlyScripter-SurveyorMap[/url]
+[/list]
+
+[hr]
+
+[size=4][b]📄 Licença[/b][/size]
+
+Licença customizada — uso e estudo permitidos. Crédito ao autor obrigatório em qualquer redistribuição ou trabalho derivado.
+
+[hr]
+
+[center][i]Mod criado por [b]HiarlyScripter[/b] · BepInEx 5.4.2100 · R.E.P.O. Build 23250495[/i][/center]
+
+[hr][hr][center][i]— English version below —[/i][/center][hr][hr]
+
+[center][size=5][b]🗺️ SurveyorMap[/b][/size]
+[i]Persistent client-side minimap in the bottom-left HUD for R.E.P.O.[/i][/center]
+
+[hr]
+
+[size=4][b]✨ What it does[/b][/size]
+
+SurveyorMap reads the game's own map camera and displays a persistent minimap in the bottom-left HUD during gameplay. Same geometry, same colours, and same fidelity as the TAB map — no owned render textures, no fake overlays.
+
+Adjust position, size, and zoom without leaving the game, with cursor unlocked and camera frozen during editing.
+
+[hr]
+
+[size=4][b]🎯 Features[/b][/size]
+
+[list]
+[*][b]Persistent minimap[/b] — bottom-left HUD, visible only during gameplay. Disappears in menus and lobby.
+[*][b]Native map fidelity[/b] — reads the game's own map camera ([font=Courier New]activeTexture[/font]). Same geometry, colours, and wall fidelity as the TAB map.
+[*][b]M key[/b] — press to show/hide the minimap without affecting the native TAB map.
+[*][b]TAB-safe[/b] — the minimap hides automatically when you open the TAB map. The native map is unaffected.
+[*][b]F8 Edit Mode[/b] — cursor unlocked and camera suspended automatically. Drag, resize, and adjust without spinning the player's view.
+[*][b]Scroll (in F8)[/b] — adjusts minimap size.
+[*][b]+ / -[/b] — adjust zoom inside or outside F8.
+[*][b]Optional enemy markers[/b] — shape and colour indicate threat level. Dead enemies cleaned up in ~2s.
+[*][b]Silent by default[/b] — DebugLogging=false. Emits only one line in normal use.
+[*][b]Client-side[/b] — no other players need to install it. No RPCs. No network changes.
+[/list]
+
+[hr]
+
+[size=4][b]🎮 Controls[/b][/size]
+
+[list]
+[*][b]M[/b] (any context) — Show / hide the minimap
+[*][b]F8[/b] (any context) — Enter / exit edit mode
+[*][b]Drag[/b] (F8 active) — Reposition the minimap
+[*][b]Scroll[/b] (F8 active) — Adjust size
+[*][b]+ / -[/b] (F8 active) — Adjust zoom
+[*][b]R[/b] (F8 active) — Reset to default values
+[*][b]+ / -[/b] (normal gameplay) — Adjust zoom with EnableZoomHotkeysOutsideEdit=true (on by default)
+[/list]
+
+[hr]
+
+[size=4][b]👁️ Enemy marker visual system[/b][/size]
+
+Shape and colour both indicate threat level — redundantly — for maximum readability on a small minimap.
+
+[list]
+[*][b]Low (Easy)[/b] — Circle · Ice-green (#DFFFE8)
+[*][b]Medium[/b] — Square · Dark blue (#1E6BFF)
+[*][b]High[/b] — Triangle · Lilac (#C084FC)
+[*][b]Critical (Elite)[/b] — Star · Red/coral (#FF3B30)
+[/list]
+
+Threat level is derived from the enemy's [font=Courier New]difficulty[/font] field. Name/type keywords can only elevate the tier (never reduce it):
+
+[list]
+[*][font=Courier New]veryheavy[/font] → elevated to at least High (triangle/lilac)
+[*][font=Courier New]trudge, slow walker, boss, elite[/font] → elevated to Critical (star/red)
+[*][font=Courier New]hunt, huntsman, bang, rush, charge[/font] → elevated to at least High (triangle/lilac)
+[/list]
+
+[hr]
+
+[size=4][b]⚙️ Configuration[/b][/size]
+
+[b]EnableMinimap[/b] [i](Section: Minimap · default: true)[/i]
+Enable/disable the minimap HUD.
+
+[b]ToggleKey[/b] [i](Section: Minimap · default: M)[/i]
+Key to toggle the minimap.
+
+[b]Width / Height[/b] [i](Section: Minimap · default: 260)[/i]
+Initial minimap size in pixels.
+
+[b]PosX / PosY[/b] [i](Section: Minimap · default: 24 / 120)[/i]
+Initial position — offset from the left and bottom edges.
+
+[b]Zoom[/b] [i](Section: Minimap · default: 2.25)[/i]
+Native map camera orthographic zoom factor.
+
+[b]Opacity[/b] [i](Section: Minimap · default: 0.85)[/i]
+Minimap opacity (0 = invisible, 1 = fully opaque).
+
+[b]ShowEnemies[/b] [i](Section: Features · default: true)[/i]
+Show enemy markers on the map.
+
+[b]EnemyMarkerSize[/b] [i](Section: Features · default: 0.95)[/i]
+Enemy marker scale (0.30–2.00). Applies within ~2s without restart.
+
+[b]RevealRoomsMode[/b] [i](Section: Features · default: Vanilla)[/i]
+Vanilla = default (TAB stays original). NativeGlobal = reveals rooms via SetExplored (also affects TAB).
+
+[b]EditModeKey[/b] [i](Section: EditMode · default: F8)[/i]
+Key to enter/exit edit mode.
+
+[b]UnlockCursorInEditMode[/b] [i](Section: EditMode · default: true)[/i]
+Unlocks the cursor automatically when entering F8 edit mode.
+
+[b]FreezeCameraInEditMode[/b] [i](Section: EditMode · default: true)[/i]
+Freezes the camera when entering F8. Control is restored on exit.
+
+[b]EnableZoomHotkeysOutsideEdit[/b] [i](Section: EditMode · default: true)[/i]
+Allows + / - to adjust minimap zoom during normal gameplay without entering F8.
+
+[b]DebugLogging[/b] [i](Section: Debug · default: false)[/i]
+Verbose logging to BepInEx/LogOutput.log. Enable only for diagnostics.
+
+[hr]
+
+[size=4][b]👥 Multiplayer[/b][/size]
+
+Only the player who wants the minimap needs to install it.
+
+[list]
+[*][b]Only you have the mod[/b] — The minimap appears only for you. Other players are unaffected.
+[*][b]Everyone has the mod[/b] — Each player sees their own minimap normally.
+[*][b]Nobody has the mod[/b] — No effect.
+[/list]
+
+SurveyorMap does not send RPCs, does not alter networking, and does not require other players to install it.
+
+[hr]
+
+[size=4][b]📦 Installation via Vortex[/b][/size]
+
+[list]
+[*]Install [b]BepInExPack for R.E.P.O.[/b] if you haven't already.
+[*]Download [font=Courier New]SurveyorMap-v1.0.0-NexusMods.zip[/font] from this page.
+[*]Drag the ZIP into Vortex or use the [b]Mod Manager Download[/b] button.
+[*]Enable the mod in Vortex and launch the game.
+[/list]
+
+[size=4][b]📦 Manual installation[/b][/size]
+
+[list]
+[*]Install BepInExPack for R.E.P.O.
+[*]Copy the DLL to: [font=Courier New]BepInEx/plugins/HiarlyScripter-SurveyorMap/SurveyorMap.dll[/font]
+[*]Launch the game.
+[/list]
+
+[hr]
+
+[size=4][b]📋 Notes[/b][/size]
+
+[list]
+[*][b]RevealRoomsMode = NativeGlobal[/b] calls RoomVolume.SetExplored() — this also reveals rooms in the native TAB map. Intentional opt-in. Default is Vanilla.
+[*][b]DebugLogging = false[/b] by default — the mod emits only one line in normal use. Enable only for diagnostics.
+[/list]
+
+[hr]
+
+[size=4][b]🔗 Links[/b][/size]
+
+[list]
+[*][b]Source code and full changelog:[/b] [url=https://github.com/HiarlyScripter/HiarlyScripter-SurveyorMap]GitHub — HiarlyScripter/HiarlyScripter-SurveyorMap[/url]
+[/list]
+
+[hr]
+
+[size=4][b]📄 License[/b][/size]
+
+Custom license — use and study permitted. Credit to the original author is required for any redistribution or derivative work.
+
+[hr]
+
+[center][i]Mod by [b]HiarlyScripter[/b] · BepInEx 5.4.2100 · R.E.P.O. Build 23250495[/i][/center]
