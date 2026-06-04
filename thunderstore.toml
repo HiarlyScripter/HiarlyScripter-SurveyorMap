@@ -17,3 +17,11 @@ outdir = "./dist"
 [[build.copy]]
 source = "./package/plugins"
 target = "plugins"
+
+[[build.copy]]
+source = "./package/CHANGELOG.md"
+target = "CHANGELOG.md"
+
+[[build.copy]]
+source = "./package/LICENSE"
+target = "LICENSE"
