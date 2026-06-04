@@ -25,3 +25,8 @@ target = "CHANGELOG.md"
 [[build.copy]]
 source = "./package/LICENSE"
 target = "LICENSE"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["repo"]
+

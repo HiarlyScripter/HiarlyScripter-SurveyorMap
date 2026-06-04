@@ -1,6 +1,6 @@
 # 🗺️ SurveyorMap
 
-[![Thunderstore](https://img.shields.io/badge/Thunderstore-Em%20breve-lightgrey?style=flat-square&logo=thunderstore)](https://thunderstore.io/c/repo/p/HiarlyScripter/SurveyorMap/)
+[![Thunderstore](https://img.shields.io/thunderstore/dt/HiarlyScripter/SurveyorMap?style=flat-square&logo=thunderstore&label=Thunderstore)](https://thunderstore.io/c/repo/p/HiarlyScripter/SurveyorMap/)
 [![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Build%2023250495-blue?style=flat-square)](https://store.steampowered.com/app/3241660/REPO/)
 [![BepInEx](https://img.shields.io/badge/BepInEx-5.4.2100-yellow?style=flat-square)](https://thunderstore.io/c/repo/p/BepInEx/BepInExPack/)
 [![Licença](https://img.shields.io/badge/licença-crédito%20obrigatório-red?style=flat-square)](LICENSE)
