@@ -6,7 +6,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
-### v1.0.0 local — 2026-06-02 (patch 11 — log mínimo, controles F8 invertidos, zoom fora do F8)
+### v1.0.0 — 2026-06-02 (patch 11 — log mínimo, controles F8 invertidos, zoom fora do F8)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -15,7 +15,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - **Nova config `EnableZoomHotkeysOutsideEdit = true` (seção `[EditMode]`).** Com esta opção ativa, `+`/`-` (teclado principal e numpad) ajustam o zoom do minimapa durante gameplay normal, sem precisar entrar no modo F8. Só funciona quando o minimapa está visível, o modo de edição está desativado e o TAB não está aberto.
 - Nenhuma alteração em minimap nativo, TAB, M, F8 camera freeze, inimigos, cores/formas ou RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 10 — congelar câmera via InputManager.DisableAiming)
+### v1.0.0 — 2026-06-02 (patch 10 — congelar câmera via InputManager.DisableAiming)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -23,17 +23,17 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - `CameraAimEditModePatch` mantido como segunda camada de proteção (suprime `CameraAim.Update()` inteiramente quando `EditModeActive`).
 - Nenhuma alteração em minimap, TAB, M, R reset, inimigos, cores/formas, cleanup ou RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 9 — câmera real congelada, logs silenciosos, config limpa, ícone premium)
+### v1.0.0 — 2026-06-02 (patch 9 — câmera real congelada, logs silenciosos, config limpa, ícone premium)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
 - **Câmera realmente congelada no F8.** A abordagem anterior (`CameraAim.OverridePlayerAimDisable`) não bloqueava o input de forma confiável. Substituída por patch Harmony em `CameraAim.Update`: enquanto o modo F8 está ativo, o método é suprimido inteiramente, impedindo que qualquer mouse delta chegue à câmera. Ao sair do F8, a supressão é removida e `Input.ResetInputAxes()` limpa qualquer delta acumulado.
 - **`ShowEnemiesInUnexploredRooms` removida como config pública.** A feature era instável e já estava marcada como no-op. A entrada foi removida do código e do arquivo de configuração. Nenhuma funcionalidade foi perdida — todos os marcadores ativos já eram exibidos.
-- **`DebugLogging=false` agora realmente silencia o log.** Chamadas `Log.LogInfo()` e `Log.LogDebug()` diretas em `NativeMapMirror.cs` (TAB open/close, câmera encontrada, activeTexture null) foram convertidas para `LogDbg()`. Com `DebugLogging=false`, o SurveyorMap emite apenas: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
+- **`DebugLogging=false` agora realmente silencia o log.** Chamadas `Log.LogInfo()` e `Log.LogDebug()` diretas em `NativeMapMirror.cs` (TAB open/close, câmera encontrada, activeTexture null) foram convertidas para `LogDbg()`. Com `DebugLogging=false`, o SurveyorMap emite apenas: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, warnings e erros reais. *(O logging foi reduzido ainda mais no Patch 11: no estado final de release, apenas uma linha é emitida em condições normais.)*
 - **Novo ícone premium aplicado.** `package/icon.png` substituído pelo arquivo `surveyormap-v2-256.png` (256×256). Master 1024px salvo em `assets/icon/`.
 - Nenhuma alteração em minimap, TAB, M, R reset, inimigos, cores/formas, cleanup ou RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 8 — suspensão de câmera no F8 edit mode)
+### v1.0.0 — 2026-06-02 (patch 8 — suspensão de câmera no F8 edit mode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -43,7 +43,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Se `CameraAim.Instance` for nulo (fora de gameplay), o mod emite um aviso e continua sem travar.
 - Nenhuma alteração funcional: minimap, TAB, M, R reset, inimigos, cleanup, DebugLogging inalterados.
 
-### v1.0.0 local — 2026-06-02 (patch 7 — cursor automático no F8 e revisão de documentação)
+### v1.0.0 — 2026-06-02 (patch 7 — cursor automático no F8 e revisão de documentação)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -54,16 +54,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Revisão editorial da documentação: acentuação e pontuação em português corrigidas em README e CHANGELOG.
 - Nenhuma alteração funcional: minimap, TAB, M, R reset, inimigos, cleanup, DebugLogging inalterados.
 
-### v1.0.0 local — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+### v1.0.0 — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
 - **Nova config `DebugLogging = false` (seção `[Debug]`).** Por padrão, o log fica silencioso em uso normal. Ative `DebugLogging = true` apenas para diagnóstico de classificação de inimigos, sweep e room tracking.
 - Logs movidos para debug condicional: `Sweep: active=`, `Enemy marker: id=`, `Map.AddCustom OK`, `Room explored (new)`, `AddMarker skipped`, `M toggle`, `Patched EnemyHealth.*`.
-- Logs que continuam sempre visíveis: BuildTag md5=, plugin carregado, resumo de config, Edit mode ON/OFF, Edit mode reset, warnings e erros reais.
+- Logs que continuam sempre visíveis (à época deste patch): BuildTag md5=, plugin carregado, resumo de config, Edit mode ON/OFF, Edit mode reset, warnings e erros reais. *(O escopo foi reduzido nos patches 9 e 11; no estado final de release, apenas uma linha é emitida.)*
 - Nenhuma alteração funcional: cores, formas, cleanup, scale, TAB/M/F8/R inalterados.
 
-### v1.0.0 local — 2026-06-02 (patch 5 — alinhamento visual: cor = ameaça)
+### v1.0.0 — 2026-06-02 (patch 5 — alinhamento visual: cor = ameaça)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -72,7 +72,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Keywords de nome/tipo continuam servindo apenas para **elevar** o threat tier; nunca para escolher cor separada.
 - Log de classificação atualizado: campo `family=` removido; mantidos `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=`.
 
-### v1.0.0 local — 2026-06-01 (patch 4 — sistema visual de inimigos v2)
+### v1.0.0 — 2026-06-01 (patch 4 — sistema visual de inimigos v2)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -82,7 +82,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - `ShowEnemiesInUnexploredRooms` depreciado: filtro por sala removido da lógica ativa.
 - `EnemyMarkerSize` padrão 0.95 (era 0.65). Aplica em ~2s via REPOConfig sem reiniciar.
 
-### v1.0.0 local — 2026-06-01 (patch 3 — UX inimigos + reset editmode)
+### v1.0.0 — 2026-06-01 (patch 3 — UX inimigos + reset editmode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -90,7 +90,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Filtro pré-spawn em `AddMarker`: inimigos mortos, inativos ou com `CurrentState=Despawn` rejeitados.
 - Tecla `R` no modo de edição: reseta para os valores padrão (PosX=24, PosY=120, W=260, H=260, Zoom=2.25, Opacity=0.85). Funciona apenas com F8 ativo.
 
-### v1.0.0 local — 2026-06-01 (patch 2 — marcadores e edit mode)
+### v1.0.0 — 2026-06-01 (patch 2 — marcadores e edit mode)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -99,7 +99,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Modo de edição F8: mover, redimensionar pelo canto, zoom com scroll, `Shift+wheel`, `+/-`, salvar ao sair.
 - `RevealRoomsMode = Vanilla` como padrão seguro. `NativeGlobal` é opt-in e também afeta o TAB.
 
-### v1.0.0 local — 2026-06-01
+### v1.0.0 — 2026-06-01
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -110,7 +110,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Marcadores de inimigos via `MapCustom`, com cleanup por despawn.
 - `RevealRoomsMode`: `Vanilla` (padrão, sem SetExplored), `NativeGlobal` (afeta TAB), `MinimapOnly` bloqueado.
 
-### v1.0.0 local — 2026-05-31
+### v1.0.0 — 2026-05-31
 
 - Rebuild inicial da arquitetura v2.
 - Remoção de RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, overlays falsos, RenderTexture próprio e proof HUD.
@@ -120,7 +120,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## English
 
-### v1.0.0 local — 2026-06-02 (patch 11 — minimal log, inverted F8 controls, zoom outside F8)
+### v1.0.0 — 2026-06-02 (patch 11 — minimal log, inverted F8 controls, zoom outside F8)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -129,7 +129,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - **New config `EnableZoomHotkeysOutsideEdit = true` (section `[EditMode]`).** When enabled, `+`/`-` (main keyboard and numpad) adjust minimap zoom during normal gameplay without entering F8 edit mode. Only active when the minimap is visible, edit mode is off, and the TAB map is not open.
 - No changes to native minimap, TAB, M, F8 camera freeze, enemy markers, colours/shapes, or RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 10 — camera freeze via InputManager.DisableAiming)
+### v1.0.0 — 2026-06-02 (patch 10 — camera freeze via InputManager.DisableAiming)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -137,17 +137,17 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - `CameraAimEditModePatch` retained as a second layer (suppresses `CameraAim.Update()` entirely when `EditModeActive`).
 - No changes to minimap, TAB, M, R reset, enemy markers, colours/shapes, cleanup, or RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 9 — real camera freeze, silent logs, config cleanup, premium icon)
+### v1.0.0 — 2026-06-02 (patch 9 — real camera freeze, silent logs, config cleanup, premium icon)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
 - **Camera actually frozen during F8.** The previous approach (`CameraAim.OverridePlayerAimDisable`) did not reliably block mouse-look input. Replaced with a Harmony prefix patch on `CameraAim.Update`: while F8 edit mode is active, the method is suppressed entirely, preventing any mouse delta from reaching the camera. On exit, suppression is removed and `Input.ResetInputAxes()` clears any accumulated delta.
 - **`ShowEnemiesInUnexploredRooms` removed as a public config.** The feature was unstable and already a no-op. The config entry has been removed from code and from the config file. No functionality lost — all live markers were already shown unconditionally.
-- **`DebugLogging=false` now truly silences the log.** Direct `Log.LogInfo()` and `Log.LogDebug()` calls in `NativeMapMirror.cs` (TAB open/close, camera found, activeTexture null) were converted to `LogDbg()`. With `DebugLogging=false`, SurveyorMap only emits: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors.
+- **`DebugLogging=false` now truly silences the log.** Direct `Log.LogInfo()` and `Log.LogDebug()` calls in `NativeMapMirror.cs` (TAB open/close, camera found, activeTexture null) were converted to `LogDbg()`. With `DebugLogging=false`, SurveyorMap only emits: BuildTag md5=, v1.0.0 loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors. *(Logging was reduced further in Patch 11: in the final release state, only one line is emitted under normal conditions.)*
 - **New premium icon applied.** `package/icon.png` replaced with `surveyormap-v2-256.png` (256×256). 1024px master saved to `assets/icon/`.
 - No changes to minimap, TAB, M, R reset, enemy markers, colours/shapes, cleanup, or RevealRoomsMode.
 
-### v1.0.0 local — 2026-06-02 (patch 8 — camera suspension during F8 edit mode)
+### v1.0.0 — 2026-06-02 (patch 8 — camera suspension during F8 edit mode)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -157,7 +157,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - If `CameraAim.Instance` is null (e.g. not in gameplay), the mod emits a warning and continues without crashing.
 - No functional changes: minimap, TAB, M, R reset, enemy markers, cleanup, DebugLogging unchanged.
 
-### v1.0.0 local — 2026-06-02 (patch 7 — automatic cursor in F8 edit mode and documentation review)
+### v1.0.0 — 2026-06-02 (patch 7 — automatic cursor in F8 edit mode and documentation review)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -168,16 +168,16 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Editorial review of documentation: corrected accents and punctuation in the Portuguese README and CHANGELOG.
 - No functional changes: minimap, TAB, M, R reset, enemy markers, cleanup, DebugLogging unchanged.
 
-### v1.0.0 local — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
+### v1.0.0 — 2026-06-02 (patch 6 — log cleanup: DebugLogging=false)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
 - **New config `DebugLogging = false` (section `[Debug]`).** Log is silent by default for end users. Set `DebugLogging = true` only for diagnostics (enemy classification, sweep, room tracking).
 - Moved to conditional debug: `Sweep: active=`, `Enemy marker: id=`, `Map.AddCustom OK`, `Room explored (new)`, `AddMarker skipped`, `M toggle`, `Patched EnemyHealth.*`.
-- Always visible: BuildTag md5=, plugin loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors.
+- Always visible (at the time of this patch): BuildTag md5=, plugin loaded, config summary, Edit mode ON/OFF, Edit mode reset, real warnings and errors. *(Scope was reduced further in patches 9 and 11; in the final release, only one line is emitted.)*
 - No functional changes: colours, shapes, cleanup, scale, TAB/M/F8/R unchanged.
 
-### v1.0.0 local — 2026-06-02 (patch 5 — visual alignment: colour = threat)
+### v1.0.0 — 2026-06-02 (patch 5 — visual alignment: colour = threat)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -186,7 +186,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Name/type keywords still serve only to **elevate** threat tier, never to choose a separate colour.
 - Classification log updated: `family=` field removed; `diff=`, `threat=`, `shape=`, `color=`, `elevated=`, `names=` retained.
 
-### v1.0.0 local — 2026-06-01 (patch 4 — enemy visual system v2)
+### v1.0.0 — 2026-06-01 (patch 4 — enemy visual system v2)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -196,7 +196,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - `ShowEnemiesInUnexploredRooms` deprecated: room-based filtering removed from active logic.
 - `EnemyMarkerSize` default 0.95 (was 0.65). Applies within ~2s via REPOConfig without restart.
 
-### v1.0.0 local — 2026-06-01 (patch 3 — enemy UX + edit mode reset)
+### v1.0.0 — 2026-06-01 (patch 3 — enemy UX + edit mode reset)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -204,7 +204,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Pre-spawn filter in `AddMarker`: dead, inactive, or `CurrentState=Despawn` enemies rejected.
 - `R` key in edit mode resets to default values. Only works when F8 edit mode is active.
 
-### v1.0.0 local — 2026-06-01 (patch 2 — markers and edit mode)
+### v1.0.0 — 2026-06-01 (patch 2 — markers and edit mode)
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -213,7 +213,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - F8 edit mode: move, resize from corner, scroll zoom, `Shift+wheel`, `+/-`, save on exit.
 - `RevealRoomsMode = Vanilla` as safe default. `NativeGlobal` is opt-in and also affects TAB.
 
-### v1.0.0 local — 2026-06-01
+### v1.0.0 — 2026-06-01
 
 **Compatibility:** R.E.P.O. + BepInEx `5.4.2100`
 
@@ -224,7 +224,7 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 - Enemy markers through `MapCustom`, with cleanup on despawn.
 - `RevealRoomsMode`: `Vanilla` (default, no SetExplored), `NativeGlobal` (also affects TAB), `MinimapOnly` blocked.
 
-### v1.0.0 local — 2026-05-31
+### v1.0.0 — 2026-05-31
 
 - Initial v2 architecture rebuild.
 - Removed RuntimeLoop, RuntimeProbeBehaviour, CenterOnPlayer, fake overlays, owned RenderTexture, and proof HUD.
