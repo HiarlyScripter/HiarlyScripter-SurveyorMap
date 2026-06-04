@@ -6,6 +6,12 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.1 — 2026-06-04
+
+**Compatibilidade:** R.E.P.O. Build `23250495` · BepInEx `5.4.2100`
+
+- Sem alterações de código. Publicação com categorias corretas no Thunderstore (Mods, Client-side, Quality Of Life) e badge atualizado no README.
+
 ### v1.0.0 — 2026-06-02 (patch 11 — log mínimo, controles F8 invertidos, zoom fora do F8)
 
 **Compatibilidade:** R.E.P.O. + BepInEx `5.4.2100`
@@ -119,6 +125,12 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.1 — 2026-06-04
+
+**Compatibility:** R.E.P.O. Build `23250495` · BepInEx `5.4.2100`
+
+- No code changes. Published with correct Thunderstore categories (Mods, Client-side, Quality Of Life) and updated README badge.
 
 ### v1.0.0 — 2026-06-02 (patch 11 — minimal log, inverted F8 controls, zoom outside F8)
 
