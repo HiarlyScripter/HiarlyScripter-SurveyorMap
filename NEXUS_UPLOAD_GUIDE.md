@@ -1,4 +1,4 @@
-# Nexus Mods — Guia de Upload: SurveyorMap v1.0.0
+# Nexus Mods — Guia de Upload: SurveyorMap v1.0.2
 
 URL de upload: https://www.nexusmods.com/repo/mods/add
 
@@ -9,7 +9,7 @@ URL de upload: https://www.nexusmods.com/repo/mods/add
 | Campo | Valor |
 |---|---|
 | **Mod name** | `SurveyorMap` |
-| **Version** | `1.0.0` |
+| **Version** | `1.0.2` |
 | **Brief summary** | `Client-side configurable HUD minimap for R.E.P.O. with optional enemy markers and F8 edit mode.` |
 | **Category** | Gameplay — HUD / Interface (ou equivalente disponível para R.E.P.O.) |
 | **Language** | Portuguese + English |
@@ -20,7 +20,7 @@ URL de upload: https://www.nexusmods.com/repo/mods/add
 ## Arquivo para upload
 
 ```
-releases\SurveyorMap-v1.0.0-NexusMods.zip
+releases\SurveyorMap-v1.0.2-NexusMods.zip
 ```
 
 Estrutura interna (compatível com Vortex):
@@ -38,8 +38,7 @@ BepInEx/
 | Tipo | Arquivo |
 |---|---|
 | **Banner / Main image** | `media\nexus_banner_1300x372.png` |
-| **Galeria (screenshot)** | `media\nexus_gallery_1920x1080.png` |
-| **Capa alternativa** | `assets\icon\surveyormap-v2-1024.png` |
+| **Galeria** | `media\nexus_gallery_1920x1080.jpg` |
 
 ---
 
@@ -69,9 +68,9 @@ BepInEx/
 ## Checklist final antes de publicar
 
 - [ ] Mod name: `SurveyorMap`
-- [ ] Version: `1.0.0`
+- [ ] Version: `1.0.2`
 - [ ] Brief summary preenchido (máx 255 chars)
-- [ ] Arquivo ZIP: `SurveyorMap-v1.0.0-NexusMods.zip` — upado e ativo
+- [ ] Arquivo ZIP: `SurveyorMap-v1.0.2-NexusMods.zip` — upado e ativo
 - [ ] Descrição colada via **Import description** (não no editor visual)
 - [ ] Banner / imagem principal anexada
 - [ ] Pelo menos 1 screenshot na galeria
@@ -87,4 +86,4 @@ Copie a URL da página do mod (ex: `https://www.nexusmods.com/repo/mods/XXX`) e 
 
 ---
 
-*Gerado automaticamente — SurveyorMap v1.0.0 — HiarlyScripter*
+*Gerado automaticamente — SurveyorMap v1.0.2 — HiarlyScripter*
