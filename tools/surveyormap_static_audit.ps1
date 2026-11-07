@@ -4,7 +4,7 @@
 
 $proj    = Split-Path $PSScriptRoot -Parent
 $srcDir  = Join-Path $proj "src"
-$install = "C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll"
+$install = "C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\HiarlyScripter-SurveyorMap\SurveyorMap.dll"
 $build   = Join-Path $proj "build\SurveyorMap.dll"
 
 $passCount = 0
