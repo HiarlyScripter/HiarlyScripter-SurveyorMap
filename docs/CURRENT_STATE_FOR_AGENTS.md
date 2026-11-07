@@ -1,3 +1,5 @@
+> **ATENÇÃO (2026-11-06): este documento está DESATUALIZADO (fase de maio). Fonte confiável: package/CHANGELOG.md, docs/NEXT_ACTIONS.md e tools/last-*-validation.*.**
+
 # CURRENT_STATE_FOR_AGENTS.md
 # Estado atual do projeto para agentes — fonte de verdade desta rodada.
 
