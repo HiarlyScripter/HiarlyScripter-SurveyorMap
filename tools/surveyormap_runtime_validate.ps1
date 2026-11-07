@@ -286,7 +286,7 @@ if (Test-Path $logPath) {
 }
 $pluginLoaded = (($logContent | Where-Object { $_ -match "\[SurveyorMap\].*v1\.0\.0 loaded" }).Count -gt 0)
 $c["03_loaded"] = $pluginLoaded
-if ($pluginLoaded) { OK "[C3] Plugin v1.0.0 loaded in log" } else { ERR "[C3] Plugin load line NOT in log" }
+if ($pluginLoaded) { OK "[C3] Plugin v1.0.2 loaded in log" } else { ERR "[C3] Plugin load line NOT in log" }
 
 # C4 - BuildTag (MD5 short) in log
 $c["04_tag"] = (($logContent | Where-Object { $_ -match "BuildTag.*md5=$expectedTag" }).Count -gt 0)
@@ -455,7 +455,7 @@ $md += "| # | Criterion | Result |"
 $md += "|---|---|---|"
 $md += "| C1 | hashMatch: build == installed ($buildShort) | $(if ($c['01_hash']) {'PASS'} else {'FAIL'}) |"
 $md += "| C2 | modEnabled | $(if ($c['02_mod']) {'PASS'} else {'FAIL'}) |"
-$md += "| C3 | Plugin v1.0.0 loaded in log | $(if ($c['03_loaded']) {'PASS'} else {'FAIL'}) |"
+$md += "| C3 | Plugin v1.0.2 loaded in log | $(if ($c['03_loaded']) {'PASS'} else {'FAIL'}) |"
 $md += "| C4 | BuildTag '$expectedTag' in log | $(if ($c['04_tag']) {'PASS'} else {'FAIL'}) |"
 $md += "| C5 | runtime-state.json fresh | $(if ($c['05_json']) {'PASS'} else {'FAIL'}) |"
 $md += "| C6 | buildTimestamp in JSON (Awake ran) | $(if ($c['06_awake']) {'PASS'} else {'FAIL'}) |"

@@ -32,7 +32,7 @@ namespace SurveyorMap
         {
             try
             {
-                var rooms = UnityEngine.Object.FindObjectsOfType<RoomVolume>();
+                var rooms = UnityEngine.Object.FindObjectsByType<RoomVolume>(FindObjectsSortMode.None);
                 int total = rooms.Length, explored = 0, skipped = 0;
 
                 foreach (var room in rooms)

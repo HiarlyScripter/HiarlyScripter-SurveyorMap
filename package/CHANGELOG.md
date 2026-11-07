@@ -6,6 +6,13 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 
 ## Português
 
+### v1.0.2 — 2026-11-06
+
+**Compatibilidade:** R.E.P.O. Build `26407089` · BepInEx `5.4.2100`
+
+- Revalidado para a atualização do jogo de 06/11/2026. Todas as APIs usadas (mapa nativo, TAB, inimigos, câmera) conferidas; sem mudança funcional.
+- Interno: `FindObjectsOfType` substituído por `FindObjectsByType` (Reveal Rooms), eliminando o warning de API obsoleta.
+
 ### v1.0.1 — 2026-06-04
 
 **Compatibilidade:** R.E.P.O. Build `23250495` · BepInEx `5.4.2100`
@@ -125,6 +132,13 @@ This file includes Portuguese and English versions. Portuguese comes first; Engl
 ---
 
 ## English
+
+### v1.0.2 — 2026-11-06
+
+**Compatibility:** R.E.P.O. Build `26407089` · BepInEx `5.4.2100`
+
+- Revalidated for the 2026-11-06 game update. All used APIs (native map, TAB, enemies, camera) checked; no functional change.
+- Internal: replaced `FindObjectsOfType` with `FindObjectsByType` (Reveal Rooms), removing the obsolete-API warning.
 
 ### v1.0.1 — 2026-06-04
 

@@ -4,7 +4,7 @@
 
 $proj    = Split-Path $PSScriptRoot -Parent
 $srcDir  = Join-Path $proj "src"
-$install = "C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\SurveyorMap.dll"
+$install = "C:\Users\Hiarly\AppData\Roaming\r2modmanPlus-local\REPO\profiles\REPO - Test\BepInEx\plugins\HiarlyScripter-SurveyorMap\HiarlyScripter-SurveyorMap\SurveyorMap.dll"
 $build   = Join-Path $proj "build\SurveyorMap.dll"
 
 $passCount = 0
@@ -50,7 +50,7 @@ Write-Host ""
 # === Plugin identity ===
 Check "SurveyorMapPlugin inherits BaseUnityPlugin" (SrcContains 'class\s+SurveyorMapPlugin\s*:\s*BaseUnityPlugin') ""
 Check "GUID com.hiarlyscripter.surveyormap"        (SrcContains 'com\.hiarlyscripter\.surveyormap') ""
-Check "PluginVersion 1.0.0"                         (SrcContains '"1\.0\.0"') ""
+Check "PluginVersion 1.0.2"                         (SrcContains '"1.0.2"') ""
 
 # === Lifecycle ===
 Check "Awake() exists"                              (SrcContains 'private\s+void\s+Awake\s*\(') ""

@@ -14,7 +14,7 @@ namespace SurveyorMap
     {
         public const string PluginGuid    = "com.hiarlyscripter.surveyormap";
         public const string PluginName    = "SurveyorMap";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.2";
 
         internal static ManualLogSource   Log          { get; private set; }
         internal static SurveyorMapConfig Settings     { get; private set; }
