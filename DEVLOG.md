@@ -14,3 +14,8 @@
 - Static audit: 45/45 após correção (caminho da DLL instalada no audit corrigido para o layout do r2modman).
 - DLL nova (md5 bfd376b6) instalada no perfil `REPO - Test`. Status: UNTESTED até aprovação in-game.
 - Docs `docs/CURRENT_STATE_FOR_AGENTS.md` e afins estão desatualizados (fase de maio); fonte confiável: package/CHANGELOG.md e tools/last-*-validation.*.
+
+## 2026-11-06 — v1.0.2
+
+- Aprovado in-game por Hiarly (DLL md5 bfd376b6, código idêntico exceto PluginVersion). Bump para 1.0.2: manifest, thunderstore.toml, `PluginVersion`, README (badge build 26407089), CHANGELOG PT/EN, audit e runtime validator.
+- Build final md5 c9acee77 (só difere pela string de versão). ZIP: dist/HiarlyScripter-SurveyorMap-1.0.2.zip. Cópia para o perfil Test falhou (DLL em uso pelo jogo); reinstalar com o jogo fechado.

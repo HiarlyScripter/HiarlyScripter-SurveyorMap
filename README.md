@@ -1,7 +1,7 @@
 # 🗺️ SurveyorMap
 
 [![Thunderstore](https://img.shields.io/thunderstore/dt/HiarlyScripter/SurveyorMap?style=flat-square&logo=thunderstore&label=Thunderstore)](https://thunderstore.io/c/repo/p/HiarlyScripter/SurveyorMap/)
-[![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Build%2023250495-blue?style=flat-square)](https://store.steampowered.com/app/3241660/REPO/)
+[![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Build%2026407089-blue?style=flat-square)](https://store.steampowered.com/app/3241660/REPO/)
 [![BepInEx](https://img.shields.io/badge/BepInEx-5.4.2100-yellow?style=flat-square)](https://thunderstore.io/c/repo/p/BepInEx/BepInExPack/)
 [![Licença](https://img.shields.io/badge/licença-crédito%20obrigatório-red?style=flat-square)](LICENSE)
 
@@ -118,4 +118,4 @@ O SurveyorMap não envia RPCs, não altera a rede e não requer instalação pel
 
 ---
 
-*Mod criado por **[HiarlyScripter](https://discord.com/users/hiarly_ferreira)** · BepInEx `5.4.2100` · R.E.P.O. Build `23250495`*
+*Mod criado por **[HiarlyScripter](https://discord.com/users/hiarly_ferreira)** · BepInEx `5.4.2100` · R.E.P.O. Build `26407089`*
