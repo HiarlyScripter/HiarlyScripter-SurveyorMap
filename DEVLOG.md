@@ -21,3 +21,5 @@
 - Build final md5 c9acee77 (só difere pela string de versão). ZIP: dist/HiarlyScripter-SurveyorMap-1.0.2.zip. Cópia para o perfil Test falhou (DLL em uso pelo jogo); reinstalar com o jogo fechado.
 
 - 2026-11-06: v1.0.2 publicada no Thunderstore (https://thunderstore.io/package/download/HiarlyScripter/SurveyorMap/1.0.2/). Nexus/Discord: não publicados.
+
+- 2026-11-06: release GitHub v1.0.2 criada; ZIP enviado ao Discord; pacote Nexus preparado (upload manual pendente).
